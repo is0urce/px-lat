@@ -77,8 +77,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\coordinate.hpp" />
     <ClInclude Include="px-lat.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="src\core\map.hpp" />
+    <ClInclude Include="src\core\point.hpp" />
+    <ClInclude Include="src\core\rectangle.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

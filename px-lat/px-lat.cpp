@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "px-lat.h"
 
+#include "src/core/map.hpp"
+
 #define MAX_LOADSTRING 100
 
 // Global Variables:
@@ -41,6 +43,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PXLAT));
+
+	px::map<bool> passable(3, 3);
+	passable.fill(true);
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
