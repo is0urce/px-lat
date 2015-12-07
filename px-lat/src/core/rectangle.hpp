@@ -50,6 +50,14 @@ namespace px
 		{
 			return m_range.Y;
 		}
+		point range() const
+		{
+			return m_range;
+		}
+		point start() const
+		{
+			return m_start;
+		}
 
 		bool contains(const point &point) const
 		{
@@ -78,6 +86,14 @@ namespace px
 			}
 		}
 	};
+	inline bool operator==(const rectangle &a, const rectangle &b)
+	{
+		return a.range() == b.range() && a.start() == b.start();
+	}
+	inline bool operator!=(const rectangle &a, const rectangle &b)
+	{
+		return !operator==(a, b);
+	}
 }
 
 #endif
