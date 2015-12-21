@@ -1,9 +1,10 @@
-// name: avatar_handle.h
+// name: avatar_handle.hpp
 // type: c++ header
 // desc: class declaration
 // auth: is0urce
 
 // avatar representation binded to unit with std::function
+// to function requires mapped unit to live while live instance of this class
 
 #ifndef PX_SHELL_AVATAR_HANDLE_H
 #define PX_SHELL_AVATAR_HANDLE_H
@@ -15,22 +16,20 @@ namespace px
 {
 	namespace shell
 	{
-		template <typename _E, _A>
+		template <typename _A>
 		class avatar_handle
 		{
 		private:
-			typedef _E entity_t;
 			typedef _A avatar_t;
-			typedef std::function<avatar_t(const entity_t&)> update_fn;
+			typedef std::function<avatar_t()> update_fn;
 
 		private:
 			avatar_t m_avatar;
-			entity_t* m_mapped;
 			update_fn m_update;
-			_A appearance_t;
+			const void* m_mapped;
 
 		public:
-			avatar_handle(entity_t* mapped, update_fn fn) : m_mapped(mapped), m_update(fn)
+			avatar_handle(const void* mapped, update_fn fn) : m_mapped(mapped), m_update(fn)
 			{
 				if (!mapped) throw std::runtime_error("avatar_handle.ctor(..) - entity is null");
 				if (!fn) throw std::runtime_error("avatar_handle.ctor(..) - fn is null");
@@ -39,13 +38,13 @@ namespace px
 		public:
 			void update()
 			{
-				m_avatar = m_update(*m_mapped);
+				m_avatar = m_update();
 			}
-			entity_t* ptr() const
+			const void* ptr() const
 			{
 				return m_mapped;
 			}
-			const m_avatar& operator->() const
+			const avatar_t& operator->() const
 			{
 				return m_avatar;
 			}

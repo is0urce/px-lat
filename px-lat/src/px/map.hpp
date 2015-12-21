@@ -1,4 +1,4 @@
-// name: map.h
+// name: map.hpp
 // type: c++ header
 // desc: class declaration
 // auth: is0ruce

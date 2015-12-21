@@ -22,6 +22,7 @@ namespace px
 			color m_back;
 
 		public:
+			canvas(point::component x, point::component y);
 			canvas(point range);
 			virtual ~canvas();
 

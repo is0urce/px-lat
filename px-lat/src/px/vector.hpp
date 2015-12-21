@@ -1,4 +1,4 @@
-// name: vector.h
+// name: vector.hpp
 // type: c++ header
 // desc: class with implementation
 // auth: is0urce

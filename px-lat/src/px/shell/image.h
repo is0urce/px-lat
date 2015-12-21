@@ -18,7 +18,6 @@ namespace px
 			typedef float real_t;
 
 		public:
-			color tint;
 			unsigned int atlas;
 			real_t x;
 			real_t y;

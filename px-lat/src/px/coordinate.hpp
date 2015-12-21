@@ -55,12 +55,12 @@ namespace px
 		// chebyshev distance to specified coordinate
 		component king_distance(const coordinate &target) const
 		{
-			coordinate dx = X - target.X;
-			coordinate dy = Y - target.Y;
-			coordinate dz = Z - target.Z;
-			dx = std::abs(dx);
-			dy = std::abs(dy);
-			dz = std::abs(dz);
+			coordinate::component dx = X - target.X;
+			coordinate::component dy = Y - target.Y;
+			coordinate::component dz = Z - target.Z;
+			dx = (std::abs)(dx);
+			dy = (std::abs)(dy);
+			dz = (std::abs)(dz);
 			return (std::max)(dx, (std::max)(dy, dz));
 		}
 

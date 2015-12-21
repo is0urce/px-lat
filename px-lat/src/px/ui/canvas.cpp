@@ -11,6 +11,9 @@ namespace px
 {
 	namespace ui
 	{
+		canvas::canvas(point::component x, point::component y) : map<symbol>(x, y), m_front(1, 1, 1, 1), m_back(0, 0, 0, 0)
+		{
+		}
 		canvas::canvas(point range) : map<symbol>(range), m_front(1, 1, 1, 1), m_back(0, 0, 0, 0)
 		{
 		}

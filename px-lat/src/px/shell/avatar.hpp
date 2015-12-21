@@ -1,4 +1,4 @@
-// name: avatar.h
+// name: avatar.hpp
 // type: c++ header
 // desc: class declaration
 // auth: is0urce
