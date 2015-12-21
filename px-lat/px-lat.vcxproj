@@ -41,9 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>build\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -51,11 +53,21 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>lib/win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /deyvq "config/win32" "$(TargetDir)"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -65,29 +77,71 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>lib/win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /deyvq "config/win32" "$(TargetDir)"</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\coordinate.hpp" />
-    <ClInclude Include="px-lat.h" />
+    <ClInclude Include="src\px\color.h" />
+    <ClInclude Include="src\px\shell\avatar.hpp" />
+    <ClInclude Include="src\px\shell\avatar_handle.hpp" />
+    <ClInclude Include="src\px\shell\fps_counter.h" />
+    <ClInclude Include="src\px\coordinate.hpp" />
+    <ClInclude Include="src\px\key.h" />
+    <ClInclude Include="src\px\shell\core.h" />
+    <ClInclude Include="src\px\shell\font.h" />
+    <ClInclude Include="src\px\shell\image.h" />
+    <ClInclude Include="src\px\shell\opengl.h" />
+    <ClInclude Include="src\px\shell\renderer.h" />
+    <ClInclude Include="src\px\shell\timer.h" />
+    <ClInclude Include="src\px\shell\vao.h" />
+    <ClInclude Include="src\px\shell\wingl.h" />
+    <ClInclude Include="src\px-lat.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="src\core\map.hpp" />
-    <ClInclude Include="src\core\point.hpp" />
-    <ClInclude Include="src\core\rectangle.hpp" />
+    <ClInclude Include="src\px\map.hpp" />
+    <ClInclude Include="src\px\point.hpp" />
+    <ClInclude Include="src\px\rectangle.hpp" />
+    <ClInclude Include="src\px\string.h" />
+    <ClInclude Include="src\px\ui\canvas.h" />
+    <ClInclude Include="src\px\ui\symbol.h" />
+    <ClInclude Include="src\px\vector.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="px-lat.cpp" />
+    <ClCompile Include="src\px\shell\fps_counter.cpp" />
+    <ClCompile Include="src\px\shell\core.cpp" />
+    <ClCompile Include="src\px\shell\font.cpp" />
+    <ClCompile Include="src\px\shell\opengl.cpp" />
+    <ClCompile Include="src\px\shell\wingl.cpp" />
+    <ClCompile Include="src\px-lat.cpp">
+      <ForcedUsingFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedUsingFiles>
+      <ForcedUsingFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedUsingFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdafx.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdafx.h</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/src/core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

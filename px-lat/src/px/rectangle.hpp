@@ -17,7 +17,6 @@ namespace px
 	private:
 		point m_start;
 		point m_range;
-		point m_corner;
 
 	public:
 		rectangle() : m_start{}, m_range{} {}
@@ -84,6 +83,59 @@ namespace px
 					enum_fn(index);
 				}
 			}
+		}
+		rectangle intersection(const rectangle &with) const
+		{
+			point start = with.m_start;
+			if (start.X < m_start.X)
+			{
+				start.X = m_start.X;
+			}
+			if (start.Y < m_start.Y)
+			{
+				start.Y = m_start.Y;
+			}
+			point corner = with.m_start + with.m_range;
+			auto cx = m_start.X + m_range.X;
+			auto cy = m_start.Y + m_range.Y;
+			if (corner.X > cx)
+			{
+				corner.X = cx;
+			}
+			if (corner.Y > cy)
+			{
+				corner.X = cy;
+			}
+			point range = point(corner.X - start.X, corner.Y - start.Y);
+			if (range.X < 0)
+			{
+				range.X = 0;
+			}
+			if (range.Y < 0)
+			{
+				range.Y = 0;
+			}
+			return rectangle(start, range);
+		}
+		rectangle intersection(point range) const
+		{
+			if (range.X > m_range.X)
+			{
+				range.X = m_range.X;
+			}
+			if (range.Y > m_range.Y)
+			{
+				range.Y = m_range.Y;
+			}
+			if (range.X < 0)
+			{
+				range.X = 0;
+			}
+			if (range.Y < 0)
+			{
+				range.Y = 0;
+			}
+			return rectangle(m_start, range);
 		}
 	};
 	inline bool operator==(const rectangle &a, const rectangle &b)

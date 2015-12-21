@@ -1,10 +1,11 @@
 // px-lat.cpp : Defines the entry point for the application.
 //
 
-#include "stdafx.h"
+#include <windows.h>
 #include "px-lat.h"
 
-#include "src/core/map.hpp"
+#include <px/shell/wingl.h>
+#include <px/shell/core.h>
 
 #define MAX_LOADSTRING 100
 
@@ -12,6 +13,8 @@
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+
+HWND hWnd;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -44,14 +47,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PXLAT));
 
-	px::map<bool> passable(3, 3);
-	passable.fill(true);
+	auto wgl = std::make_shared<px::shell::wingl>(hWnd);
+	auto core = px::shell::core(wgl.get());
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 		{
+			core.frame();
+
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -100,8 +105,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,

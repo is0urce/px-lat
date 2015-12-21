@@ -37,13 +37,18 @@ namespace px
 
 		// mutations
 
+		void negate() { X = -X; Y = -Y; Z = -Z; }
 		void move(const coordinate &move) { X += move.X; Y += move.Y; }
 		void move(component x, component y) { X += x; Y += y; }
 		void move(component x, component y, component z) { X += x; Y += y; Z += z; }
 		void multiply(const coordinate &c) { X *= c.X; Y *= c.Y; }
 		void multiply(component w, component h) { X *= w, Y *= h; }
 		void multiply(component x, component y, component z) { X *= x; Y *= y; Z *= z; }
-		void multiply(component size) { multiply(size, size, size); }
+		void multiply(component size) { X *= size; Y *= size; Z *= size; }
+		void divide(component x, component y, component z) { X /= x; Y /= y; Z /= z; }
+		void divide(component x, component y) { X /= x; Y /= y; }
+		void divide(const coordinate &divisor) { X /= divisor.X; Y /= divisor.Y; Z /= divisor.Z; }
+		void divide(component divisor) { X /= divisor; Y /= divisor; Z /= divisor; }
 
 		// distances
 
@@ -74,9 +79,9 @@ namespace px
 		// distance to to specified coordinate, squared for performance reasons
 		component distance2(const coordinate &target) const // squared distance
 		{
-			coordinate dx = X - target.X;
-			coordinate dy = Y - target.Y;
-			coordinate dz = Z - target.Z;
+			component dx = X - target.X;
+			component dy = Y - target.Y;
+			component dz = Z - target.Z;
 			return dx * dx + dy * dy + dz * dz;
 		}
 

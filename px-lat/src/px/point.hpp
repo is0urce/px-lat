@@ -30,10 +30,10 @@ namespace px
 		point& operator+=(const point &rhs) { move(rhs); return *this; }
 		point& operator-=(const point &rhs) { move(-rhs); return *this; }
 		point& operator*=(const point &rhs) { multiply(rhs); return *this; };
-		point& operator/=(const point &rhs) { multiply(1 / rhs.X, 1 / rhs.Y, 1 / rhs.Z); return *this; };
+		point& operator/=(const point &rhs) { divide(rhs.X); return *this; };
 
 		point& operator*=(component c) { multiply(c); return *this; };
-		point& operator/=(component c) { multiply(1 / c); return *this; };
+		point& operator/=(component c) { divide(c); return *this; };
 	};
 
 	inline point operator+(point lhs, const point &rhs) { lhs += rhs; return lhs; }
