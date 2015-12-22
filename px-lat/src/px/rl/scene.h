@@ -6,7 +6,7 @@
 #ifndef PX_SHELL_SCENE_H
 #define PX_SHELL_SCENE_H
 
-#include <px/shell/iscene.hpp>
+#include <px/rl/iscene.hpp>
 
 #include <memory>
 
@@ -16,7 +16,7 @@ namespace px
 	{
 		class unit;
 	}
-	namespace shell
+	namespace rl
 	{
 		class scene : public iscene<std::shared_ptr<es::unit>>
 		{

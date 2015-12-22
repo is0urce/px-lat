@@ -11,9 +11,9 @@
 
 namespace px
 {
+	class timer;
 	namespace shell
 	{
-		class timer;
 		class fps_counter
 		{
 		public:

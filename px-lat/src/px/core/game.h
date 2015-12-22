@@ -6,8 +6,6 @@
 #ifndef PX_SHELL_GAME_H
 #define PX_SHELL_GAME_H
 
-
-#include <px/shell/iscene.hpp>
 #include <px/point.hpp>
 
 #include <memory>
@@ -19,24 +17,20 @@ namespace px
 	{
 		class stack_panel;
 	}
-	namespace es
+	namespace rl
 	{
-		class unit;
+		class scene;
 	}
-	namespace shell
+	namespace core
 	{
 		class game
 		{
-		public:
-			typedef std::shared_ptr<es::unit> unit_ptr;
-			typedef iscene<unit_ptr> scene_t;
-
 		private:
-			scene_t* m_scene;
+			rl::scene* m_scene;
 			ui::stack_panel* m_ui;
 
 		public:
-			game(scene_t* scene, ui::stack_panel* ui);
+			game(rl::scene* scene, ui::stack_panel* ui);
 			virtual ~game();
 
 		public:

@@ -5,7 +5,7 @@
 #include "px-lat.h"
 
 #include <px/shell/wingl.h>
-#include <px/shell/core.h>
+#include <px/core/engine.h>
 
 #define MAX_LOADSTRING 100
 
@@ -48,14 +48,14 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PXLAT));
 
 	auto wgl = std::make_shared<px::shell::wingl>(hWnd);
-	auto core = px::shell::core(wgl.get());
+	auto engine = px::core::engine(wgl.get());
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 		{
-			core.frame();
+			engine.frame();
 
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);

@@ -7,7 +7,7 @@
 
 namespace px
 {
-	namespace shell
+	namespace rl
 	{
 		scene::scene()
 		{

@@ -5,8 +5,8 @@
 
 // class for registering two on_add and on_remove events
 
-#ifndef PX_SHELL_I_SCENE_HPP
-#define PX_SHELL_I_SCENE_HPP
+#ifndef PX_RL_I_SCENE_HPP
+#define PX_RL_I_SCENE_HPP
 
 #include <functional>
 #include <list>
@@ -25,7 +25,7 @@ namespace
 
 namespace px
 {
-	namespace shell
+	namespace rl
 	{
 		template <typename _P>
 		class iscene

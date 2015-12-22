@@ -41,7 +41,7 @@ namespace px
 
 		public:
 			void add(avatar_handle<avatar_t>);
-			void remove(void*);
+			void remove(const void*);
 		};
 	}
 }

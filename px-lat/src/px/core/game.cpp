@@ -12,9 +12,9 @@
 
 namespace px
 {
-	namespace shell
+	namespace core
 	{
-		game::game(scene_t* scene, ui::stack_panel* ui)
+		game::game(rl::scene* scene, ui::stack_panel* ui)
 			: m_scene(scene), m_ui(ui)
 		{
 

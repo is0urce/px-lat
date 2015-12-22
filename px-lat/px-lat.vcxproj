@@ -103,17 +103,18 @@
     <ClInclude Include="src\px\control.h" />
     <ClInclude Include="src\px\shell\avatar.hpp" />
     <ClInclude Include="src\px\shell\avatar_handle.hpp" />
+    <ClInclude Include="src\px\shell\font_texture.h" />
     <ClInclude Include="src\px\shell\fps_counter.h" />
     <ClInclude Include="src\px\coordinate.hpp" />
     <ClInclude Include="src\px\key.h" />
-    <ClInclude Include="src\px\shell\core.h" />
+    <ClInclude Include="src\px\core\engine.h" />
     <ClInclude Include="src\px\shell\font.h" />
-    <ClInclude Include="src\px\shell\game.h" />
+    <ClInclude Include="src\px\core\game.h" />
     <ClInclude Include="src\px\shell\image.h" />
     <ClInclude Include="src\px\shell\opengl.h" />
     <ClInclude Include="src\px\shell\renderer.h" />
-    <ClInclude Include="src\px\shell\iscene.hpp" />
-    <ClInclude Include="src\px\shell\scene.h" />
+    <ClInclude Include="src\px\rl\iscene.hpp" />
+    <ClInclude Include="src\px\rl\scene.h" />
     <ClInclude Include="src\px\shell\timer.h" />
     <ClInclude Include="src\px\shell\vao.h" />
     <ClInclude Include="src\px\shell\wingl.h" />
@@ -132,13 +133,14 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\px\shell\font_texture.cpp" />
     <ClCompile Include="src\px\shell\fps_counter.cpp" />
-    <ClCompile Include="src\px\shell\core.cpp" />
+    <ClCompile Include="src\px\core\engine.cpp" />
     <ClCompile Include="src\px\shell\font.cpp" />
-    <ClCompile Include="src\px\shell\game.cpp" />
+    <ClCompile Include="src\px\core\game.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
-    <ClCompile Include="src\px\shell\scene.cpp" />
+    <ClCompile Include="src\px\rl\scene.cpp" />
     <ClCompile Include="src\px\shell\wingl.cpp" />
     <ClCompile Include="src\px-lat.cpp">
       <ForcedUsingFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
