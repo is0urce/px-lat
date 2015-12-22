@@ -3,8 +3,8 @@
 // desc: class declaration
 // auth: is0urce
 
-#ifndef PX_SHELL_GAME_H
-#define PX_SHELL_GAME_H
+#ifndef PX_CORE_GAME_H
+#define PX_CORE_GAME_H
 
 #include <px/point.hpp>
 

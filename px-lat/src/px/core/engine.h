@@ -5,8 +5,8 @@
 
 // main shell, general handling of time and input
 
-#ifndef PX_CORE_H
-#define PX_CORE_H
+#ifndef PX_CORE_ENGINE_H
+#define PX_CORE_ENGINE_H
 
 #include <px/point.hpp>
 

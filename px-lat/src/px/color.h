@@ -4,20 +4,21 @@
 // auth: is0urce
 
 // color with real rgba components
+// + and * operators change alpha components
 
 #ifndef PX_COLOR_H
 #define PX_COLOR_H
 
 #include <cmath>
 
+namespace
+{
+	const double pi = 3.141592653589793238463; // more than enought
+	const unsigned int depth = 4;
+}
+
 namespace px
 {
-	// hide constants
-	namespace
-	{
-		const static double pi = 3.141592653589793238463; // more than enought
-		const static unsigned int depth = 4;
-	}
 	class color
 	{
 	public:
@@ -32,7 +33,7 @@ namespace px
 
 		// ctor & dtor
 	public:
-		color() : R{}, G{}, B{}, A{} {};
+		color() : R{}, G{}, B{}, A(1) {};
 		color(component r, component g, component b) : R(r), G(g), B(b), A(1) {};
 		color(component r, component g, component b, component a) : R(r), G(g), B(b), A(a) {};
 		color(unsigned int hex) { set_hex(hex); }
@@ -42,44 +43,39 @@ namespace px
 		static color rgba(int r, int g, int b, int a) { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
 		static color black() { return color(0, 0, 0, 1); };
 		static color white() { return color(1, 1, 1, 1); };
-		static color transparent() { return color(0, 0, 0, 0); };
 
 		// operators
 
-		color operator-() const { return color(-R, -G, -B); };
+		color operator-() const { return color(-R, -G, -B, A); };
 		color& operator+=(const color &color) { R += color.R; G += color.G; B += color.B; A += color.A; return *this; };
 		color& operator-=(const color &color) { R -= color.R; G -= color.G; B -= color.B; A -= color.A; return *this; };
 		color& operator*=(const color &color) { R *= color.R, G *= color.G, B *= color.B, A *= color.A; return *this; };
 
 		bool operator==(const color &color) const { return R == color.R && G == color.G && B == color.B && A == color.A; }
 		bool operator!=(const color &color) const { return !(*this == color); }
-		color operator+(const color &color) const { auto result = *this; return result += color; }
-		color operator-(const color &color) const { auto result = *this; return result -= color; }
-		color operator*(const color &color) const { auto result = *this; return result *= color; }
+		color operator+(color c) const { c += *this; return c; }
+		color operator-(color c) const { c -= *this; return c; }
+		color operator*(color c) const { c *= *this; return c; }
 
 		color operator*(component c) const { return color(R * c, G * c, B * c, A * c); };
 		color operator/(component c) const { return color(R / c, G / c, B / c, A / c); };
 		color operator*=(component c) { *this = *this * c; return *this; };
 		color operator/=(component c) { *this = *this / c; return *this; };
 
-		template <typename _M>
-		void write(_M *memory) const { memory[0] = (_M)R; memory[1] = (_M)G; memory[2] = (_M)B; memory[3] = (_M)A; };
-		template <typename _M>
-		void write(_M *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
-		void write(component *memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
-		void write(component *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
 		void set_rgba(int r, int g, int b, int a) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = a / 255.0; }
-		void set_rgb(int r, int g, int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = 1.0; }
+		void set_rgb(int r, int g, int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; }
 		void set_hex(unsigned int hex) { set_rgb(hex / 256 / 256 % 256, hex / 256 % 256, hex % 256); };
 		void shift_hue(double angle) { *this = transform_hue(*this, angle); };
 		void shift_brightness(double scale) { *this = transform_hsv(*this, 0, 1.0, scale); }
 		void shift_hsv(double hue, double saturation, double v) { *this = transform_hsv(*this, hue, saturation, v); };
 		color transform_hsv(double hue, double saturation, double v) const { return transform_hsv(*this, hue, saturation, v); };
-		color average(const color &other) const { return (*this + other) / 2; };
+		color average(color other) const { other += *this; other /= 2; return other; };
 		double luminance() const { return 0.2125 * R + 0.7154 * G + 0.0721 * B; };
-		color lerp(const color b, component t) const { return *this * (t - 1) + b * t; }
+		color lerp(color b, component t) const { b *= t; b += *this * (t - 1); return b; }
 
-		// hue - hue shift (in degrees) saturation - saturation multiplier (scalar), v - value multiplier (scalar)
+		// hsv transformation
+		// hue - hue shift (in degrees) in hardcoded 'default' colorspace preset
+		// saturation - saturation multiplier (scalar), v - value multiplier (scalar)
 		static color transform_hsv(const color &in, double hue, double saturation, double V)
 		{
 			double VSU = V * saturation * std::cos(hue * pi / 180.0);
@@ -116,6 +112,15 @@ namespace px
 
 			return ret;
 		}
+
+		// io
+		template <typename _M>
+		void write(_M *memory) const { memory[0] = (_M)R; memory[1] = (_M)G; memory[2] = (_M)B; memory[3] = (_M)A; };
+		template <typename _M>
+		void write(_M *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
+		void write(component *memory) const { memory[0] = R; memory[1] = G; memory[2] = B; memory[3] = A; };
+		void write(component *memory, unsigned int repeat) const { for (unsigned int i = 0; i < repeat; ++i) { write(memory); memory += depth; } };
+
 		static color average(const color &a, const color &b) { return (a + b) / 2; };
 		static color average(const color &a, const color &b, const color &c) { return (a + b + c) / 3; };
 		static color average(const color &a, const color &b, const color &c, const color &d) { return (a + b + c + d) / 4; };
