@@ -62,7 +62,8 @@
       <AdditionalLibraryDirectories>lib/win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /deyvq "config/win32" "$(TargetDir)"</Command>
+      <Command>xcopy /deyvq "config/win32" "$(TargetDir)"
+xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -88,7 +89,8 @@
       <AdditionalLibraryDirectories>lib/win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /deyvq "config/win32" "$(TargetDir)"</Command>
+      <Command>xcopy /deyvq "config/win32" "$(TargetDir)"
+xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>

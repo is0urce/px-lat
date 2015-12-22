@@ -31,18 +31,18 @@ namespace px
 			:
 			m_shutdown(false), m_ogl(ogl)
 		{
-			m_timer.reset(new timer());
-			m_performance.reset(new shell::fps_counter());
+			m_timer = std::make_unique<timer>();
+			m_performance = std::make_unique<shell::fps_counter>();
 			std::srand((unsigned int)m_timer->counter());
 
-			m_renderer.reset(new shell::renderer(ogl));
+			m_renderer = std::make_unique<shell::renderer>(ogl);
 
 			// interface
-			m_canvas.reset(new ui::canvas(1, 1)); // size not important (but > 0), shall be updated in next frame
-			m_ui.reset(new ui::stack_panel(m_canvas.get()));
+			m_canvas = std::make_unique<ui::canvas>(1, 1);
+			m_ui = std::make_shared<ui::stack_panel>(m_canvas.get());
 
 			// game
-			m_scene.reset(new rl::scene());
+			m_scene = std::make_unique<rl::scene>();
 			m_scene->on_add
 				([this](rl::scene::unit_ptr unit)
 				{
@@ -60,9 +60,8 @@ namespace px
 			{
 				m_renderer->remove(unit.get());
 			});
-			m_game.reset(new game(m_scene.get(), m_ui.get()));
 
-
+			m_game = std::make_unique<game>(m_scene.get(), m_ui.get());
 		}
 		engine::~engine() {}
 

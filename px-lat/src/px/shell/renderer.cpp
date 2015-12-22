@@ -5,6 +5,8 @@
 
 #include "renderer.h"
 
+#include <px/shell/font.h>
+
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -18,6 +20,7 @@ namespace px
 			: m_aspect(1)
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
+			m_ui = { std::make_unique<font>("PragmataPro.ttf", 16) };
 		}
 
 		renderer::~renderer()

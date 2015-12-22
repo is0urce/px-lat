@@ -10,6 +10,7 @@
 
 #include <px/shell/avatar.hpp>
 #include <px/shell/avatar_handle.hpp>
+#include <px/shell/font_texture.h>
 #include <px/shell/opengl.h>
 #include <px/shell/vao.h>
 #include <px/point.hpp>
@@ -21,7 +22,6 @@ namespace px
 {
 	namespace shell
 	{
-		class font;
 		class opengl;
 
 		class renderer
@@ -34,6 +34,7 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
+			font_texture m_ui;
 
 		public:
 			renderer(opengl *opengl);

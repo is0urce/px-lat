@@ -21,6 +21,45 @@ namespace px
 		}
 		font_texture::font_texture(std::shared_ptr<font> font_ptr)
 		{
+			init(font_ptr);
+		}
+		font_texture::font_texture(std::unique_ptr<font> font_ptr)
+		{
+			init(std::shared_ptr<font>(font_ptr.release()));
+		}
+		font_texture::font_texture(font* font_ptr)
+		{
+			init(std::shared_ptr<font>(font_ptr, [](font* f){}));
+		}
+		font_texture::font_texture(const font_texture& other)
+		{
+			init(other.m_font);
+		}
+		font_texture::font_texture(font_texture&& other)
+			: font_texture()
+		{
+			this->swap(other);
+		}
+		font_texture::~font_texture()
+		{
+			release();
+		}
+		font_texture& font_texture::operator=(font_texture other)
+		{
+			this->swap(other);
+			return *this;
+		}
+
+		void font_texture::swap(font_texture &other)
+		{
+			std::swap(this->m_font, other.m_font);
+			std::swap(this->m_texture, other.m_texture);
+			std::swap(this->m_version, other.m_version);
+		}
+
+		void font_texture::init(std::shared_ptr<font> font_ptr)
+		{
+			release();
 			if (!font_ptr) throw std::runtime_error("font_texture.ctor(..) font is null");
 
 			glGenTextures(1, &m_texture);
@@ -28,18 +67,19 @@ namespace px
 			m_font = font_ptr;
 			update(true);
 		}
-		font_texture::~font_texture()
+		void font_texture::release()
 		{
-			glDeleteTextures(1, &m_texture);
+			if (m_font)
+			{
+				glDeleteTextures(1, &m_texture);
+			}
 		}
-
 		void font_texture::update()
 		{
 			update(false);
 		}
 		void font_texture::update(bool force)
 		{
-
 			if (m_font)
 			{
 				auto version = m_font->version();

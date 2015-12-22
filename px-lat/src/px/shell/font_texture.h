@@ -30,14 +30,21 @@ namespace px
 			~font_texture();
 			font_texture();
 			font_texture(std::shared_ptr<font>);
-			font_texture(const font_texture&) = delete;
+			font_texture(std::unique_ptr<font>);
+			font_texture(font*);
+			font_texture(const font_texture&);
+			font_texture(font_texture&&);
 
 		public:
-			void swap();
+			void init(std::shared_ptr<font>);
+			void release();
+			void swap(font_texture &other);
 			void update();
 			void update(bool force);
 			texture_id last_texture() const;
 			texture_id texture();
+
+			font_texture& operator=(font_texture other);
 		};
 	}
 }

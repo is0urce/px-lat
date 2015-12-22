@@ -18,7 +18,7 @@ namespace px
 	{
 		fps_counter::fps_counter() : m_frames(0), m_fps(0)
 		{
-			m_performance.reset(new timer());
+			m_performance = std::make_unique<timer>();
 		}
 
 		fps_counter::~fps_counter()
