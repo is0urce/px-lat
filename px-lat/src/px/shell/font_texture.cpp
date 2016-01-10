@@ -7,6 +7,8 @@
 
 #include <px/shell/font.h>
 
+#include <stdexcept>
+
 namespace
 {
 	const int mipmaps_total = 8;

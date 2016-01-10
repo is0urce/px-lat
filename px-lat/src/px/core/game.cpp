@@ -32,18 +32,23 @@ namespace px
 		// controls
 		bool game::step(const point &move)
 		{
+			return false;
 		}
 		bool game::cast(unsigned int slot)
 		{
+			return false;
 		}
 		bool game::use()
 		{
+			return false;
 		}
 		bool game::hover(point position)
 		{
+			return false;
 		}
 		bool game::click(point position, unsigned int button)
 		{
+			return false;
 		}
 	}
 }

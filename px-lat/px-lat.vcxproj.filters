@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="include\readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\px-lat.h">

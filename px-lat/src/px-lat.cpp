@@ -48,7 +48,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PXLAT));
 
 	auto wgl = std::make_shared<px::shell::wingl>(hWnd);
-	auto engine = px::core::engine(wgl.get());
+	px::core::engine engine(wgl.get());
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))
