@@ -114,8 +114,10 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\engine.h" />
     <ClInclude Include="src\px\shell\font.h" />
     <ClInclude Include="src\px\core\game.h" />
+    <ClInclude Include="src\px\shell\glsl.h" />
     <ClInclude Include="src\px\shell\image.h" />
     <ClInclude Include="src\px\shell\opengl.h" />
+    <ClInclude Include="src\px\shell\program.h" />
     <ClInclude Include="src\px\shell\renderer.h" />
     <ClInclude Include="src\px\rl\iscene.hpp" />
     <ClInclude Include="src\px\rl\scene.h" />
@@ -170,6 +172,10 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
   <ItemGroup>
     <Image Include="px-lat.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config\common\shaders\bg.frag" />
+    <None Include="config\common\shaders\bg.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,6 @@
+// name: px-lat.cpp
 // px-lat.cpp : Defines the entry point for the application.
-//
+// desc: entry point for windows
 
 #include <windows.h>
 #include "px-lat.h"
@@ -10,17 +11,15 @@
 #define MAX_LOADSTRING 100
 
 // Global Variables:
+HWND hWnd;
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
-
-HWND hWnd;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -46,30 +45,35 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_PXLAT));
-
-	auto wgl = std::make_unique<px::shell::wingl>(hWnd);
-	px::core::engine engine(wgl.get());
-
-	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
+	try
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			engine.frame();
+		auto wgl = std::make_unique<px::shell::wingl>(hWnd);
+		px::core::engine engine(wgl.get());
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+		// Main message loop:
+		while (GetMessage(&msg, NULL, 0, 0))
+		{
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			{
+				engine.frame();
+
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
+	}
+	catch (std::exception &exc)
+	{
+		wchar_t message[1028];
+		MultiByteToWideChar(CP_ACP, 0, exc.what(), -1, message, 1024);
+		MessageBox(NULL, message, NULL, NULL);
 	}
 
 	return (int) msg.wParam;
 }
 
-//
 //  FUNCTION: MyRegisterClass()
-//
 //  PURPOSE: Registers the window class.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
@@ -81,7 +85,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
 	wcex.hInstance		= hInstance;
-	wcex.hIcon			= 0;LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PXLAT));
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_PXLAT));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName	= 0;

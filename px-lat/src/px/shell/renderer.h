@@ -14,6 +14,7 @@
 #include <px/shell/font_texture.h>
 #include <px/shell/opengl.h>
 #include <px/shell/vao.h>
+#include <px/shell/program.h>
 #include <px/point.hpp>
 #include <px/vector.hpp>
 
@@ -34,7 +35,10 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
+
 			font_texture m_ui;
+			vao m_bg;
+			program m_shader;
 
 		public:
 			renderer(opengl *opengl);

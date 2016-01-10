@@ -37,6 +37,16 @@ namespace px
 			vao(const vao&) = delete;
 
 		public:
+			void swap(vao& other)
+			{
+				std::swap(m_init, other.m_init);
+				std::swap(m_vao, other.m_vao);
+				std::swap(m_num, other.m_num);
+				std::swap(m_depth, other.m_depth);
+				std::swap(m_buffers, other.m_buffers);
+				std::swap(m_indices, other.m_indices);
+				std::swap(m_length, other.m_length);
+			}
 			// count - number of buffers
 			// depth - array of buffer element size
 			inline void init(unsigned int count, const unsigned int* depths)
@@ -128,7 +138,7 @@ namespace px
 			}
 			inline void fill(unsigned int points, const std::vector<std::vector<GLfloat>*> &attribute_values, const std::vector<GLuint> &index_values)
 			{
-				int av_size = attribute_values.size();
+				auto av_size = attribute_values.size();
 				if (av_size == 0) throw std::runtime_error("px::shell::vao::fill - attribute values size = 0");
 				if (av_size != m_num)  throw std::runtime_error("px::shell::vao::fill - attribute num missmatch");
 

@@ -19,11 +19,11 @@ namespace px
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
 			, m_aspect(1)
+			, m_bg({2, 4}), m_shader("shaders/bg")
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
 			m_ui = std::make_unique<font>("PragmataPro.ttf", 16);
 		}
-
 		renderer::~renderer()
 		{
 		}
@@ -37,6 +37,11 @@ namespace px
 
 		void renderer::draw()
 		{
+			std::vector<GLfloat> vertice{ 0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f, 1.0f,1.0f };
+			std::vector<GLfloat> color{ 1.0f,0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f,1.0f, 0.0f,0.0f,1.0f,1.0f, 1.0f,1.0f,1.0f,1.0f };
+			m_bg.fill(6, { &vertice, &color }, { 0,2,1, 0,2,3 });
+			m_shader.use();
+			m_bg.draw();
 			m_opengl->swap();
 		}
 	}
