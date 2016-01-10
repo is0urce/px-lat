@@ -20,14 +20,13 @@ namespace px
 		{
 		protected:
 			bool m_visible;
-			canvas *m_canvas;
 
 		public:
-			panel(canvas *ui_canvas);
+			panel();
 			virtual ~panel();
 
 		protected:
-			virtual void draw_panel() = 0;
+			virtual void draw_panel(canvas&) = 0;
 
 		public:
 			bool visible() const;
@@ -35,7 +34,7 @@ namespace px
 			void enable();
 			void disable();
 			bool toggle();
-			void draw();
+			void draw(canvas&);
 
 			canvas* operator->();
 		};

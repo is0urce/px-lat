@@ -11,18 +11,17 @@ namespace px
 	namespace ui
 	{
 
-		panel::panel(canvas *ui_canvas) : m_canvas(ui_canvas), m_visible(true)
+		panel::panel() : m_visible(true)
 		{
-			if (!ui_canvas) throw std::logic_error("px::ui::panel::ctor(canvas*) - canvas is null");
 		}
 
 		panel::~panel()
 		{
 		}
 
-		void panel::draw()
+		void panel::draw(canvas& cnv)
 		{
-			draw_panel();
+			draw_panel(cnv);
 		}
 
 		bool panel::visible() const
@@ -48,11 +47,6 @@ namespace px
 		bool panel::toggle()
 		{
 			return m_visible = !m_visible;
-		}
-
-		canvas* panel::operator->()
-		{
-			return m_canvas;
 		}
 	}
 }

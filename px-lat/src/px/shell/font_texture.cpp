@@ -33,23 +33,33 @@ namespace px
 		{
 			init(std::shared_ptr<font>(font_ptr, [](font* f){}));
 		}
+
+		// copy constructor
 		font_texture::font_texture(const font_texture& other)
 		{
 			init(other.m_font);
 		}
+
+		// move constructor
 		font_texture::font_texture(font_texture&& other)
 			: font_texture()
 		{
 			this->swap(other);
 		}
+
 		font_texture::~font_texture()
 		{
 			release();
 		}
+
 		font_texture& font_texture::operator=(font_texture other)
 		{
 			this->swap(other);
 			return *this;
+		}
+		font* font_texture::operator->()
+		{
+			return m_font.get();
 		}
 
 		void font_texture::swap(font_texture &other)

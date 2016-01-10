@@ -3,7 +3,12 @@
 // desc: class declaration
 // auth: is0urce
 
-// main shell, general handling of time and input
+// main facade shell to assemble everything together
+// general handling of time and input
+// holding rendering pipeline and interface
+
+// rendering environment specific ogl hanlding consumed by constructor and should exist as long as engine existing
+// input routed either to interface or to game controls
 
 #ifndef PX_CORE_ENGINE_H
 #define PX_CORE_ENGINE_H

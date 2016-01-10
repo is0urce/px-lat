@@ -12,9 +12,10 @@ namespace px
 	namespace ui
 	{
 
-		stack_panel::stack_panel(canvas *ui_canvas) : panel(ui_canvas)
+		stack_panel::stack_panel()
 		{
 		}
+
 		stack_panel::~stack_panel()
 		{
 		}
@@ -51,13 +52,13 @@ namespace px
 			}
 			return false;
 		}
-		void stack_panel::draw_panel()
+		void stack_panel::draw_panel(canvas& table)
 		{
 			for (auto p : m_stack)
 			{
 				if (p.second->visible())
 				{
-					p.second->draw();
+					p.second->draw(table);
 				}
 			}
 		}

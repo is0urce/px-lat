@@ -29,7 +29,7 @@ namespace px
 			stack_t m_stack;
 
 		public:
-			stack_panel(canvas *ui_canvas);
+			stack_panel();
 			virtual ~stack_panel();
 
 		protected:
@@ -37,7 +37,7 @@ namespace px
 			virtual bool hover_control(const point &position) override;
 			virtual bool click_control(const point &position, unsigned int button) override;
 			virtual bool scroll_control(int delta) override;
-			virtual void draw_panel() override;
+			virtual void draw_panel(canvas&) override;
 
 		public:
 			void add(panel_id name_tag, panel_ptr panel);

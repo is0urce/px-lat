@@ -98,6 +98,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="config\readme.txt" />
     <Text Include="include\readme.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>

@@ -17,10 +17,11 @@ namespace px
 	namespace shell
 	{
 		renderer::renderer(opengl *opengl)
-			: m_aspect(1)
+			: m_opengl(opengl)
+			, m_aspect(1)
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
-			m_ui = { std::make_unique<font>("PragmataPro.ttf", 16) };
+			m_ui = std::make_unique<font>("PragmataPro.ttf", 16);
 		}
 
 		renderer::~renderer()
@@ -32,6 +33,11 @@ namespace px
 		}
 		void renderer::remove(const void* ptr)
 		{
+		}
+
+		void renderer::draw()
+		{
+			m_opengl->swap();
 		}
 	}
 }

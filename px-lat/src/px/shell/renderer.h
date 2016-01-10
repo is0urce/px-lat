@@ -10,6 +10,7 @@
 
 #include <px/shell/avatar.hpp>
 #include <px/shell/avatar_handle.hpp>
+#include <px/shell/font.h>
 #include <px/shell/font_texture.h>
 #include <px/shell/opengl.h>
 #include <px/shell/vao.h>
@@ -23,7 +24,6 @@ namespace px
 	namespace shell
 	{
 		class opengl;
-
 		class renderer
 		{
 		public:
@@ -43,6 +43,8 @@ namespace px
 		public:
 			void add(avatar_handle<avatar_t>);
 			void remove(const void*);
+
+			void draw();
 		};
 	}
 }

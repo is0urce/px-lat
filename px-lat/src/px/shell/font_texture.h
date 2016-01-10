@@ -45,6 +45,7 @@ namespace px
 			texture_id texture();
 
 			font_texture& operator=(font_texture other);
+			font* operator->();
 		};
 	}
 }

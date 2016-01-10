@@ -31,30 +31,31 @@ namespace px
 			:
 			m_shutdown(false), m_ogl(ogl)
 		{
+			// start timers and reseed rng
 			m_timer = std::make_unique<timer>();
 			m_performance = std::make_unique<shell::fps_counter>();
 			std::srand((unsigned int)m_timer->counter());
 
+			// create rendering pipeline
 			m_renderer = std::make_unique<shell::renderer>(ogl);
 
 			// interface
 			m_canvas = std::make_unique<ui::canvas>(1, 1);
-			m_ui = std::make_shared<ui::stack_panel>(m_canvas.get());
+			m_ui = std::make_shared<ui::stack_panel>();
 
 			// game
 			m_scene = std::make_unique<rl::scene>();
 			m_scene->on_add
 				([this](rl::scene::unit_ptr unit)
 				{
-					shell::avatar_handle<shell::renderer::avatar_t> handle(unit.get(), [unit]()
+					m_renderer->add({ unit.get(), [unit]()
 					{
 						shell::renderer::avatar_t result;
 						result.position = { 0, 0 };
 						result.size = 1;
 						result.img = '@';
 						return result;
-					});
-					m_renderer->add(handle);
+					} });
 				});
 			m_scene->on_remove([&](rl::scene::unit_ptr unit)
 			{
@@ -76,9 +77,10 @@ namespace px
 				w = (std::max)(1, w / ui_cell_size);
 				h = (std::max)(1, w / ui_cell_size);
 				m_canvas->resize(w, h);
-				m_ui->draw();
+				m_ui->draw(*m_canvas);
 
 				//m_renderer->draw(perception, m_game->canvas(), m_time->measure());
+				m_renderer->draw();
 			}
 		}
 

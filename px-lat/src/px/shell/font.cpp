@@ -19,7 +19,6 @@ namespace
 	std::mutex font_mutex; // init&free mutex
 }
 
-
 namespace px
 {
 	namespace shell
@@ -177,7 +176,7 @@ namespace px
 		{
 			if (uplus == 0)
 			{
-				throw std::runtime_error("Glyph& font::operator[](unsigned int uplus) uplus == 0");
+				throw std::runtime_error("glyph& font::operator[](unsigned int uplus) uplus == 0");
 			}
 			if (uplus < base_fill) return *m_base[uplus];
 
