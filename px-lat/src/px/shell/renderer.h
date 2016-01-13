@@ -12,9 +12,11 @@
 #include <px/shell/avatar_handle.hpp>
 #include <px/shell/font.h>
 #include <px/shell/font_texture.h>
-#include <px/shell/opengl.h>
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
+
+#include <px/ui/canvas.h>
+
 #include <px/point.hpp>
 #include <px/vector.hpp>
 
@@ -36,7 +38,10 @@ namespace px
 			double m_aspect;
 			double m_scale;
 
-			font_texture m_ui;
+			// ui rendering
+			int m_ui_width;
+			int m_ui_height;
+			font_texture m_ui_font;
 			vao m_bg;
 			program m_shader;
 
@@ -48,7 +53,7 @@ namespace px
 			void add(avatar_handle<avatar_t>);
 			void remove(const void*);
 
-			void draw();
+			void render(const ui::canvas& gui);
 		};
 	}
 }

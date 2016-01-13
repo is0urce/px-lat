@@ -14,6 +14,7 @@
 
 #include <px/shell/timer.h>
 #include <px/shell/fps_counter.h>
+#include <px/shell/opengl.h>
 
 // stl includes
 #include <algorithm>
@@ -80,7 +81,7 @@ namespace px
 				m_ui->draw(*m_canvas);
 
 				//m_renderer->draw(perception, m_game->canvas(), m_time->measure());
-				m_renderer->draw();
+				m_renderer->render(*m_canvas);
 			}
 		}
 

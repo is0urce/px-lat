@@ -84,8 +84,8 @@ namespace px
 			std::swap(m_tiles, that.m_tiles);
 		}
 
-		point::component width() const { return m_width(); };
-		point::component height() const { return m_height(); };
+		point::component width() const { return m_width; };
+		point::component height() const { return m_height; };
 		point::component size() const { return m_width * m_height; };
 		point range() const { return point(m_width, m_height); }
 

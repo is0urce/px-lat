@@ -5,6 +5,7 @@
 
 #include "renderer.h"
 
+#include <px/shell/opengl.h>
 #include <px/shell/font.h>
 
 #include <memory>
@@ -19,10 +20,16 @@ namespace px
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
 			, m_aspect(1)
+			, m_ui_width(-1), m_ui_height(-1)
 			, m_bg({2, 4}), m_shader("shaders/bg")
+			, m_ui_font(std::make_unique<font>("PragmataPro.ttf", 16))
 		{
-			if (!opengl) throw std::runtime_error("renderer::renderer(renderer::opengl_handle opengl) opengl is null");
-			m_ui = std::make_unique<font>("PragmataPro.ttf", 16);
+			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
+
+			m_shader.prepare([aspect = glGetUniformLocation(m_shader.id(), "size"), this]()
+				{
+					glUniform1f(aspect, (GLfloat)this->m_aspect);
+				});
 		}
 		renderer::~renderer()
 		{
@@ -35,13 +42,24 @@ namespace px
 		{
 		}
 
-		void renderer::draw()
+		void renderer::render(const ui::canvas& canvas)
 		{
-			std::vector<GLfloat> vertice{ 0.0f,0.0f, 0.0f,1.0f, 1.0f,0.0f, 1.0f,1.0f };
+			m_opengl->update(m_width, m_height);
+
+			// ui
+			int w = canvas.width();
+			int h = canvas.height();
+			if (w != m_ui_width && h != m_ui_height)
+			{
+				m_ui_width = w;
+				m_ui_height = h;
+			}
+			std::vector<GLfloat> vertice{ 0.0f,0.0f, 0.0f,1.0f, 1.0f,1.0f, 1.0f,0.0f };
 			std::vector<GLfloat> color{ 1.0f,0.0f,0.0f,1.0f, 0.0f,1.0f,0.0f,1.0f, 0.0f,0.0f,1.0f,1.0f, 1.0f,1.0f,1.0f,1.0f };
-			m_bg.fill(6, { &vertice, &color }, { 0,2,1, 0,2,3 });
+			m_bg.fill(6, { &vertice, &color }, { 0,2,1, 0,3,2 });
 			m_shader.use();
 			m_bg.draw();
+
 			m_opengl->swap();
 		}
 	}

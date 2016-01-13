@@ -79,7 +79,7 @@ namespace px
 				}
 			}
 
-			static GLuint program(const std::string& vertex, const std::string& fragment)
+			static GLuint link(const std::string& vertex, const std::string& fragment)
 			{
 				GLuint vshader = compile(vertex);
 				GLuint fshader = compile(fragment);
@@ -93,11 +93,9 @@ namespace px
 				glDeleteShader(fshader);
 				return program;
 			}
-			static GLuint program(const std::string& name)
+			static GLuint link(const std::string& name)
 			{
-				std::string v = name + ".vert";
-				std::string f = name + ".frag";
-				return program(v, f);
+				return link(name + ".vert", name + ".frag");
 			}
 		};
 	}
