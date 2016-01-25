@@ -22,10 +22,6 @@
 
 namespace px
 {
-	namespace
-	{
-		const int ui_cell_size = 16;
-	}
 	namespace core
 	{
 		engine::engine(shell::opengl *ogl)
@@ -75,13 +71,13 @@ namespace px
 
 				int w, h;
 				m_ogl->update(w, h);
-				w = (std::max)(1, w / ui_cell_size);
-				h = (std::max)(1, w / ui_cell_size);
+				w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
+				h = (std::max<int>)(1, w / shell::renderer::ui_cell_height);
 				m_canvas->resize(w, h);
 				m_ui->draw(*m_canvas);
+				m_canvas->write({ 0, 0 }, "Hi(f)ps:");
 
-				//m_renderer->draw(perception, m_game->canvas(), m_time->measure());
-				m_renderer->render(*m_canvas);
+				m_renderer->render(*m_canvas, m_timer->measure());
 			}
 		}
 

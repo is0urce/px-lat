@@ -32,9 +32,25 @@ namespace px
 			unsigned int m_length; // size of index array
 
 		public:
-			vao() : m_init(false), m_num(0), m_length(0) {}
-			vao(const std::vector<unsigned int> &depths) : m_init(false), m_num(0), m_length(0) { init(depths); }
+			vao() : m_init(false), m_num(0), m_length(0)
+			{
+			}
+			vao(const std::vector<unsigned int> &depths) : m_init(false), m_num(0), m_length(0)
+			{
+				init(depths);
+			}
 			vao(const vao&) = delete;
+			vao& operator=(const vao&) = delete;
+			vao(vao&& other) : vao()
+			{
+				swap(other);
+			}
+			vao& operator=(vao&& other)
+			{
+				swap(other);
+				return *this;
+			}
+
 
 		public:
 			void swap(vao& other)

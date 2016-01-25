@@ -30,7 +30,11 @@ namespace px
 		class renderer
 		{
 		public:
+			typedef double time_t;
 			typedef avatar<unsigned int> avatar_t;
+		public:
+			const static unsigned int ui_cell_width = 12;
+			const static unsigned int ui_cell_height = 16;
 
 		private:
 			opengl* m_opengl;
@@ -39,11 +43,18 @@ namespace px
 			double m_scale;
 
 			// ui rendering
-			int m_ui_width;
-			int m_ui_height;
-			font_texture m_ui_font;
-			vao m_bg;
-			program m_shader;
+			struct ui_draw
+			{
+			public:
+				int width = -1;
+				int height = -1;
+				font_texture font;
+				vao vao;
+				program shader;
+				std::vector<GLfloat> vertices;
+				std::vector<GLfloat> colors;
+				std::vector<GLuint> indices;
+			} m_ui;
 
 		public:
 			renderer(opengl *opengl);
@@ -53,7 +64,7 @@ namespace px
 			void add(avatar_handle<avatar_t>);
 			void remove(const void*);
 
-			void render(const ui::canvas& gui);
+			void render(const ui::canvas& gui, time_t time);
 		};
 	}
 }

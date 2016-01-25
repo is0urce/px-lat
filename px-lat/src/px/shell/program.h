@@ -26,7 +26,7 @@ namespace px
 		private:
 			GLuint m_id;
 			bool m_init;
-			std::function<void()> fn;
+			std::function<void()> m_fn;
 
 		public:
 			program() : m_init(false), m_id(0)
@@ -36,12 +36,11 @@ namespace px
 			{
 				m_id = glsl::link(path);
 				m_init = true;
-				this->fn = fn;
+				m_fn = fn;
 			}
 			program(const std::string& path) : program(path, nullptr)
 			{
 			}
-			program(const program&) = delete;
 			~program()
 			{
 				if (m_init)
@@ -49,10 +48,28 @@ namespace px
 					glDeleteProgram(m_id);
 				}
 			}
+			program(const program&) = delete;
+			program(program&& other) : program()
+			{
+				swap(other);
+			}
+			program& operator=(const program&) = delete;
+			program& operator=(program&& other)
+			{
+				swap(other);
+				return *this;
+			}
+
+			void swap(program& other)
+			{
+				std::swap(m_id, other.m_id);
+				std::swap(m_init, other.m_init);
+				std::swap(m_fn, other.m_fn);
+			}
 
 			void prepare(std::function<void()> fn)
 			{
-				this->fn = fn;
+				m_fn = fn;
 			}
 			GLuint id() const
 			{
@@ -65,9 +82,9 @@ namespace px
 			void use(bool prepare) const
 			{
 				glUseProgram(m_id);
-				if (prepare && fn)
+				if (prepare && m_fn)
 				{
-					fn();
+					m_fn();
 				}
 			}
 		};
