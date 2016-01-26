@@ -181,7 +181,9 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\common\shaders\bg.frag" />
-    <None Include="config\common\shaders\bg.vert" />
+    <None Include="config\common\shaders\ui_text.vert" />
+    <None Include="config\common\shaders\ui_text.frag" />
+    <None Include="config\common\shaders\ui_bg.frag" />
+    <None Include="config\common\shaders\ui_bg.vert" />
   </ItemGroup>
 </Project>

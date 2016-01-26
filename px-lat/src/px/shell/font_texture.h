@@ -43,6 +43,7 @@ namespace px
 			void update(bool force);
 			texture_id last_texture() const;
 			texture_id texture();
+			void bind(unsigned int texure0_plus);
 
 			font_texture& operator=(font_texture other);
 			font* operator->();

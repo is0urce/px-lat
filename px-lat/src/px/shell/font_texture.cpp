@@ -118,6 +118,11 @@ namespace px
 			update();
 			return m_texture;
 		}
+		void font_texture::bind(unsigned int texure0_plus)
+		{
+			glActiveTexture(GL_TEXTURE0 + texure0_plus);
+			glBindTexture(GL_TEXTURE_2D, texture());
+		}
 	}
 }
 

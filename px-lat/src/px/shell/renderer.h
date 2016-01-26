@@ -47,9 +47,8 @@ namespace px
 			struct ui_draw
 			{
 			public:
-				int width = -1;
-				int height = -1;
-				font_texture font;
+				int width;
+				int height;
 				struct
 				{
 					vao vao;
@@ -59,12 +58,15 @@ namespace px
 				} bg;
 				struct
 				{
+					vao vao;
 					program shader;
 					std::vector<GLfloat> vertices;
 					std::vector<GLfloat> colors;
 					std::vector<GLfloat> texture;
+					font_texture font;
 				} text;
 				std::vector<GLuint> indices; // indices are shared
+				float scale_x, scale_y, offset_x, offset_y; // uniform values
 			} m_ui;
 
 		public:
@@ -76,6 +78,9 @@ namespace px
 			void remove(const void*);
 
 			void render(const ui::canvas& gui, time_t time);
+
+		private:
+			void draw_canvas(const ui::canvas& gui);
 		};
 	}
 }

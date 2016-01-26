@@ -22,8 +22,12 @@ namespace px
 		point(component x, component y) : coordinate(x, y) {}
 		point(component x, component y, component z) : coordinate(x, y, z) {}
 
-		point moved(point move) const { move.multiply(*this); return move; }
+		point moved(point move) const { move.move(*this); return move; }
+		point moved(component x, component y) const { point result(x, y); result.move(*this); return result; }
+		point moved(component x, component y, component z) const { point result(x, y, z); result.move(*this); return result; }
 		point multiplied(point stretch) const { stretch.multiply(*this); return stretch; }
+		point multiplied(component x, component y) const { point result(x, y); result.multiply(*this); return result; }
+		point multiplied(component x, component y, component z) const { point result(x, y, z); result.multiply(*this); return result; }
 
 		point operator-() const { return{ -X, -Y, -Z }; }
 

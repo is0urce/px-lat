@@ -72,7 +72,7 @@ namespace px
 				int w, h;
 				m_ogl->update(w, h);
 				w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
-				h = (std::max<int>)(1, w / shell::renderer::ui_cell_height);
+				h = (std::max<int>)(1, h / shell::renderer::ui_cell_height);
 				m_canvas->resize(w, h);
 				m_ui->draw(*m_canvas);
 				m_canvas->write({ 0, 0 }, "Hi(f)ps:");

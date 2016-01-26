@@ -32,14 +32,10 @@ namespace px
 			program() : m_init(false), m_id(0)
 			{
 			}
-			program(const std::string& path, std::function<void()> fn)
+			program(const std::string& path)
 			{
 				m_id = glsl::link(path);
 				m_init = true;
-				m_fn = fn;
-			}
-			program(const std::string& path) : program(path, nullptr)
-			{
 			}
 			~program()
 			{
@@ -67,6 +63,22 @@ namespace px
 				std::swap(m_fn, other.m_fn);
 			}
 
+			void activate() const
+			{
+				glUseProgram(m_id);
+			}
+			GLuint uniform(const char* c_str)
+			{
+				return glGetUniformLocation(m_id, c_str);
+			}
+			void uniform(GLuint uniform, GLuint uint_value)
+			{
+				glUniform1ui(uniform, uint_value);
+			}
+			void uniform(GLuint uniform, GLfloat float_value)
+			{
+				glUniform1f(uniform, float_value);
+			}
 			void prepare(std::function<void()> fn)
 			{
 				m_fn = fn;
@@ -81,11 +93,17 @@ namespace px
 			}
 			void use(bool prepare) const
 			{
-				glUseProgram(m_id);
+				activate();
 				if (prepare && m_fn)
 				{
 					m_fn();
 				}
+			}
+
+			// aux
+			void uniform(const char* c_str, GLuint uint_value)
+			{
+				uniform(uniform(c_str), uint_value);
 			}
 		};
 	}

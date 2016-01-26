@@ -174,8 +174,10 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config\common\shaders\bg.frag" />
-    <None Include="config\common\shaders\bg.vert" />
+    <None Include="config\common\shaders\ui_bg.frag" />
+    <None Include="config\common\shaders\ui_bg.vert" />
+    <None Include="config\common\shaders\ui_text.frag" />
+    <None Include="config\common\shaders\ui_text.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
