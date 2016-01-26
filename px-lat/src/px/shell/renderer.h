@@ -43,17 +43,28 @@ namespace px
 			double m_scale;
 
 			// ui rendering
+			// buffers cashed due constant canvas size
 			struct ui_draw
 			{
 			public:
 				int width = -1;
 				int height = -1;
 				font_texture font;
-				vao vao;
-				program shader;
-				std::vector<GLfloat> vertices;
-				std::vector<GLfloat> colors;
-				std::vector<GLuint> indices;
+				struct
+				{
+					vao vao;
+					program shader;
+					std::vector<GLfloat> vertices;
+					std::vector<GLfloat> colors;
+				} bg;
+				struct
+				{
+					program shader;
+					std::vector<GLfloat> vertices;
+					std::vector<GLfloat> colors;
+					std::vector<GLfloat> texture;
+				} text;
+				std::vector<GLuint> indices; // indices are shared
 			} m_ui;
 
 		public:

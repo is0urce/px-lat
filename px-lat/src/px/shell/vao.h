@@ -50,6 +50,10 @@ namespace px
 				swap(other);
 				return *this;
 			}
+			~vao()
+			{
+				release();
+			}
 
 
 		public:
@@ -72,7 +76,7 @@ namespace px
 
 				if (m_init)
 				{
-					clear();
+					release();
 				}
 
 				m_num = count;
@@ -113,8 +117,16 @@ namespace px
 				if (attribute >= m_num) throw std::runtime_error("px::shell::vao::depth(unsigned int attribute) const - attribute out of range");
 				return m_depth[attribute];
 			}
+			inline unsigned int length() const
+			{
+				return m_length;
+			}
+			inline unsigned int attributes() const
+			{
+				return m_num;
+			}
 
-			inline void clear()
+			inline void release()
 			{
 				if (m_init)
 				{
@@ -131,43 +143,59 @@ namespace px
 
 			// points - number of points in values
 			// length - number of indices in index_values
-			inline void fill(unsigned int points, unsigned int length, const GLfloat* const* attribute_values, const GLuint* index_values)
+			inline void fill_attributes(unsigned int points, unsigned int attribute_index, GLfloat const* attribute_values)
 			{
-				if (!m_init) throw std::runtime_error("px::shell::vao::fill - not initialized");
-
+				glBindBuffer(GL_ARRAY_BUFFER, m_buffers[attribute_index]);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(attribute_values[0]) * points * m_depth[attribute_index], attribute_values, GL_STATIC_DRAW);
+			}
+			inline void fill_indices(unsigned int length, GLuint const* index_values)
+			{
 				m_length = length;
-				glBindVertexArray(m_vao);
 				if (index_values)
 				{
+					glBindVertexArray(m_vao);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices);
 					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index_values[0]) * length, index_values, GL_STATIC_DRAW);
 				}
+			}
+			inline void clear()
+			{
+				fill_indices(0, nullptr);
+			}
 
+			inline void fill_attributes(unsigned int points, const GLfloat* const* attribute_values)
+			{
 				for (unsigned int i = 0; i < m_num; ++i)
 				{
 					if (attribute_values[i])
 					{
-						glBindBuffer(GL_ARRAY_BUFFER, m_buffers[i]);
-						glBufferData(GL_ARRAY_BUFFER, sizeof(attribute_values[i][0]) * points * m_depth[i], attribute_values[i], GL_STATIC_DRAW);
+						fill_attributes(points, i, attribute_values[i]);
 					}
 				}
 			}
-			inline void fill(unsigned int points, const std::vector<std::vector<GLfloat>*> &attribute_values, const std::vector<GLuint> &index_values)
+			inline void fill(unsigned int points, unsigned int length, const GLfloat* const* attribute_values, const GLuint* index_values)
 			{
-				auto av_size = attribute_values.size();
-				if (av_size == 0) throw std::runtime_error("px::shell::vao::fill - attribute values size = 0");
-				if (av_size != m_num)  throw std::runtime_error("px::shell::vao::fill - attribute num missmatch");
+				if (!m_init) throw std::runtime_error("px::shell::vao::fill - not initialized");
 
-				std::vector<GLfloat*> av(av_size);
-				unsigned int c = 0;
-				for (auto it = attribute_values.begin(), last = attribute_values.end(); it != last; ++it)
-				{
-					std::vector<GLfloat>* v = *it;
-					av[c] = (v && v->size() > 0 ? &(*v)[0] : nullptr);
-					++c;
-				}
-				fill(points, index_values.size(), &av[0], index_values.size() == 0 ? nullptr : &index_values[0]);
+				fill_indices(length, index_values);
+				fill_attributes(points, attribute_values);
 			}
+			//inline void fill(unsigned int points, const std::vector<std::vector<GLfloat>*> &attribute_values, const std::vector<GLuint> &index_values)
+			//{
+			//	auto av_size = attribute_values.size();
+			//	if (av_size == 0) throw std::runtime_error("px::shell::vao::fill - attribute values size = 0");
+			//	if (av_size != m_num)  throw std::runtime_error("px::shell::vao::fill - attribute num missmatch");
+
+			//	std::vector<GLfloat*> av(av_size);
+			//	unsigned int c = 0;
+			//	for (auto it = attribute_values.begin(), last = attribute_values.end(); it != last; ++it)
+			//	{
+			//		std::vector<GLfloat>* v = *it;
+			//		av[c] = (v && v->size() > 0 ? &(*v)[0] : nullptr);
+			//		++c;
+			//	}
+			//	fill(points, index_values.size(), &av[0], index_values.size() == 0 ? nullptr : &index_values[0]);
+			//}
 
 			inline void draw(GLuint element_type) const
 			{
