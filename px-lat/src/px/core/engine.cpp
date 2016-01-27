@@ -44,16 +44,16 @@ namespace px
 			m_scene = std::make_unique<rl::scene>();
 			m_scene->on_add
 				([this](rl::scene::unit_ptr unit)
+			{
+				m_renderer->add({ unit.get(), [unit]()
 				{
-					m_renderer->add({ unit.get(), [unit]()
-					{
-						shell::renderer::avatar_t result;
-						result.position = { 0, 0 };
-						result.size = 1;
-						result.img = '@';
-						return result;
-					} });
-				});
+					shell::renderer::avatar_t result;
+					result.position = { 0, 0 };
+					result.size = 1;
+					result.img = '@';
+					return result;
+				} });
+			});
 			m_scene->on_remove([&](rl::scene::unit_ptr unit)
 			{
 				m_renderer->remove(unit.get());
@@ -65,20 +65,19 @@ namespace px
 
 		void engine::frame()
 		{
-			if (running())
-			{
-				m_performance->frame_processed();
+			m_performance->frame_processed();
 
-				int w, h;
-				m_ogl->update(w, h);
-				w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
-				h = (std::max<int>)(1, h / shell::renderer::ui_cell_height);
-				m_canvas->resize(w, h);
-				m_ui->draw(*m_canvas);
-				m_canvas->write({ 0, 0 }, "Hi(f)ps:");
+			int w, h;
+			m_ogl->update(w, h);
+			w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
+			h = (std::max<int>)(1, h / shell::renderer::ui_cell_height);
+			m_canvas->resize(w, h);
+			m_ui->draw(*m_canvas);
+			m_canvas->rectangle(rectangle({ 0, 0 }, { 20, 10 }), color(0.5f, 0.5f, 0));
+			m_canvas->write({ 0, 0 }, "fps:");
+			m_canvas->write({ 5, 0 }, std::to_string(m_performance->fps()));
 
-				m_renderer->render(*m_canvas, m_timer->measure());
-			}
+			m_renderer->render(*m_canvas, m_timer->measure());
 		}
 
 		bool engine::press(key vk)

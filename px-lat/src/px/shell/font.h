@@ -23,11 +23,14 @@ namespace px
 			double top, bottom, left, right; // texture coordinates
 			double width, height; // [0, 1] size
 			double advance;
-			unsigned int pixwidth, pixheight; // sizes in pixels
+			unsigned int pixel_width;
+			unsigned int pixel_height;
 
 			// baseline offsets
-			double vertical, horisontal;
-			unsigned int pixvertical, pixhorisontal;
+			double vertical;
+			double horisontal;
+			unsigned int pixel_left; // bitmap_top
+			unsigned int pixel_top; // bitmap_left
 
 			glyph() : width(0), height(0) {};
 		};
@@ -78,6 +81,7 @@ namespace px
 
 			double kerning(unsigned int left, unsigned int right) const;
 			const glyph& operator[](unsigned int unicode_plus);
+			const glyph& at(unsigned int unicode_plus);
 		};
 	}
 }

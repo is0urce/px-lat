@@ -126,15 +126,15 @@ namespace px
 			}
 
 			std::unique_ptr<glyph> g = std::make_unique<glyph>();
+			g->pixel_width = w;
+			g->pixel_height = h;
+			g->pixel_left = m_face->glyph->bitmap_left;
+			g->pixel_top = m_face->glyph->bitmap_top;
 			g->advance = (m_face->glyph->advance.x >> 6) / double(m_size);
 			g->top = double(m_peny) / m_height;
 			g->bottom = double(m_peny + h) / m_height;
 			g->left = double(m_penx) / m_width;
 			g->right = double(m_penx + w) / m_width;
-			g->pixwidth = w;
-			g->pixheight = h;
-			g->pixvertical = m_face->glyph->bitmap_left;
-			g->pixhorisontal = m_face->glyph->bitmap_top;
 			g->width = double(w) / m_size;
 			g->height = double(h) / m_size;
 			g->vertical = (m_face->glyph->bitmap_left) / double(m_size);
@@ -174,16 +174,20 @@ namespace px
 
 		const glyph& font::operator[](unsigned int uplus)
 		{
-			if (uplus == 0)
+			return at(uplus);
+		}
+		const glyph& font::at(unsigned int codepoint)
+		{
+			if (codepoint == 0)
 			{
 				throw std::runtime_error("glyph& font::operator[](unsigned int uplus) uplus == 0");
 			}
-			if (uplus < base_fill) return *m_base[uplus];
+			if (codepoint < base_fill) return *m_base[codepoint];
 
-			std::unique_ptr<glyph>& glyph = m_letters[uplus];
+			std::unique_ptr<glyph>& glyph = m_letters[codepoint];
 			if (!glyph)
 			{
-				glyph = raster(uplus);
+				glyph = raster(codepoint);
 			}
 			return *glyph;
 		}

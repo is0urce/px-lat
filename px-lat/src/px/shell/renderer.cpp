@@ -21,9 +21,20 @@ namespace px
 	{
 		const unsigned int quad = 4; // four vertices for quad
 		const unsigned int strip = 6; // six indices for 2-triangles
-		void fill_color(const px::color &c, GLfloat *dest)
+		void fill_color(const color &c, GLfloat *dest)
 		{
 			c.write(dest, quad);
+		}
+		void fill_texture(GLfloat left, GLfloat bottom, GLfloat right, GLfloat top, GLfloat *dest)
+		{
+			dest[0] = left;
+			dest[1] = bottom;
+			dest[2] = left;
+			dest[3] = top;
+			dest[4] = right;
+			dest[5] = top;
+			dest[6] = right;
+			dest[7] = bottom;
 		}
 	}
 	namespace shell
@@ -39,11 +50,11 @@ namespace px
 			m_ui.bg.shader.prepare([this
 				, scale = m_ui.bg.shader.uniform("scale")
 				, offset = m_ui.bg.shader.uniform("offset")
-				]()
-				{
-					glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-				});
+			]()
+			{
+				glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+				glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+			});
 
 			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", 16);
 			m_ui.text.vao = vao({ 2, 4, 2 });
@@ -53,11 +64,20 @@ namespace px
 			m_ui.text.shader.prepare([this
 				, scale = m_ui.text.shader.uniform("scale")
 				, offset = m_ui.text.shader.uniform("offset")
-				]()
-				{
-					glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-				});
+			]()
+			{
+				glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+				glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+				m_ui.text.font.bind(0);
+			});
+
+			// opengl setup
+			glEnable(GL_TEXTURE_2D);
+
+			// dont clamp hdr
+			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
+			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
+			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 		}
 		renderer::~renderer()
 		{
@@ -76,6 +96,10 @@ namespace px
 
 			m_aspect = m_width;
 			m_aspect /= m_height;
+
+			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			draw_canvas(canvas);
 
@@ -109,27 +133,7 @@ namespace px
 
 					for (int i = 0; i < ui_w; ++i)
 					{
-						//point p(i, ui_h - j - 1);
-
-						//int x = i * ui_cell_width;
-						//int dx = (i + 1) * ui_cell_width;
-						//int y = j * ui_cell_height;
-						//int dy = (j + 1) * ui_cell_height;
-
-						//p.moved(0, 0).multiplied(ui_cell_width, ui_cell_height).write2(&m_ui.bg.vertices[offset + 0 * 2]);
-						//p.moved(0, 1).multiplied(ui_cell_width, ui_cell_height).write2(&m_ui.bg.vertices[offset + 1 * 2]);
-						//p.moved(1, 1).multiplied(ui_cell_width, ui_cell_height).write2(&m_ui.bg.vertices[offset + 2 * 2]);
-						//p.moved(1, 0).multiplied(ui_cell_width, ui_cell_height).write2(&m_ui.bg.vertices[offset + 3 * 2]);
-
-						//m_ui.bg.vertices[offset + 0] = (GLfloat)x;
-						//m_ui.bg.vertices[offset + 1] = (GLfloat)y;
-						//m_ui.bg.vertices[offset + 2] = (GLfloat)x;
-						//m_ui.bg.vertices[offset + 3] = (GLfloat)dy;
-						//m_ui.bg.vertices[offset + 4] = (GLfloat)dx;
-						//m_ui.bg.vertices[offset + 5] = (GLfloat)dy;
-						//m_ui.bg.vertices[offset + 6] = (GLfloat)dx;
-						//m_ui.bg.vertices[offset + 7] = (GLfloat)y;
-						
+						// cell coordinates
 						int x = i * ui_cell_width;
 						int dx = (i + 1) * ui_cell_width;
 						int y = (ui_h - j - 1) * ui_cell_height;
@@ -167,41 +171,70 @@ namespace px
 				// fill cashed parts
 				m_ui.bg.vao.fill_attributes(size * quad, 0, &m_ui.bg.vertices[0]);
 				m_ui.bg.vao.fill_indices(size * strip, &m_ui.indices[0]);
+				m_ui.text.vao.fill_indices(size * strip, &m_ui.indices[0]);
 			}
 
-			unsigned int offset = 0;
+			unsigned int color_offset = 0;
+			unsigned int vertex_offset = 0;
+			unsigned int texture_offset = 0;
+
 			for (int j = 0; j < ui_h; ++j)
 			{
 				for (int i = 0; i < ui_w; ++i)
 				{
-					for (int k = 0; k < 4; ++k)
-					{
-						m_ui.bg.colors[offset + 0] = (std::rand() % 10000) / 10000.0f;
-						m_ui.bg.colors[offset + 1] = (std::rand() % 10000) / 10000.0f;
-						m_ui.bg.colors[offset + 2] = (std::rand() % 10000) / 10000.0f;
-						m_ui.bg.colors[offset + 3] = 1;
-						offset += 4;
-					}
+					auto &symbol = canvas.at({ i, j });
+					auto &g = m_ui.text.font->at(symbol.code);
+
+					// vertices
+					int x = i * ui_cell_width + ui_cell_width / 2 - g.pixel_width / 2;
+					int xd = x + g.pixel_width;
+					int y = (ui_h - j - 1) * ui_cell_height - g.pixel_height + g.pixel_top;
+					int yd = y + g.pixel_height;
+
+					m_ui.text.vertices[vertex_offset + 0] = (GLfloat)x;
+					m_ui.text.vertices[vertex_offset + 1] = (GLfloat)y;
+					m_ui.text.vertices[vertex_offset + 2] = (GLfloat)x;
+					m_ui.text.vertices[vertex_offset + 3] = (GLfloat)yd;
+					m_ui.text.vertices[vertex_offset + 4] = (GLfloat)xd;
+					m_ui.text.vertices[vertex_offset + 5] = (GLfloat)yd;
+					m_ui.text.vertices[vertex_offset + 6] = (GLfloat)xd;
+					m_ui.text.vertices[vertex_offset + 7] = (GLfloat)y;
+
+					// colors
+					fill_color(symbol.back, &m_ui.bg.colors[color_offset]);
+					fill_color(symbol.front, &m_ui.text.colors[color_offset]);
+
+					// textures
+					fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &m_ui.text.texture[texture_offset]);
+
+					color_offset += 4 * quad;
+					vertex_offset += 2 * quad;
+					texture_offset += 2 * quad;
 				}
 			}
 
+			// setup drawing
+			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			// uniforms preparation source
 			m_ui.scale_x = 2.0f / m_width;
 			m_ui.scale_y = 2.0f / m_height;
 			m_ui.offset_x = (float)(m_width % ui_cell_width / 2);
 			m_ui.offset_y = (float)(m_height % ui_cell_height / 2);
 
-			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
-
+			// background
 			m_ui.bg.shader.use();
 			m_ui.bg.vao.fill_attributes(size * quad, 1, &m_ui.bg.colors[0]);
 			m_ui.bg.vao.draw();
 
-			//m_ui.text.shader.use();
-			//m_ui.text.font.bind(0);
-			//m_ui.text.vao.fill_attributes(ui_w * ui_h * quad, 0, &m_ui.text.vertices[0]);
-			//m_ui.text.vao.fill_attributes(ui_w * ui_h * quad, 1, &m_ui.text.colors[0]);
-			//m_ui.text.vao.fill_attributes(ui_w * ui_h * quad, 2, &m_ui.text.texture[0]);
-			//m_ui.text.vao.draw();
+			// text
+			m_ui.text.shader.use();
+			m_ui.text.vao.fill_attributes(size * quad, 0, &m_ui.text.vertices[0]);
+			m_ui.text.vao.fill_attributes(size * quad, 1, &m_ui.text.colors[0]);
+			m_ui.text.vao.fill_attributes(size * quad, 2, &m_ui.text.texture[0]);
+			m_ui.text.vao.draw();
 		}
 	}
 }

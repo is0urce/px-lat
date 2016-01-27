@@ -50,15 +50,19 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		auto wgl = std::make_unique<px::shell::wingl>(hWnd);
 		px::core::engine engine(wgl.get());
 
-		// Main message loop:
-		while (GetMessage(&msg, NULL, 0, 0))
+		for (bool run = true; run; run &= engine.running())
 		{
-			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-			{
-				engine.frame();
+			engine.frame();
 
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+			// dispatch windows messages
+			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
+			{
+				run &= (GetMessage(&msg, NULL, 0, 0) == TRUE);
+				if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
 			}
 		}
 	}
