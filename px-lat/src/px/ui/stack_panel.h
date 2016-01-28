@@ -21,12 +21,22 @@ namespace px
 		class stack_panel : public panel
 		{
 		public:
-			typedef std::shared_ptr<panel> panel_ptr;
 			typedef std::string panel_id;
-			typedef std::map<panel_id, panel_ptr> stack_t;
+			typedef std::shared_ptr<stack_panel> panel_ptr;
+			struct stacked_panel
+			{
+				panel_ptr panel;
+				alignment align;
+				stacked_panel(panel_ptr panel, alignment align)
+					: panel(panel), align(align)
+				{
+				}
+			};
+			typedef std::map<panel_id, stacked_panel> stack_t;
 
 		private:
 			stack_t m_stack;
+			rectangle m_bounds;
 
 		public:
 			stack_panel();
@@ -40,14 +50,15 @@ namespace px
 			virtual void draw_panel(canvas&) override;
 
 		public:
-			void add(panel_id name_tag, panel_ptr panel);
-			void add(panel_id name_tag, panel_ptr panel, bool start_enabled);
+			void add(panel_id name_tag, panel_ptr panel, alignment align);
 			void remove(const panel_id &name_tag);
 			void disable(const panel_id &name_tag);
 			void enable(const panel_id &name_tag);
 			void toggle(const panel_id &name_tag);
 			bool enabled(const panel_id &name_tag) const;
 			panel_ptr at(const panel_id &name_tag);
+			void layout(rectangle bounds);
+			void layout();
 		};
 	}
 }

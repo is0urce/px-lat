@@ -6,6 +6,7 @@
 #ifndef PX_UI_PANEL_H
 #define PX_UI_PANEL_H
 
+#include <px/ui/alignment.h>
 #include <px/point.hpp>
 #include <px/control.h>
 
@@ -35,8 +36,6 @@ namespace px
 			void disable();
 			bool toggle();
 			void draw(canvas&);
-
-			canvas* operator->();
 		};
 	}
 }

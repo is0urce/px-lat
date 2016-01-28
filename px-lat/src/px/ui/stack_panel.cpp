@@ -24,7 +24,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p.second->visible() && p.second->key(code)) return true;
+				if (p.second.panel->visible() && p.second.panel->key(code)) return true;
 			}
 			return false;
 		}
@@ -32,7 +32,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p.second->visible() && p.second->hover(position)) return true;
+				if (p.second.panel->visible() && p.second.panel->hover(position)) return true;
 			}
 			return false;
 		}
@@ -40,7 +40,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p.second->visible() && p.second->click(position, button)) return true;
+				if (p.second.panel->visible() && p.second.panel->click(position, button)) return true;
 			}
 			return false;
 		}
@@ -48,7 +48,7 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p.second->visible() && p.second->scroll(delta)) return true;
+				if (p.second.panel->visible() && p.second.panel->scroll(delta)) return true;
 			}
 			return false;
 		}
@@ -56,23 +56,18 @@ namespace px
 		{
 			for (auto p : m_stack)
 			{
-				if (p.second->visible())
+				if (p.second.panel->visible())
 				{
-					p.second->draw(table);
+					p.second.panel->draw(table);
 				}
 			}
 		}
 
-		void stack_panel::add(panel_id name_tag, panel_ptr panel)
-		{
-			add(name_tag, panel, panel->visible());
-		}
-
-		void stack_panel::add(panel_id name_tag, panel_ptr panel, bool is_enabled)
+		void stack_panel::add(panel_id name_tag, panel_ptr panel, alignment align)
 		{
 			remove(name_tag);
-			panel->visible(is_enabled);
-			m_stack.emplace(name_tag, panel);
+			panel->layout(m_bounds);
+			m_stack.emplace(name_tag, stacked_panel(panel, align));
 		}
 
 		void stack_panel::remove(const panel_id &name_tag)
@@ -88,7 +83,7 @@ namespace px
 		{
 			auto find = m_stack.find(name_tag);
 			if (find == m_stack.end()) throw std::logic_error("px::ui::stack_panel::at(panel_id) panel not found");
-			return find->second;
+			return find->second.panel;
 		}
 
 		void stack_panel::disable(const panel_id &name_tag)
@@ -96,7 +91,8 @@ namespace px
 			auto find = m_stack.find(name_tag);
 			if (find != m_stack.end())
 			{
-				find->second->disable();
+				panel &p = *find->second.panel;
+				p.disable();
 			}
 		}
 
@@ -105,7 +101,8 @@ namespace px
 			auto find = m_stack.find(name_tag);
 			if (find != m_stack.end())
 			{
-				find->second->enable();
+				panel &p = *find->second.panel;
+				p.enable();
 			}
 		}
 		void stack_panel::toggle(const panel_id &name_tag)
@@ -113,13 +110,27 @@ namespace px
 			auto find = m_stack.find(name_tag);
 			if (find != m_stack.end())
 			{
-				find->second->toggle();
+				panel &p = *find->second.panel;
+				p.toggle();
 			}
 		}
 		bool stack_panel::enabled(const panel_id &name_tag) const
 		{
 			auto find = m_stack.find(name_tag);
-			return find == m_stack.end() ? false : find->second->visible();
+			return find == m_stack.end() ? false : find->second.panel->visible();
+		}
+		void stack_panel::layout(rectangle bounds)
+		{
+			m_bounds = bounds;
+			layout();
+		}
+		void stack_panel::layout()
+		{
+			for (auto p : m_stack)
+			{
+				p.second.panel->m_bounds = p.second.align.calculate(m_bounds);
+				p.second.panel->layout(m_bounds);
+			}
 		}
 	}
 }

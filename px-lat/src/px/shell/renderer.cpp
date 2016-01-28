@@ -50,11 +50,11 @@ namespace px
 			m_ui.bg.shader.prepare([this
 				, scale = m_ui.bg.shader.uniform("scale")
 				, offset = m_ui.bg.shader.uniform("offset")
-			]()
-			{
-				glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-				glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-			});
+				]()
+				{
+					glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+				});
 
 			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", 16);
 			m_ui.text.vao = vao({ 2, 4, 2 });
@@ -64,12 +64,12 @@ namespace px
 			m_ui.text.shader.prepare([this
 				, scale = m_ui.text.shader.uniform("scale")
 				, offset = m_ui.text.shader.uniform("offset")
-			]()
-			{
-				glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-				glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-				m_ui.text.font.bind(0);
-			});
+				]()
+				{
+					glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+					m_ui.text.font.bind(0);
+				});
 
 			// opengl setup
 			glEnable(GL_TEXTURE_2D);

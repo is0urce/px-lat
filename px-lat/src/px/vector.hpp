@@ -11,6 +11,8 @@
 #include <px/coordinate.hpp>
 #include <px/point.hpp>
 
+#include <algorithm>
+
 namespace px
 {
 	class vector : public coordinate<double>
