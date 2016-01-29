@@ -131,6 +131,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\rectangle.hpp" />
     <ClInclude Include="src\px\string.h" />
     <ClInclude Include="src\px\ui\alignment.h" />
+    <ClInclude Include="src\px\ui\board_panel.h" />
     <ClInclude Include="src\px\ui\canvas.h" />
     <ClInclude Include="src\px\ui\panel.h" />
     <ClInclude Include="src\px\ui\stack_panel.h" />
@@ -161,6 +162,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     </ClCompile>
     <ClCompile Include="src\px\ui\canvas.cpp" />
     <ClCompile Include="src\px\ui\panel.cpp" />
+    <ClCompile Include="src\px\ui\board_panel.cpp" />
     <ClCompile Include="src\px\ui\stack_panel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

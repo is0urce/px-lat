@@ -11,6 +11,7 @@
 
 #include <px/ui/canvas.h>
 #include <px/ui/stack_panel.h>
+#include <px/ui/board_panel.h>
 
 #include <px/shell/timer.h>
 #include <px/shell/fps_counter.h>
@@ -39,6 +40,7 @@ namespace px
 			// interface
 			m_canvas = std::make_unique<ui::canvas>(1, 1);
 			m_ui = std::make_shared<ui::stack_panel>();
+			m_ui->add(std::make_shared<ui::board_panel>(color(0, 0, 0.5)), ui::alignment({ 0.0f, 0.0f }, { 1, 1 }, { -2, -2 }, { 1.0f, 1.0f }));
 
 			// game
 			m_scene = std::make_unique<rl::scene>();
@@ -72,9 +74,8 @@ namespace px
 			w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
 			h = (std::max<int>)(1, h / shell::renderer::ui_cell_height);
 			m_canvas->resize(w, h);
-			//m_ui->layout({ { 0, 0 }, { w, h } });
+			m_ui->layout({ { 0, 0 }, { w, h } });
 			m_ui->draw(*m_canvas);
-			m_canvas->rectangle(rectangle({ 0, 0 }, { 20, 10 }), color(0.5f, 0.5f, 0));
 			m_canvas->write({ 0, 0 }, "fps:");
 			m_canvas->write({ 5, 0 }, std::to_string(m_performance->fps()));
 

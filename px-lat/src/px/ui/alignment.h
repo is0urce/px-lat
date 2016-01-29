@@ -35,7 +35,7 @@ namespace px
 
 			rectangle calculate(const rectangle &parent) const
 			{
-				point start = parent.start() + (parent.range() * anchor_percent).ceil();
+				point start = anchor_offset + parent.start() + (parent.range() * anchor_percent).ceil();
 				point range = size_absolute + (parent.range() * size_relative).ceil();
 				return{ start, range };
 			}

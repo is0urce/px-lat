@@ -125,6 +125,9 @@
     <ClInclude Include="src\px\ui\alignment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\ui\board_panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\px-lat.cpp">
@@ -167,6 +170,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\px\shell\font_texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\ui\board_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

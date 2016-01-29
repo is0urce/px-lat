@@ -7,11 +7,12 @@
 
 #include "stack_panel.h"
 
+#include <sstream>
+
 namespace px
 {
 	namespace ui
 	{
-
 		stack_panel::stack_panel()
 		{
 		}
@@ -19,48 +20,39 @@ namespace px
 		stack_panel::~stack_panel()
 		{
 		}
+		template<typename _O>
+		bool stack_panel::panel_action(_O act)
+		{
+			for (auto p : m_stack)
+			{
+				if (p.second.panel && p.second.panel->visible() && act(p.second)) return true;
+			}
+			for (auto p : m_list)
+			{
+				if (p.panel && p.panel->visible() && act(p)) return true;
+			}
+			return false;
+		}
 
 		bool stack_panel::key_control(key_t code)
 		{
-			for (auto p : m_stack)
-			{
-				if (p.second.panel->visible() && p.second.panel->key(code)) return true;
-			}
-			return false;
+			return panel_action([&](stacked_panel& p) { return p.panel->key(code); });
 		}
 		bool stack_panel::hover_control(const point &position)
 		{
-			for (auto p : m_stack)
-			{
-				if (p.second.panel->visible() && p.second.panel->hover(position)) return true;
-			}
-			return false;
+			return panel_action([&](stacked_panel& p) { return p.panel->hover(position); });
 		}
 		bool stack_panel::click_control(const point &position, unsigned int button)
 		{
-			for (auto p : m_stack)
-			{
-				if (p.second.panel->visible() && p.second.panel->click(position, button)) return true;
-			}
-			return false;
+			return panel_action([&](stacked_panel& p) { return p.panel->click(position, button); });
 		}
 		bool stack_panel::scroll_control(int delta)
 		{
-			for (auto p : m_stack)
-			{
-				if (p.second.panel->visible() && p.second.panel->scroll(delta)) return true;
-			}
-			return false;
+			return panel_action([&](stacked_panel& p) { return p.panel->scroll(delta); });
 		}
 		void stack_panel::draw_panel(canvas& table)
 		{
-			for (auto p : m_stack)
-			{
-				if (p.second.panel->visible())
-				{
-					p.second.panel->draw(table);
-				}
-			}
+			panel_action([&](stacked_panel& p) { p.panel->draw(table); return true; }); // return false to not cancel loops
 		}
 
 		void stack_panel::add(panel_id name_tag, panel_ptr panel, alignment align)
@@ -68,6 +60,11 @@ namespace px
 			remove(name_tag);
 			panel->layout(m_bounds);
 			m_stack.emplace(name_tag, stacked_panel(panel, align));
+		}
+		void stack_panel::add(panel_ptr panel, alignment align)
+		{
+			panel->layout(m_bounds);
+			m_list.emplace_back(panel, align);
 		}
 
 		void stack_panel::remove(const panel_id &name_tag)
@@ -126,11 +123,23 @@ namespace px
 		}
 		void stack_panel::layout()
 		{
-			for (auto p : m_stack)
-			{
-				p.second.panel->m_bounds = p.second.align.calculate(m_bounds);
-				p.second.panel->layout(m_bounds);
-			}
+			panel_action([&](stacked_panel& p) { p.panel->m_bounds = p.align.calculate(m_bounds); p.panel->layout(); return false; });
+		}
+		rectangle stack_panel::bounds() const
+		{
+			return m_bounds;
+		}
+		void stack_panel::clear()
+		{
+			m_stack.clear();
+		}
+
+		std::string stack_panel::info() const
+		{
+			std::stringstream ss("");
+			ss << "childs=" << m_stack.size() << " ";
+			ss << "bounds=[start=[" << m_bounds.start().X << "," << m_bounds.start().Y << "], range=[" << m_bounds.range().X << ", " << m_bounds.range().Y << "]]";
+			return ss.str();
 		}
 	}
 }

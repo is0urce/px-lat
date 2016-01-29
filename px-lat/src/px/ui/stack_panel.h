@@ -10,6 +10,7 @@
 
 #include <px/ui/panel.h>
 
+#include <list>
 #include <memory>
 #include <map>
 #include <string>
@@ -36,6 +37,7 @@ namespace px
 
 		private:
 			stack_t m_stack;
+			std::list<stacked_panel> m_list;
 			rectangle m_bounds;
 
 		public:
@@ -51,6 +53,7 @@ namespace px
 
 		public:
 			void add(panel_id name_tag, panel_ptr panel, alignment align);
+			void add(panel_ptr panel, alignment align);
 			void remove(const panel_id &name_tag);
 			void disable(const panel_id &name_tag);
 			void enable(const panel_id &name_tag);
@@ -59,6 +62,13 @@ namespace px
 			panel_ptr at(const panel_id &name_tag);
 			void layout(rectangle bounds);
 			void layout();
+			rectangle bounds() const;
+			void clear();
+			std::string info() const;
+
+		private:
+			template<typename _O>
+			bool panel_action(_O act);
 		};
 	}
 }
