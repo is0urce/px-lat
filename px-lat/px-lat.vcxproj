@@ -133,6 +133,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\ui\alignment.h" />
     <ClInclude Include="src\px\ui\board_panel.h" />
     <ClInclude Include="src\px\ui\canvas.h" />
+    <ClInclude Include="src\px\ui\text_panel.h" />
     <ClInclude Include="src\px\ui\panel.h" />
     <ClInclude Include="src\px\ui\stack_panel.h" />
     <ClInclude Include="src\px\ui\symbol.h" />

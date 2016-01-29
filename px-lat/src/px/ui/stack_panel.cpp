@@ -52,7 +52,7 @@ namespace px
 		}
 		void stack_panel::draw_panel(canvas& table)
 		{
-			panel_action([&](stacked_panel& p) { p.panel->draw(table); return true; }); // return false to not cancel loops
+			panel_action([&](stacked_panel& p) { p.panel->draw(table); return false; }); // return false to not cancel loops
 		}
 
 		void stack_panel::add(panel_id name_tag, panel_ptr panel, alignment align)

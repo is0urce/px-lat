@@ -12,6 +12,7 @@
 #include <px/ui/canvas.h>
 #include <px/ui/stack_panel.h>
 #include <px/ui/board_panel.h>
+#include <px/ui/text_panel.h>
 
 #include <px/shell/timer.h>
 #include <px/shell/fps_counter.h>
@@ -40,26 +41,28 @@ namespace px
 			// interface
 			m_canvas = std::make_unique<ui::canvas>(1, 1);
 			m_ui = std::make_shared<ui::stack_panel>();
-			m_ui->add(std::make_shared<ui::board_panel>(color(0, 0, 0.5)), ui::alignment({ 0.0f, 0.0f }, { 1, 1 }, { -2, -2 }, { 1.0f, 1.0f }));
+			m_ui->add(std::make_shared<ui::text_panel>("Hi!", color(1, 1, 1)), ui::alignment({ 0.0f, 0.0f }, { 0, 0 }, { 0, 0 }, { 0.0f, 0.0f }));
+			m_ui->add(std::make_shared<ui::board_panel>(color(0, 0, 0.5)), ui::alignment({ 0.0f, 0.0f }, { 1, 1 }, { 15, 5 }, { 0.0f, 0.0f }));
 
 			// game
 			m_scene = std::make_unique<rl::scene>();
 			m_scene->on_add
 				([this](rl::scene::unit_ptr unit)
-			{
-				m_renderer->add({ unit.get(), [unit]()
 				{
-					shell::renderer::avatar_t result;
-					result.position = { 0, 0 };
-					result.size = 1;
-					result.img = '@';
-					return result;
-				} });
-			});
-			m_scene->on_remove([&](rl::scene::unit_ptr unit)
-			{
-				m_renderer->remove(unit.get());
-			});
+					m_renderer->add({ unit.get(), [unit]()
+					{
+						shell::renderer::avatar_t result;
+						result.position = { 0, 0 };
+						result.size = 1;
+						result.img = '@';
+						return result;
+					} });
+				});
+			m_scene->on_remove
+				([&](rl::scene::unit_ptr unit)
+				{
+					m_renderer->remove(unit.get());
+				});
 
 			m_game = std::make_unique<game>(m_scene.get(), m_ui.get());
 		}
@@ -76,8 +79,8 @@ namespace px
 			m_canvas->resize(w, h);
 			m_ui->layout({ { 0, 0 }, { w, h } });
 			m_ui->draw(*m_canvas);
-			m_canvas->write({ 0, 0 }, "fps:");
-			m_canvas->write({ 5, 0 }, std::to_string(m_performance->fps()));
+			m_canvas->write({ 1, 1 }, "fps:");
+			m_canvas->write({ 6, 1 }, std::to_string(m_performance->fps()));
 
 			m_renderer->render(*m_canvas, m_timer->measure());
 		}
