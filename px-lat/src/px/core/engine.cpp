@@ -18,6 +18,8 @@
 #include <px/shell/fps_counter.h>
 #include <px/shell/opengl.h>
 
+#include <px/rl/component.h>
+
 // stl includes
 #include <algorithm>
 #include <string>
@@ -65,6 +67,13 @@ namespace px
 				});
 
 			m_game = std::make_unique<game>(m_scene.get(), m_ui.get());
+
+			rl::component_manager<rl::my_component, 10> cm;
+			auto c = cm.create();
+			auto u = std::make_shared<rl::unit>();
+			u->add(c);
+			auto cc = u->component<rl::my_component>();
+			u.reset();
 		}
 		engine::~engine() {}
 

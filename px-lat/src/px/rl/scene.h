@@ -3,8 +3,8 @@
 // desc: 'scene' class definition
 // auth: is0urce
 
-#ifndef PX_SHELL_SCENE_H
-#define PX_SHELL_SCENE_H
+#ifndef PX_RL_SCENE_H
+#define PX_RL_SCENE_H
 
 #include <px/rl/iscene.hpp>
 
