@@ -9,6 +9,7 @@
 #include <array>
 #include <list>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 namespace px
@@ -19,8 +20,8 @@ namespace px
 		class component_base
 		{
 		private:
-			unit* m_unit = nullptr;
-			bool m_enabled = false;
+			unit* m_unit;
+			bool m_enabled;
 
 		public:
 			component_base()
@@ -144,6 +145,10 @@ namespace px
 				m_manager = manager;
 				m_key = key;
 			}
+			void manage(_M* manager)
+			{
+				m_manager = manager;
+			}
 			void manage(key_t key)
 			{
 				m_key = key;
@@ -158,83 +163,197 @@ namespace px
 			typedef std::array<element, _B> container_t;
 			struct batch
 			{
+			private:
+				container_t m_elements;
+				std::list<unsigned int> m_recycle;
+				unsigned int m_cursor = 0;
+
 			public:
-				container_t elements;
-				std::list<unsigned int> recycle;
-				unsigned int cursor = 0;
+				unsigned int recycled() const
+				{
+					return m_recycle.size();
+				}
+				unsigned int count() const
+				{
+					return m_cursor - recycled();
+				}
+				unsigned int cursor() const
+				{
+					return m_cursor;
+				}
+				bool empty() const
+				{
+					return count() == 0;
+				}
+				bool full() const
+				{
+					return count() == _B;
+				}
+				void clear()
+				{
+					m_recycle.clear();
+					m_cursor = 0;
+				}
+				void optimise()
+				{
+					if (count() == 0)
+					{
+						clear();
+					}
+				}
+				const _C& operator[](unsigned int index) const
+				{
+					return m_elements[index];
+				}
+				_C& operator[](unsigned int index)
+				{
+					return m_elements[index];
+				}
+				unsigned int increment()
+				{
+					unsigned int index = m_cursor;
+					++m_cursor;
+					return index;
+				}
+				void recycle(unsigned int index)
+				{
+					m_elements[index].disable();
+					m_recycle.push_back(index);
+
+					// optimise batch
+					optimise();
+				}
+				unsigned int recycle()
+				{
+					// use position of recycled component
+					auto it = m_recycle.end();
+					unsigned int index = *it;
+					m_recycle.erase(it);
+					return index;
+				}
 			};
 			typedef std::list<batch> batch_t;
 			typedef typename batch_t::iterator batch_it;
 			struct key
 			{
 			public:
-				batch_it it;
+				batch_it batch;
 				unsigned int cursor;
 				key()
 				{
-
 				}
-				key(batch_it batch_iterator, unsigned int index) : it(batch_iterator), cursor(index)
+				key(batch_it batch_iterator, unsigned int index) : batch(batch_iterator), cursor(index)
 				{
-
 				}
 			};
 
 		private:
 			batch_t m_batches;
+			std::mutex m_mutex;
+			unsigned int m_count = 0;
 
 		public:
 			component_manager()
 			{
-				m_batches.emplace_back();
 			}
 
 		public:
 			_C* create()
 			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
 				// select batch
 				auto it = m_batches.begin();
 				auto last = m_batches.end();
-				while (it != last && it->recycle.empty() && it->cursor == _B)
+				while (it != last && it->full())
 				{
 					++it;
 				}
+				// create new batch if no place available
 				if (it == last)
 				{
-					m_batches.emplace_back();
-					it = m_batches.end();
+					it = m_batches.emplace(it);
 				}
 				batch &b = *it;
-				unsigned int index = 0;
-				_C* result = nullptr;
-				if (!b.recycle.empty())
-				{
-					auto it = b.recycle.end();
-					unsigned int index = *it;
-					b.recycle.erase(it);
 
-					// re-construct
-					//new (result) _C;
-				}
-				else
-				{
-					index = b.cursor;
+				// select index
+				unsigned int index = (b.recycled() > 0) ? b.recycle() : b.increment();
 
-					// increment cursor
-					++b.cursor;
-				}
+				// component management setup
+				_C &result = b[index];
+				result.disable();
+				result.bind(nullptr);
+				result.manage(this, { it, index });
 
-				result = &(b.elements[index]);
-				result->manage(this, { it, index });
-				return result;
+				++m_count;
+				return &result;
 			}
 			void destroy(key k)
 			{
-				//batch &b = *(k.it);
-				//b.elements[k.cursor].~_C();
+				std::lock_guard<std::mutex> lock(m_mutex);
+
+				k.batch->recycle(k.cursor);
+
+				--m_count;
 			}
+
+			template<typename _O>
+			void update(_O op)
+			{
+				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
+				{
+					batch &b = *it;
+					for (unsigned int i = 0; i < b.cursor(); ++i)
+					{
+						auto &component = (*it)[i];
+						if (component.enabled())
+						{
+							op(component);
+						}
+					}
+				}
+			}
+
+			// clear unused batches
+			void optimise()
+			{
+				auto it = m_batches.begin();
+				auto last = m_batches.last();
+				//++it; // skip first (i.e. 'root')
+				while (it != last)
+				{
+					it->optimise();
+					if (it->count() == 0)
+					{
+						++it;
+						m_batches.erase(it);
+					}
+					else
+					{
+						++it;
+					}
+				}
+			};
+
+			// count created (including not enabled) components
+			unsigned int count() const
+			{
+				return m_count;
+			};
 		};
-		
+
+		template<typename _L>
+		class component_link
+		{
+		protected:
+			_L* m_link;
+		public:
+			component_link() {}
+			_L* link() const { return m_link; }
+			void link(_L* link) { m_link = link; }
+			explicit operator _L*() const { return m_link; }
+		};
+
 		struct my_pov
 		{
 			std::string boolable;
@@ -253,6 +372,52 @@ namespace px
 			virtual ~my_component()
 			{
 
+			}
+		};
+
+		struct sprite
+		{
+			unsigned int atlas;
+			float left, right, bottom, top;
+			void* color;
+			double transparency;
+		};
+		struct location
+		{
+			point position;
+		};
+
+		class sprite_component
+			: public sprite
+			, public component_link<location>
+			, public component<component_manager<sprite_component, 100>>
+		{
+		public:
+			virtual ~sprite_component()
+			{
+
+			}
+		};
+
+		class sprite_manager : public component_manager<sprite_component, 100>
+		{
+		private:
+			unsigned int m_length;
+			std::vector<float> colors;
+			std::vector<float> textcoords;
+			std::vector<float> vertice;
+		public:
+			void construct()
+			{
+				m_length = 0;
+				update([this](sprite_component &sc)
+				{
+					++m_length;
+					location* l = (location*)sc;
+
+					vertice[m_length + 0] = (float)(l->position.X);
+					vertice[m_length + 1] = (float)(l->position.Y);
+				});
 			}
 		};
 	}
