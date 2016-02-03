@@ -33,6 +33,8 @@ namespace px
 
 		protected:
 			virtual void destroy_component() = 0;
+			virtual void disable_component() = 0;
+			virtual void enable_component() = 0;
 
 		public:
 			bool enabled() const
@@ -41,10 +43,12 @@ namespace px
 			}
 			void enable()
 			{
+				enable_component();
 				m_enabled = true;
 			}
 			void disable()
 			{
+				disable_component();
 				m_enabled = false;
 			}
 			void destroy()
@@ -137,6 +141,12 @@ namespace px
 			virtual void destroy_component() override
 			{
 				m_manager->destroy(m_key);
+			}
+			virtual void disable_component() override
+			{
+			}
+			virtual void enable_component() override
+			{
 			}
 
 		public:
@@ -256,6 +266,7 @@ namespace px
 			component_manager()
 			{
 			}
+			component_manager(const component_manager&) = delete;
 
 		public:
 			_C* create()
@@ -393,6 +404,9 @@ namespace px
 			, public component<component_manager<sprite_component, 100>>
 		{
 		public:
+			sprite_component()
+			{
+			}
 			virtual ~sprite_component()
 			{
 
@@ -406,6 +420,10 @@ namespace px
 			std::vector<float> colors;
 			std::vector<float> textcoords;
 			std::vector<float> vertice;
+			std::vector<unsigned int> index;
+
+			unsigned int m_version = 0;
+
 		public:
 			void construct()
 			{

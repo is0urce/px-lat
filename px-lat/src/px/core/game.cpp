@@ -5,50 +5,34 @@
 
 #include "game.h"
 
-#include <px/point.hpp>
-
-#include <memory>
-#include <string>
-
 namespace px
 {
 	namespace core
 	{
-		game::game(rl::scene* scene, ui::stack_panel* ui)
-			: m_scene(scene), m_ui(ui)
+		game::game(rl::scene* scene)
+			: m_scene(scene)
 		{
-
 		}
 		game::~game()
 		{
-
 		}
-
 		unsigned int game::distance(const point &a, const point &b) const
 		{
 			return a.king_distance(b);
 		}
 
-		// controls
+		// controls (used in crtp)
 		bool game::step(const point &move)
 		{
-			return false;
+			return true;
 		}
-		bool game::cast(unsigned int slot)
+		bool game::use(unsigned int slot, const point &position)
 		{
-			return false;
+			return true;
 		}
-		bool game::use()
+		bool game::activate(point position, unsigned int button)
 		{
-			return false;
-		}
-		bool game::hover(point position)
-		{
-			return false;
-		}
-		bool game::click(point position, unsigned int button)
-		{
-			return false;
+			return true;
 		}
 	}
 }

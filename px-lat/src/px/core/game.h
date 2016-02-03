@@ -7,6 +7,7 @@
 #define PX_CORE_GAME_H
 
 #include <px/point.hpp>
+#include <px/core/game_control.hpp>
 
 #include <memory>
 #include <string>
@@ -23,14 +24,13 @@ namespace px
 	}
 	namespace core
 	{
-		class game
+		class game : public game_control<game>
 		{
 		private:
 			rl::scene* m_scene;
-			ui::stack_panel* m_ui;
 
 		public:
-			game(rl::scene* scene, ui::stack_panel* ui);
+			game(rl::scene* scene);
 			virtual ~game();
 
 		public:
@@ -39,10 +39,8 @@ namespace px
 
 			// controls
 			bool step(const point &move);
-			bool cast(unsigned int slot);
-			bool use();
-			bool hover(point position);
-			bool click(point position, unsigned int button);
+			bool use(unsigned int slot, const point &position);
+			bool activate(point position, unsigned int button);
 		};
 	}
 }

@@ -66,7 +66,7 @@ namespace px
 					m_renderer->remove(unit.get());
 				});
 
-			m_game = std::make_unique<game>(m_scene.get(), m_ui.get());
+			m_game = std::make_unique<game>(m_scene.get());
 
 			rl::component_manager<rl::my_component, 10> cm;
 			auto c = cm.create();
@@ -96,78 +96,23 @@ namespace px
 
 		bool engine::press(key vk)
 		{
-			bool result = false;
-			switch (vk)
+			if (vk == key::command_cancel)
 			{
-			case key::command_cancel:
 				shutdown();
-				result = true;
-				break;
-			case key::move_none:
-				result = m_game->step({ 0, 0 });
-				break;
-			case key::move_north:
-				result = m_game->step({ 0, 1 });
-				break;
-			case key::move_south:
-				result = m_game->step({ 0, -1 });
-				break;
-			case key::move_east:
-				result = m_game->step({ 1, 0 });
-				break;
-			case key::move_west:
-				result = m_game->step({ -1, 0 });
-				break;
-			case key::move_southwest:
-				result = m_game->step({ -1, -1 });
-				break;
-			case key::move_southeast:
-				result = m_game->step({ 1, -1 });
-				break;
-			case key::move_northwest:
-				result = m_game->step({ -1, 1 });
-				break;
-			case key::move_northeast:
-				result = m_game->step({ 1, 1 });
-				break;
-			case key::action_use:
-				result = m_game->use();
-				break;
-			case key::action0:
-				result = m_game->cast(0);
-				break;
-			case key::action1:
-				result = m_game->cast(1);
-				break;
-			case key::action2:
-				result = m_game->cast(2);
-				break;
-			case key::action3:
-				result = m_game->cast(3);
-				break;
-			case key::action4:
-				result = m_game->cast(4);
-				break;
-			case key::action5:
-				result = m_game->cast(5);
-				break;
-			default:
-				result = false;
-				break;
 			}
-			return result;
+			return (m_ui && m_ui->key(vk)) || m_game->key(vk);
 		}
 		bool engine::hover(const point &screen)
 		{
-			return false;
+			return (m_ui && m_ui->hover(screen)) || m_game->hover(screen);
 		}
 		bool engine::click(const point &screen, unsigned int button)
 		{
-			return false;
+			return (m_ui && m_ui->click(screen, button)) || m_game->click(screen, button);
 		}
 		bool engine::scroll(int delta)
 		{
-			return false;
+			return (m_ui && m_ui->scroll(delta)) || m_game->scroll(delta);
 		}
 
 		bool engine::running() const

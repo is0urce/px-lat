@@ -105,6 +105,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
   <ItemGroup>
     <ClInclude Include="src\px\color.h" />
     <ClInclude Include="src\px\control.h" />
+    <ClInclude Include="src\px\core\game_control.hpp" />
     <ClInclude Include="src\px\rl\component.h" />
     <ClInclude Include="src\px\shell\avatar.hpp" />
     <ClInclude Include="src\px\shell\avatar_handle.hpp" />
