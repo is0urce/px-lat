@@ -4,10 +4,12 @@ smooth in vec4 theColor;
 smooth in vec2 theTexture;
 
 out vec4 outputColor;
-uniform sampler2D font;
+uniform sampler2D img;
 
 void main()
 {
-	outputColor = theColor;
-	outputColor.a *= texture(font, theTexture.xy).r;
+	outputColor = vec4(theColor.rgb, theColor.a * texture(img, theTexture.xy).r);
+	//outputColor.r = 1;
+	//outputColor.b = 1;
+	//outputColor.a = 1;
 }

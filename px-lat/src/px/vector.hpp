@@ -31,7 +31,7 @@ namespace px
 
 		vector operator-() const { return { -X, -Y, -Z }; }
 		vector& operator+=(const vector &rhs) { move(rhs); return *this; }
-		vector& operator-=(const vector &rhs) { move(-rhs); return *this; }
+		vector& operator-=(const vector &rhs) { reverse_move(rhs); return *this; }
 		vector& operator*=(const vector &v) { multiply(v); return *this; };
 		vector& operator/=(const vector &v) { divide(v); return *this; };
 		vector& operator*=(component c) { multiply(c); return *this; };

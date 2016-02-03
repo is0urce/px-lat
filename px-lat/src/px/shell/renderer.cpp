@@ -45,7 +45,7 @@ namespace px
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
 
-
+			// ui draw setup
 			m_ui.bg.vao = vao({ 2, 4 });
 			m_ui.bg.shader = program("shaders/ui_bg");
 			m_ui.bg.shader.prepare([this
@@ -72,6 +72,35 @@ namespace px
 					m_ui.text.font.bind(0);
 				});
 
+			// sprite draw setup
+			auto cc = m_sprite.manager.create();
+			auto location = m_sprite.move.create();
+			location->position.X = 0;
+			location->position.Y = 0;
+
+			auto &g = m_ui.text.font->at('@');
+			cc->atlas = 0;
+			cc->left = (float)g.left;
+			cc->right = (float)g.right;
+			cc->bottom = (float)g.bottom;
+			cc->top = (float)g.top;
+			cc->width = (float)g.width;
+			cc->height = (float)g.height;
+			cc->tint = color(0xffff00);
+
+			cc->link(location);
+			cc->enable();
+
+			m_sprite.vao = vao({ 4, 4, 2 });
+			m_sprite.shader = program("shaders/sprite");
+			m_sprite.shader.uniform("img", 0);
+			m_sprite.shader.prepare([&]()
+				{
+					glActiveTexture(GL_TEXTURE0 + 0);
+					glBindTexture(GL_TEXTURE_2D, m_ui.text.font.texture());
+					//m_ui.text.font.bind(0);
+				});
+
 			// opengl setup
 			glEnable(GL_TEXTURE_2D);
 
@@ -79,20 +108,6 @@ namespace px
 			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
-
-
-			shell::sprite_manager cm;
-			rl::unit u;
-			u.add(cm.create());
-			auto cc = u.component<shell::sprite_component>();
-			if (cc)
-				cc->atlas = 0;
-			cc->left = 0;
-			cc->right = 1;
-			cc->bottom = 0;
-			cc->top = 0;
-			cc->width = 1;
-			cc->height = 1;
 		}
 		renderer::~renderer()
 		{
@@ -115,6 +130,20 @@ namespace px
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			// sprites draw
+			unsigned int size;
+			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			m_sprite.manager.construct();
+			m_sprite.manager.query(size, m_sprite.vertices, m_sprite.colors, m_sprite.texture, m_sprite.index);
+			m_sprite.shader.use();
+			m_sprite.vao.fill_attributes(size * quad * 4, 0, m_sprite.vertices);
+			m_sprite.vao.fill_attributes(size * quad * 4, 1, m_sprite.colors);
+			m_sprite.vao.fill_attributes(size * quad * 2, 2, m_sprite.texture);
+			m_sprite.vao.fill_indices(size * 2 * 3, m_sprite.index);
+			m_sprite.vao.draw();
 
 			draw_canvas(canvas);
 

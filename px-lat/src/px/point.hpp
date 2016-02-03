@@ -11,7 +11,6 @@
 #include "coordinate.hpp"
 
 #include <algorithm>
-#include <functional>
 
 namespace px
 {
@@ -32,9 +31,9 @@ namespace px
 		point operator-() const { return{ -X, -Y, -Z }; }
 
 		point& operator+=(const point &rhs) { move(rhs); return *this; }
-		point& operator-=(const point &rhs) { move(-rhs); return *this; }
-		point& operator*=(const point &rhs) { multiply(rhs); return *this; };
-		point& operator/=(const point &rhs) { divide(rhs.X); return *this; };
+		point& operator-=(const point &rhs) { reverse_move(rhs); return *this; }
+		point& operator*=(const point &rhs) { multiply(rhs); return *this; }
+		point& operator/=(const point &rhs) { divide(rhs.X); return *this; }
 
 		point& operator*=(component c) { multiply(c); return *this; };
 		point& operator/=(component c) { divide(c); return *this; };

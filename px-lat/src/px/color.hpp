@@ -36,7 +36,7 @@ namespace px
 		color() : R{}, G{}, B{}, A(1) {};
 		color(component r, component g, component b) : R(r), G(g), B(b), A(1) {};
 		color(component r, component g, component b, component a) : R(r), G(g), B(b), A(a) {};
-		color(unsigned int hex) { set_hex(hex); }
+		color(unsigned int hex) : A(1) { set_hex(hex); }
 
 	public:
 		static color rgb(unsigned int r, unsigned int g, unsigned int b) { return color(r / 255.0, g / 255.0, b / 255.0); }

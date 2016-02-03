@@ -43,7 +43,6 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
-			sprite_manager m_sprites;
 
 			// ui rendering
 			// buffers cashed due constant canvas size
@@ -71,6 +70,16 @@ namespace px
 				std::vector<GLuint> indices; // indices are shared
 				float scale_x, scale_y, offset_x, offset_y; // uniform values
 			} m_ui;
+			struct sprite_draw
+			{
+			public:
+				sprite_manager manager;
+				location_manager move;
+				vao vao;
+				program shader;
+				GLfloat *vertices, *colors, *texture;
+				GLuint* index;
+			} m_sprite;
 
 		public:
 			renderer(opengl *opengl);

@@ -10,6 +10,8 @@
 
 #include "point.hpp"
 
+#include <functional>
+
 namespace px
 {
 	struct rectangle
@@ -20,7 +22,7 @@ namespace px
 
 	public:
 		rectangle() : m_start{}, m_range{} {}
-		rectangle(point range) : m_start{}, m_range(range) {}
+		rectangle(point range) : m_start(0, 0), m_range(range) {}
 		rectangle(point start, point range) : m_start(start), m_range(range) {}
 
 	public:
@@ -87,6 +89,7 @@ namespace px
 		rectangle intersection(const rectangle &with) const
 		{
 			point start = with.m_start;
+			point corner = with.m_start + with.m_range;
 			if (start.X < m_start.X)
 			{
 				start.X = m_start.X;
@@ -95,47 +98,16 @@ namespace px
 			{
 				start.Y = m_start.Y;
 			}
-			point corner = with.m_start + with.m_range;
-			auto cx = m_start.X + m_range.X;
-			auto cy = m_start.Y + m_range.Y;
-			if (corner.X > cx)
+			point c = m_start + m_range;
+			if (corner.X > c.X)
 			{
-				corner.X = cx;
+				corner.X = c.X;
 			}
-			if (corner.Y > cy)
+			if (corner.Y > c.Y)
 			{
-				corner.X = cy;
+				corner.Y = c.Y;
 			}
-			point range = point(corner.X - start.X, corner.Y - start.Y);
-			if (range.X < 0)
-			{
-				range.X = 0;
-			}
-			if (range.Y < 0)
-			{
-				range.Y = 0;
-			}
-			return rectangle(start, range);
-		}
-		rectangle intersection(point range) const
-		{
-			if (range.X > m_range.X)
-			{
-				range.X = m_range.X;
-			}
-			if (range.Y > m_range.Y)
-			{
-				range.Y = m_range.Y;
-			}
-			if (range.X < 0)
-			{
-				range.X = 0;
-			}
-			if (range.Y < 0)
-			{
-				range.Y = 0;
-			}
-			return rectangle(m_start, range);
+			return rectangle(start, corner - start);
 		}
 	};
 	inline bool operator==(const rectangle &a, const rectangle &b)

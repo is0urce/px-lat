@@ -24,7 +24,7 @@ namespace px
 		component Z;
 
 	protected:
-		coordinate() : X{}, Y{}, Z{} {}
+		coordinate() {}
 		coordinate(component x, component y) : X(x), Y(y) {}
 		coordinate(component x, component y, component z) : X(x), Y(y), Z(z) {}
 
@@ -38,9 +38,12 @@ namespace px
 		// mutations
 
 		void negate() { X = -X; Y = -Y; Z = -Z; }
-		void move(const coordinate &move) { X += move.X; Y += move.Y; }
+		void move(const coordinate &move) { X += move.X; Y += move.Y; Z += move.Z; }
 		void move(component x, component y) { X += x; Y += y; }
 		void move(component x, component y, component z) { X += x; Y += y; Z += z; }
+		void reverse_move(const coordinate &move) { X -= move.X; Y -= move.Y; Z -= move.Z; }
+		void reverse_move(component x, component y) { X -= x; Y -= y; }
+		void reverse_move(component x, component y, component z) { X -= x; Y -= y; Z -= z; }
 		void multiply(const coordinate &c) { X *= c.X; Y *= c.Y; }
 		void multiply(component w, component h) { X *= w, Y *= h; }
 		void multiply(component x, component y, component z) { X *= x; Y *= y; Z *= z; }
