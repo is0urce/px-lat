@@ -28,6 +28,8 @@ namespace px
 		move_southeast,
 
 		action_use,
+		action_alt,
+
 		action0,
 		action1,
 		action2,

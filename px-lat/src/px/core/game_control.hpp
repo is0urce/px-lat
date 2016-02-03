@@ -19,7 +19,9 @@ namespace px
 {
 	namespace
 	{
-		unsigned int activate_vmb = 0; // (in general) 'e' to lmb 
+		// (in general) 'e' to lmb and rmb for alternative action
+		unsigned int activate_lmb = 0;
+		unsigned int activate_rmb = 1; 
 	}
 	namespace core
 	{
@@ -64,7 +66,10 @@ namespace px
 					result = game->step({ 1, 1 });
 					break;
 				case key::action_use:
-					result = game->activate(m_hover, activate_vmb);
+					result = game->activate(m_hover, activate_lmb);
+					break;
+				case key::action_alt:
+					result = game->activate(m_hover, activate_rmb);
 					break;
 				case key::action0:
 					result = game->use(0, m_hover);

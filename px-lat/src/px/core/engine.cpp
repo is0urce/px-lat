@@ -68,12 +68,16 @@ namespace px
 
 			m_game = std::make_unique<game>(m_scene.get());
 
-			rl::component_manager<rl::my_component, 10> cm;
-			auto c = cm.create();
-			auto u = std::make_shared<rl::unit>();
-			u->add(c);
-			auto cc = u->component<rl::my_component>();
-			u.reset();
+			rl::sprite_manager cm;
+			rl::unit u;
+			u.add(cm.create());
+			auto cc = u.component<rl::sprite_component>();
+			if (cc)
+			cc->atlas = 0;
+			cc->left = 0;
+			cc->right = 1;
+			cc->bottom = 0;
+			cc->top = 0;
 		}
 		engine::~engine() {}
 
@@ -119,7 +123,6 @@ namespace px
 		{
 			return !m_shutdown;
 		}
-
 		void engine::shutdown()
 		{
 			m_shutdown = true;
