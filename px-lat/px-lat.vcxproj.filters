@@ -71,9 +71,6 @@
     <ClInclude Include="src\px\ui\symbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -131,10 +128,16 @@
     <ClInclude Include="src\px\ui\text_panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\rl\component.h">
+    <ClInclude Include="src\px\core\game_control.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\game_control.hpp">
+    <ClInclude Include="src\px\shell\sprite_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\color.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,5 +206,7 @@
     <None Include="config\common\shaders\ui_text.frag" />
     <None Include="config\common\shaders\ui_bg.frag" />
     <None Include="config\common\shaders\ui_bg.vert" />
+    <None Include="config\common\shaders\sprite.frag" />
+    <None Include="config\common\shaders\sprite.vert" />
   </ItemGroup>
 </Project>

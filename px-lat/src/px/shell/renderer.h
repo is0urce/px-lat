@@ -15,6 +15,8 @@
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
 
+#include <px/shell/sprite_manager.h>
+
 #include <px/ui/canvas.h>
 
 #include <px/point.hpp>
@@ -41,6 +43,7 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
+			sprite_manager m_sprites;
 
 			// ui rendering
 			// buffers cashed due constant canvas size

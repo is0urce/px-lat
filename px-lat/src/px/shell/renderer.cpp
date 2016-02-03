@@ -7,7 +7,8 @@
 
 #include <px/shell/opengl.h>
 #include <px/shell/font.h>
-#include <px/color.h>
+
+#include <px/color.hpp>
 
 #include <memory>
 #include <stdexcept>
@@ -78,6 +79,20 @@ namespace px
 			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
+
+
+			shell::sprite_manager cm;
+			rl::unit u;
+			u.add(cm.create());
+			auto cc = u.component<shell::sprite_component>();
+			if (cc)
+				cc->atlas = 0;
+			cc->left = 0;
+			cc->right = 1;
+			cc->bottom = 0;
+			cc->top = 0;
+			cc->width = 1;
+			cc->height = 1;
 		}
 		renderer::~renderer()
 		{

@@ -14,10 +14,6 @@
 
 namespace px
 {
-	namespace ui
-	{
-		class stack_panel;
-	}
 	namespace rl
 	{
 		class scene;

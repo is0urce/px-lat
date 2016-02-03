@@ -9,7 +9,7 @@
 #define PX_UI_BOARD_PANEL_H
 
 #include <px/ui/stack_panel.h>
-#include <px/color.h>
+#include <px/color.hpp>
 
 namespace px
 {

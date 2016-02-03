@@ -330,7 +330,6 @@ namespace px
 			{
 				auto it = m_batches.begin();
 				auto last = m_batches.last();
-				//++it; // skip first (i.e. 'root')
 				while (it != last)
 				{
 					it->optimise();
@@ -363,80 +362,6 @@ namespace px
 			_L* link() const { return m_link; }
 			void link(_L* link) { m_link = link; }
 			explicit operator _L*() const { return m_link; }
-		};
-
-		struct my_pov
-		{
-			std::string boolable;
-			std::string get_custom_value() const { return boolable; }
-			my_pov()
-			{
-				boolable = "zxcvb";
-			}
-		};
-
-		class my_component
-			: public my_pov
-			, public component<component_manager<my_component, 10>>
-		{
-		public:
-			virtual ~my_component()
-			{
-
-			}
-		};
-
-		struct sprite
-		{
-			unsigned int atlas;
-			float left, right, bottom, top;
-			void* color;
-			double transparency;
-		};
-		struct location
-		{
-			point position;
-		};
-
-		class sprite_component
-			: public sprite
-			, public component_link<location>
-			, public component<component_manager<sprite_component, 100>>
-		{
-		public:
-			sprite_component()
-			{
-			}
-			virtual ~sprite_component()
-			{
-
-			}
-		};
-
-		class sprite_manager : public component_manager<sprite_component, 100>
-		{
-		private:
-			unsigned int m_length;
-			std::vector<float> colors;
-			std::vector<float> textcoords;
-			std::vector<float> vertice;
-			std::vector<unsigned int> index;
-
-			unsigned int m_version = 0;
-
-		public:
-			void construct()
-			{
-				m_length = 0;
-				update([this](sprite_component &sc)
-				{
-					++m_length;
-					location* l = (location*)sc;
-
-					vertice[m_length + 0] = (float)(l->position.X);
-					vertice[m_length + 1] = (float)(l->position.Y);
-				});
-			}
 		};
 	}
 }

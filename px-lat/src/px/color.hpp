@@ -1,4 +1,4 @@
-// name: color.h
+// name: color.hpp
 // type: c++ header
 // desc: class with implementation
 // auth: is0urce
@@ -39,8 +39,8 @@ namespace px
 		color(unsigned int hex) { set_hex(hex); }
 
 	public:
-		static color rgb(int r, int g, int b) { return color(r / 255.0, g / 255.0, b / 255.0); }
-		static color rgba(int r, int g, int b, int a) { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
+		static color rgb(unsigned int r, unsigned int g, unsigned int b) { return color(r / 255.0, g / 255.0, b / 255.0); }
+		static color rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) { return color(r / 255.0, g / 255.0, b / 255.0, a / 255.0); }
 		static color black() { return color(0, 0, 0, 1); };
 		static color white() { return color(1, 1, 1, 1); };
 
@@ -62,8 +62,8 @@ namespace px
 		color operator*=(component c) { *this = *this * c; return *this; };
 		color operator/=(component c) { *this = *this / c; return *this; };
 
-		void set_rgba(int r, int g, int b, int a) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = a / 255.0; }
-		void set_rgb(int r, int g, int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; }
+		void set_rgba(unsigned int r, unsigned int g, unsigned int b, unsigned int a) { R = r / 255.0; G = g / 255.0; B = b / 255.0; A = a / 255.0; }
+		void set_rgb(unsigned int r, unsigned int g, unsigned int b) { R = r / 255.0; G = g / 255.0; B = b / 255.0; }
 		void set_hex(unsigned int hex) { set_rgb(hex / 256 / 256 % 256, hex / 256 % 256, hex % 256); };
 		void shift_hue(double angle) { *this = transform_hue(*this, angle); };
 		void shift_brightness(double scale) { *this = transform_hsv(*this, 0, 1.0, scale); }

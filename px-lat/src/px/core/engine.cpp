@@ -18,7 +18,7 @@
 #include <px/shell/fps_counter.h>
 #include <px/shell/opengl.h>
 
-#include <px/rl/component.h>
+#include <px/shell/sprite_manager.h>
 
 // stl includes
 #include <algorithm>
@@ -67,17 +67,6 @@ namespace px
 				});
 
 			m_game = std::make_unique<game>(m_scene.get());
-
-			rl::sprite_manager cm;
-			rl::unit u;
-			u.add(cm.create());
-			auto cc = u.component<rl::sprite_component>();
-			if (cc)
-			cc->atlas = 0;
-			cc->left = 0;
-			cc->right = 1;
-			cc->bottom = 0;
-			cc->top = 0;
 		}
 		engine::~engine() {}
 

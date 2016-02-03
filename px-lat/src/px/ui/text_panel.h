@@ -10,7 +10,7 @@
 
 #include <px/ui/stack_panel.h>
 #include <px/ui/canvas.h>
-#include <px/color.h>
+#include <px/color.hpp>
 
 #include <string>
 
