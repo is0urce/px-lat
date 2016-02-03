@@ -79,6 +79,10 @@ namespace px
 			{
 				glUniform1f(uniform, float_value);
 			}
+			void uniform(GLuint uniform, GLfloat f0, GLfloat f1)
+			{
+				glUniform2f(uniform, f0, f1);
+			}
 			void prepare(std::function<void()> fn)
 			{
 				m_fn = fn;

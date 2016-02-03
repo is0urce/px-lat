@@ -36,7 +36,7 @@ namespace px
 			typedef avatar<unsigned int> avatar_t;
 		public:
 			const static unsigned int ui_cell_width = 16;
-			const static unsigned int ui_cell_height = 18;
+			const static unsigned int ui_cell_height = 20;
 
 		private:
 			opengl* m_opengl;

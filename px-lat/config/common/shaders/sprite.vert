@@ -7,9 +7,11 @@ layout(location = 2) in vec2 textcoord;
 smooth out vec4 theColor;
 smooth out vec2 theTexture;
 
+uniform vec2 scale;
+
 void main()
 {
-	gl_Position = position;
+	gl_Position = vec4(position.xyz * scale.xyy, 1);
     theColor = color;
 	theTexture = textcoord;
 }

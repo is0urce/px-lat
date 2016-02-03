@@ -114,26 +114,28 @@ namespace px
 				{
 					// vertex coordinates
 					auto* location = (location_component*)sprite;
-					auto horisontal = (location->position.X - 0.5f) * sprite.width;
-					auto vertical = (location->position.Y - 0.5f) * sprite.height;
+					auto x = location->position.X;
+					auto y = location->position.Y;
+					auto horisontal = sprite.width;
+					auto vertical = sprite.height;
 
-					m_vertice[vertex_offset + 0] = -horisontal;
-					m_vertice[vertex_offset + 1] = -vertical;
+					m_vertice[vertex_offset + 0] = x - horisontal;
+					m_vertice[vertex_offset + 1] = y - vertical;
 					m_vertice[vertex_offset + 2] = 0;
 					m_vertice[vertex_offset + 3] = 1;
 
-					m_vertice[vertex_offset + 4] = -horisontal;
-					m_vertice[vertex_offset + 5] = vertical;
+					m_vertice[vertex_offset + 4] = x - horisontal;
+					m_vertice[vertex_offset + 5] = y + vertical;
 					m_vertice[vertex_offset + 6] = 0;
 					m_vertice[vertex_offset + 7] = 1;
 
-					m_vertice[vertex_offset + 8] = horisontal;
-					m_vertice[vertex_offset + 9] = vertical;
+					m_vertice[vertex_offset + 8] = x + horisontal;
+					m_vertice[vertex_offset + 9] = y + vertical;
 					m_vertice[vertex_offset + 10] = 0;
 					m_vertice[vertex_offset + 11] = 1;
 
-					m_vertice[vertex_offset + 12] = horisontal;
-					m_vertice[vertex_offset + 13] = -vertical;
+					m_vertice[vertex_offset + 12] = x + horisontal;
+					m_vertice[vertex_offset + 13] = y - vertical;
 					m_vertice[vertex_offset + 14] = 0;
 					m_vertice[vertex_offset + 15] = 1;
 					

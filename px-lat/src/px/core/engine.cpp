@@ -79,7 +79,7 @@ namespace px
 			w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
 			h = (std::max<int>)(1, h / shell::renderer::ui_cell_height);
 			m_canvas->resize(w, h);
-			m_ui->layout({ { 0, 0 }, { w, h } });
+			m_ui->layout({ {0, 0}, { w, h } });
 			m_ui->draw(*m_canvas);
 			m_canvas->write({ 1, 1 }, "fps:");
 			m_canvas->write({ 6, 1 }, std::to_string(m_performance->fps()));

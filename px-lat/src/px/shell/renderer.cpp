@@ -57,7 +57,7 @@ namespace px
 					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
 				});
 
-			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", 16);
+			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", ui_cell_height);
 			m_ui.text.vao = vao({ 2, 4, 2 });
 			m_ui.text.shader = program("shaders/ui_text");
 			m_ui.text.shader.activate();
@@ -78,7 +78,7 @@ namespace px
 			location->position.X = 0;
 			location->position.Y = 0;
 
-			auto &g = m_ui.text.font->at('@');
+			auto &g = m_ui.text.font->at('?');
 			cc->atlas = 0;
 			cc->left = (float)g.left;
 			cc->right = (float)g.right;
@@ -94,11 +94,10 @@ namespace px
 			m_sprite.vao = vao({ 4, 4, 2 });
 			m_sprite.shader = program("shaders/sprite");
 			m_sprite.shader.uniform("img", 0);
-			m_sprite.shader.prepare([&]()
+			m_sprite.shader.prepare([this, scale=m_sprite.shader.uniform("scale")]()
 				{
-					glActiveTexture(GL_TEXTURE0 + 0);
-					glBindTexture(GL_TEXTURE_2D, m_ui.text.font.texture());
-					//m_ui.text.font.bind(0);
+					m_ui.text.font.bind(0);
+					m_sprite.shader.uniform(scale, 1.0f, (GLfloat)m_aspect);
 				});
 
 			// opengl setup
