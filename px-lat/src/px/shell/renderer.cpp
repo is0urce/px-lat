@@ -72,25 +72,6 @@ namespace px
 					m_ui.text.font.bind(0);
 				});
 
-			// sprite draw setup
-			auto cc = m_sprite.manager.create();
-			auto location = m_sprite.move.create();
-			location->position.X = 0;
-			location->position.Y = 0;
-
-			auto &g = m_ui.text.font->at('?');
-			cc->atlas = 0;
-			cc->left = (float)g.left;
-			cc->right = (float)g.right;
-			cc->bottom = (float)g.bottom;
-			cc->top = (float)g.top;
-			cc->width = (float)g.width;
-			cc->height = (float)g.height;
-			cc->tint = color(0xffff00);
-
-			cc->link(location);
-			cc->enable();
-
 			m_sprite.vao = vao({ 4, 4, 2 });
 			m_sprite.shader = program("shaders/sprite");
 			m_sprite.shader.uniform("img", 0);
@@ -124,11 +105,45 @@ namespace px
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			// sprites draw
+
+			// sprite draw setup
+			//auto cc = m_sprite.manager.create();
+			//auto location = m_sprite.move.create();
+			//location->position.X = 0;
+			//location->position.Y = 0;
+
+			//auto &g = m_ui.text.font->at('?');
+			//cc->atlas = 0;
+			//cc->left = (float)g.left;
+			//cc->right = (float)g.right;
+			//cc->bottom = (float)g.bottom;
+			//cc->top = (float)g.top;
+			//cc->width = (float)g.width;
+			//cc->height = (float)g.height;
+			//cc->tint = color(0xffff00);
+
+			//cc->link(location);
+			//cc->enable();
+			m_sprite.manager.update([this](shell::image &img)
+			{
+				auto uplus = img.alternative_ascii;
+				if (uplus != 0)
+				{
+					auto &g = m_ui.text.font->at(uplus);
+					img.atlas = 0;
+					img.left = (float)g.left;
+					img.right = (float)g.right;
+					img.bottom = (float)g.bottom;
+					img.top = (float)g.top;
+					img.width = (float)g.width;
+					img.height = (float)g.height;
+				}
+			});
+
 			unsigned int size;
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			m_sprite.manager.construct();
 			m_sprite.manager.query(size, m_sprite.vertices, m_sprite.colors, m_sprite.texture, m_sprite.index);
 			m_sprite.shader.use();
 			m_sprite.vao.fill_attributes(size * quad * 4, 0, m_sprite.vertices);

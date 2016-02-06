@@ -6,8 +6,9 @@
 #ifndef PX_CORE_LIBRARY_H
 #define PX_CORE_LIBRARY_H
 
-#include <px/core/sprite_manager.hpp>
 #include <px/es/unit.h>
+#include <px/shell/sprite_manager.hpp>
+#include <px/shell/image.h>
 
 #include <memory>
 
@@ -17,19 +18,23 @@ namespace px
 	{
 		class library
 		{
+		public:
+			//typedef shell::sprite_manager img_manager;
 		private:
-			shell::sprite_manager m_sprites;
+			shell::sprite_manager *m_sprites;
 			shell::location_manager m_location;
 
 		public:
-			library() {}
+			library(shell::sprite_manager *image_manager) : m_sprites(image_manager)
+			{
+			}
 			virtual ~library() {}
 
 		public:
 			std::shared_ptr<es::unit> create()
 			{
 				// create
-				auto sprite = m_sprites.create();
+				auto sprite = m_sprites->create();
 				auto location = m_location.create();
 
 				// link
@@ -40,6 +45,12 @@ namespace px
 				result->add(sprite);
 				result->add(location);
 				return result;
+			}
+			shell::sprite_manager::element* make_image(unsigned int u_plus)
+			{
+				auto s = m_sprites->create();
+				s->alternative_ascii = u_plus;
+				return s;
 			}
 		};
 	}

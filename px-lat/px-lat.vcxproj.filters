@@ -80,12 +80,6 @@
     <ClInclude Include="src\px\shell\image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\shell\avatar.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\shell\avatar_handle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\control.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -149,7 +143,7 @@
     <ClInclude Include="src\px\es\component_link.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\core\sprite_manager.hpp">
+    <ClInclude Include="src\px\shell\sprite_manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,9 @@
 #include "engine.h"
 
 #include <px/core/game.h>
+
 #include <px/shell/renderer.h>
+
 #include <px/rl/scene.h>
 
 #include <px/ui/canvas.h>
@@ -18,7 +20,7 @@
 #include <px/shell/fps_counter.h>
 #include <px/shell/opengl.h>
 
-#include <px/core/sprite_manager.hpp>
+#include <px/core/library.h>
 
 // stl includes
 #include <algorithm>
@@ -46,12 +48,14 @@ namespace px
 			m_ui->add(std::make_shared<ui::text_panel>("Hi!", color(1, 1, 1)), ui::alignment({ 0.0f, 0.0f }, { 0, 0 }, { 0, 0 }, { 0.0f, 0.0f }));
 			m_ui->add(std::make_shared<ui::board_panel>(color(0, 0, 0.5)), ui::alignment({ 0.0f, 0.0f }, { 1, 1 }, { 15, 5 }, { 0.0f, 0.0f }));
 
-			// game
-			m_scene = std::make_unique<rl::scene>();
-
-			m_game = std::make_unique<game>(m_scene.get());
+			// game setup
+			m_lib = std::make_unique<library>(m_renderer->sprite_manager());
+			m_game = std::make_unique<game>(m_scene.get(), m_lib.get());
+			m_game->start();
 		}
-		engine::~engine() {}
+		engine::~engine()
+		{
+		}
 
 		void engine::frame()
 		{

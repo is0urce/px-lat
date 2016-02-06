@@ -19,6 +19,7 @@ namespace px
 			float width, height;
 			color tint;
 			double transparency;
+			unsigned int alternative_ascii;
 		};
 	}
 }

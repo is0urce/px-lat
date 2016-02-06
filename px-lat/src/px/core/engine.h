@@ -40,17 +40,20 @@ namespace px
 	namespace core
 	{
 		class game;
+		class library;
 
 		class engine
 		{
 		private:
 			shell::opengl* m_ogl;
-			std::unique_ptr<ui::canvas> m_canvas;
+
 			std::shared_ptr<ui::stack_panel> m_ui;
+			std::unique_ptr<ui::canvas> m_canvas;
 
 			std::unique_ptr<rl::scene> m_scene;
 			std::unique_ptr<shell::renderer> m_renderer;
 			std::unique_ptr<game> m_game;
+			std::unique_ptr<library> m_lib;
 
 			// environment
 			std::unique_ptr<timer> m_timer;

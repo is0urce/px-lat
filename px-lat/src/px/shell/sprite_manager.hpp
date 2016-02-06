@@ -63,6 +63,7 @@ namespace px
 			{
 			}
 		};
+
 		class location_manager : public es::component_manager<location_component, 100>
 		{
 		public:
@@ -77,7 +78,8 @@ namespace px
 		class sprite_manager : public es::component_manager<sprite_component, 100>
 		{
 		private:
-			unsigned int m_length;
+			unsigned int m_length = 0;
+			unsigned int m_max = 0;
 			std::vector<float> m_vertice;
 			std::vector<float> m_color;
 			std::vector<float> m_texture;
@@ -90,19 +92,20 @@ namespace px
 		public:
 			void query(unsigned int& length, float*& vertex, float*& color, float*& texture, unsigned int*& index)
 			{
+				construct();
 				length = m_length;
 				vertex = to_pointer(m_vertice);
 				color = to_pointer(m_color);
 				texture = to_pointer(m_texture);
 				index = to_pointer(m_index);
 			}
+		private:
 			void construct()
 			{
 				unsigned int len = count();
 				m_vertice.resize(len * 4 * 4);
 				m_color.resize(len * 4 * 4);
 				m_texture.resize(len * 4 * 2);
-				m_index.resize(len * 2 * 3);
 
 				m_length = 0;
 				unsigned int vertex_offset = 0;
@@ -158,19 +161,25 @@ namespace px
 				});
 
 				// indices
-				unsigned int index_offset = 0;
-				unsigned int quad_offset = 0;
-				for (unsigned int i = 0; i < m_length; ++i)
+				if (m_length > m_max)
 				{
-					m_index[index_offset + 0] = quad_offset + 0;
-					m_index[index_offset + 1] = quad_offset + 2;
-					m_index[index_offset + 2] = quad_offset + 1;
-					m_index[index_offset + 3] = quad_offset + 0;
-					m_index[index_offset + 4] = quad_offset + 3;
-					m_index[index_offset + 5] = quad_offset + 2;
+					m_max = m_length;
 
-					index_offset += 6;
-					quad_offset += 4;
+					m_index.resize(len * 2 * 3);
+					unsigned int index_offset = 0;
+					unsigned int quad_offset = 0;
+					for (unsigned int i = 0; i < m_length; ++i)
+					{
+						m_index[index_offset + 0] = quad_offset + 0;
+						m_index[index_offset + 1] = quad_offset + 2;
+						m_index[index_offset + 2] = quad_offset + 1;
+						m_index[index_offset + 3] = quad_offset + 0;
+						m_index[index_offset + 4] = quad_offset + 3;
+						m_index[index_offset + 5] = quad_offset + 2;
+
+						index_offset += 6;
+						quad_offset += 4;
+					}
 				}
 			}
 		};

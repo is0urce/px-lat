@@ -6,18 +6,21 @@
 #ifndef PX_ES_UNIT_H
 #define PX_ES_UNIT_H
 
+#include <px/es/component.hpp>
+
 #include <list>
 
 namespace px
 {
 	namespace es
 	{
-		class unit
+		class unit : public std::enable_shared_from_this<unit>
 		{
 		public:
 			typedef component_base* component_ptr;
 			typedef std::list<component_ptr> component_container;
 			typedef component_container::iterator component_it;
+			typedef std::shared_ptr<unit> ptr;
 		private:
 			std::list<component_ptr> m_components;
 

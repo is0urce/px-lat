@@ -111,8 +111,6 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\es\component_link.hpp" />
     <ClInclude Include="src\px\es\component_manager.hpp" />
     <ClInclude Include="src\px\es\unit.h" />
-    <ClInclude Include="src\px\shell\avatar.hpp" />
-    <ClInclude Include="src\px\shell\avatar_handle.hpp" />
     <ClInclude Include="src\px\shell\font_texture.h" />
     <ClInclude Include="src\px\shell\fps_counter.h" />
     <ClInclude Include="src\px\coordinate.hpp" />
@@ -127,7 +125,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\renderer.h" />
     <ClInclude Include="src\px\rl\iscene.hpp" />
     <ClInclude Include="src\px\rl\scene.h" />
-    <ClInclude Include="src\px\core\sprite_manager.hpp" />
+    <ClInclude Include="src\px\shell\sprite_manager.hpp" />
     <ClInclude Include="src\px\shell\timer.h" />
     <ClInclude Include="src\px\shell\vao.h" />
     <ClInclude Include="src\px\shell\wingl.h" />

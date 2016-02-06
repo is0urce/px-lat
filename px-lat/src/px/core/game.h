@@ -9,7 +9,9 @@
 #include <px/point.hpp>
 #include <px/core/game_control.hpp>
 #include <px/core/library.h>
+#include <px/es/unit.h>
 
+#include <list>
 #include <memory>
 #include <string>
 
@@ -24,11 +26,13 @@ namespace px
 		class game : public game_control<game>
 		{
 		private:
-			rl::scene* m_scene;
-			library m_lib;
+			std::list<es::unit::ptr> m_units;
+			rl::scene *m_scene;
+			library *m_lib;
+			shell::location_manager m_locations;
 
 		public:
-			game(rl::scene* scene);
+			game(rl::scene* scene, library* lib);
 			virtual ~game();
 
 		public:
@@ -39,6 +43,8 @@ namespace px
 			bool step(const point &move);
 			bool use(unsigned int slot, const point &position);
 			bool activate(point position, unsigned int button);
+
+			void start();
 		};
 	}
 }

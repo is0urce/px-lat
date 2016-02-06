@@ -8,14 +8,11 @@
 #ifndef PX_SHELL_RENDERER_H
 #define PX_SHELL_RENDERER_H
 
-#include <px/shell/avatar.hpp>
-#include <px/shell/avatar_handle.hpp>
 #include <px/shell/font.h>
 #include <px/shell/font_texture.h>
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
-
-#include <px/core/sprite_manager.hpp>
+#include <px/shell/sprite_manager.hpp>
 
 #include <px/ui/canvas.h>
 
@@ -74,7 +71,6 @@ namespace px
 			{
 			public:
 				sprite_manager manager;
-				location_manager move;
 				vao vao;
 				program shader;
 				GLfloat *vertices, *colors, *texture;
@@ -87,6 +83,7 @@ namespace px
 
 		public:
 			void render(const ui::canvas& gui, time_t time);
+			sprite_manager* sprite_manager() { return &m_sprite.manager; }
 
 		private:
 			void draw_canvas(const ui::canvas& gui);

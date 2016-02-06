@@ -17,11 +17,11 @@ namespace px
 	namespace es
 	{
 		template<typename _C>
-		class component_manager_base
+		class manager_base
 		{
 		public:
-			component_manager_base() {}
-			virtual ~component_manager_base() {}
+			manager_base() {}
+			virtual ~manager_base() {}
 
 		protected:
 			virtual _C* create_component() = 0;
@@ -35,7 +35,7 @@ namespace px
 		};
 
 		template<typename _C, unsigned int _B>
-		class component_manager : public component_manager_base<_C>
+		class component_manager : public manager_base<_C>
 		{
 		public:
 			typedef _C element;
