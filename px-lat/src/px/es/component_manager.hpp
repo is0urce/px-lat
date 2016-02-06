@@ -3,8 +3,8 @@
 // desc: class definition
 // auth: is0urce
 
-#ifndef PX_RL_COMPONENT_H
-#define PX_RL_COMPONENT_H
+#ifndef PX_ES_COMPONENT_MANAGER_H
+#define PX_ES_COMPONENT_MANAGER_H
 
 #include <array>
 #include <list>
@@ -14,159 +14,27 @@
 
 namespace px
 {
-	namespace rl
+	namespace es
 	{
-		class unit;
-		class component_base
+		template<typename _C>
+		class component_manager_base
 		{
-		private:
-			unit* m_unit;
-			bool m_enabled;
-
 		public:
-			component_base()
-			{
-			}
-			virtual ~component_base()
-			{
-			}
+			component_manager_base() {}
+			virtual ~component_manager_base() {}
 
 		protected:
-			virtual void destroy_component() = 0;
-			virtual void disable_component() = 0;
-			virtual void enable_component() = 0;
+			virtual _C* create_component() = 0;
 
 		public:
-			bool enabled() const
+			_C* create()
 			{
-				return m_enabled;
-			}
-			void enable()
-			{
-				enable_component();
-				m_enabled = true;
-			}
-			void disable()
-			{
-				disable_component();
-				m_enabled = false;
-			}
-			void destroy()
-			{
-				destroy_component();
-			}
-			void bind(unit* entity)
-			{
-				m_unit = entity;
-			}
-			unit* entity()
-			{
-				return m_unit;
-			}
-		};
-
-		class unit
-		{
-		public:
-			typedef component_base* component_ptr;
-			typedef std::list<component_ptr> component_container;
-			typedef component_container::iterator component_it;
-		private:
-			std::list<component_ptr> m_components;
-
-		public:
-			unit() {}
-			virtual ~unit()
-			{
-				for (component_it it = m_components.begin(), last = m_components.end(); it != last; ++it)
-				{
-					(*it)->destroy();
-				}
-			}
-
-		public:
-			void add(component_ptr c)
-			{
-				m_components.push_back(c);
-				c->bind(this);
-			}
-			void enable()
-			{
-				for (auto &i : m_components)
-				{
-					i->enable();
-				}
-			}
-			void disable()
-			{
-				for (auto &i : m_components)
-				{
-					i->disable();
-				}
-			}
-			template<typename _C>
-			_C* component() const
-			{
-				_C* cast = nullptr;
-				for (auto &i : m_components)
-				{
-					cast = dynamic_cast<_C*>(i);
-					if (cast != nullptr) break;
-				}
-				return cast;
-			}
-		};
-
-		//template<typename _C, unsigned int _B>
-		//class component_manager;
-
-		template<typename _M>
-		class component : public component_base
-		{
-		private:
-			typedef typename _M::key key_t;
-		private:
-			_M* m_manager;
-			key_t m_key;
-
-		public:
-			component()
-			{
-			}
-			virtual ~component()
-			{
-			}
-
-		protected:
-			virtual void destroy_component() override
-			{
-				m_manager->destroy(m_key);
-			}
-			virtual void disable_component() override
-			{
-			}
-			virtual void enable_component() override
-			{
-			}
-
-		public:
-			void manage(_M* manager, key_t key)
-			{
-				m_manager = manager;
-				m_key = key;
-			}
-			void manage(_M* manager)
-			{
-				m_manager = manager;
-			}
-			void manage(key_t key)
-			{
-				m_key = key;
+				return create_component();
 			}
 		};
 
 		template<typename _C, unsigned int _B>
-		class component_manager
+		class component_manager : public component_manager_base<_C>
 		{
 		public:
 			typedef _C element;
@@ -268,8 +136,8 @@ namespace px
 			}
 			component_manager(const component_manager&) = delete;
 
-		public:
-			_C* create()
+		protected:
+			_C* create_component()
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -299,6 +167,8 @@ namespace px
 				++m_count;
 				return &result;
 			}
+
+		public:
 			void destroy(key k)
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
@@ -350,18 +220,6 @@ namespace px
 			{
 				return m_count;
 			};
-		};
-
-		template<typename _L>
-		class component_link
-		{
-		protected:
-			_L* m_link;
-		public:
-			component_link() {}
-			_L* link() const { return m_link; }
-			void link(_L* link) { m_link = link; }
-			explicit operator _L*() const { return m_link; }
 		};
 	}
 }

@@ -134,10 +134,22 @@
     <ClInclude Include="src\px\shell\sprite_manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\rl\component.hpp">
+    <ClInclude Include="src\px\color.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\color.hpp">
+    <ClInclude Include="src\px\core\library.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\es\unit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\es\component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\es\component_manager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\es\component_link.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

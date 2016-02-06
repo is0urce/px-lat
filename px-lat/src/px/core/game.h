@@ -8,6 +8,7 @@
 
 #include <px/point.hpp>
 #include <px/core/game_control.hpp>
+#include <px/core/library.h>
 
 #include <memory>
 #include <string>
@@ -24,6 +25,7 @@ namespace px
 		{
 		private:
 			rl::scene* m_scene;
+			library m_lib;
 
 		public:
 			game(rl::scene* scene);

@@ -1,4 +1,4 @@
-// name: core.h
+// name: engine.h
 // type: c++ header
 // desc: class declaration
 // auth: is0urce

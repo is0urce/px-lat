@@ -6,7 +6,9 @@
 #ifndef PX_SHELL_SPRITE_MANAGER_H
 #define PX_SHELL_SPRITE_MANAGER_H
 
-#include <px/rl/component.hpp>
+#include <px/es/component.hpp>
+#include <px/es/component_manager.hpp>
+#include <px/es/component_link.hpp>
 #include <px/point.hpp>
 #include <px/color.hpp>
 
@@ -45,8 +47,8 @@ namespace px
 
 		class sprite_component
 			: public sprite
-			, public rl::component_link<location_component>
-			, public rl::component<rl::component_manager<sprite_component, 100>>
+			, public es::component_link<location_component>
+			, public es::component<es::component_manager<sprite_component, 100>>
 		{
 		public:
 			sprite_component()
@@ -59,7 +61,7 @@ namespace px
 
 		class location_component
 			: public location
-			, public rl::component<rl::component_manager<location_component, 100>>
+			, public es::component<es::component_manager<location_component, 100>>
 		{
 		public:
 			location_component()
@@ -69,7 +71,7 @@ namespace px
 			{
 			}
 		};
-		class location_manager : public rl::component_manager<location_component, 100>
+		class location_manager : public es::component_manager<location_component, 100>
 		{
 		public:
 			location_manager()
@@ -80,7 +82,7 @@ namespace px
 			}
 		};
 
-		class sprite_manager : public rl::component_manager<sprite_component, 100>
+		class sprite_manager : public es::component_manager<sprite_component, 100>
 		{
 		private:
 			unsigned int m_length;
