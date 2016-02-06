@@ -28,10 +28,7 @@ namespace px
 			unit() {}
 			virtual ~unit()
 			{
-				for (component_it it = m_components.begin(), last = m_components.end(); it != last; ++it)
-				{
-					(*it)->destroy();
-				}
+				clear();
 			}
 
 		public:
@@ -39,6 +36,23 @@ namespace px
 			{
 				m_components.push_back(c);
 				c->bind(this);
+			}
+
+			// remove specified component (O=n)
+			void remove(component_ptr c)
+			{
+				m_components.remove(c);
+				c->bind(nullptr);
+			}
+
+			// remove all components
+			void clear()
+			{
+				for (component_it it = m_components.begin(), last = m_components.end(); it != last; ++it)
+				{
+					(*it)->destroy();
+				}
+				m_components.clear();
 			}
 			void enable()
 			{

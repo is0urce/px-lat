@@ -105,25 +105,6 @@ namespace px
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			// sprites draw
-
-			// sprite draw setup
-			//auto cc = m_sprite.manager.create();
-			//auto location = m_sprite.move.create();
-			//location->position.X = 0;
-			//location->position.Y = 0;
-
-			//auto &g = m_ui.text.font->at('?');
-			//cc->atlas = 0;
-			//cc->left = (float)g.left;
-			//cc->right = (float)g.right;
-			//cc->bottom = (float)g.bottom;
-			//cc->top = (float)g.top;
-			//cc->width = (float)g.width;
-			//cc->height = (float)g.height;
-			//cc->tint = color(0xffff00);
-
-			//cc->link(location);
-			//cc->enable();
 			m_sprite.manager.update([this](shell::image &img)
 			{
 				auto uplus = img.alternative_ascii;
@@ -139,7 +120,6 @@ namespace px
 					img.height = (float)g.height;
 				}
 			});
-
 			unsigned int size;
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glEnable(GL_BLEND);

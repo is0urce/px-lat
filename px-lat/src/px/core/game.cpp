@@ -26,6 +26,7 @@ namespace px
 		// controls (used in crtp)
 		bool game::step(const point &move)
 		{
+			m_pos->position += move;
 			return true;
 		}
 		bool game::use(unsigned int slot, const point &position)
@@ -39,18 +40,22 @@ namespace px
 
 		void game::start()
 		{
+			auto u = std::make_shared<es::unit>();
+
 			auto img = m_lib->make_image('@');
 			auto pos = m_locations.create();
 			img->tint = 0xffff00;
 			pos->position = { 0, 0 };
 
-			auto u = std::make_shared<es::unit>();
+			img->link(pos);
 			u->add(img);
 			u->add(pos);
-			img->link(pos);
 
 			u->enable();
 			m_units.push_back(u);
+
+			m_pos = pos;
+			m_player = u.get();
 		}
 	}
 }
