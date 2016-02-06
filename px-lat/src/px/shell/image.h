@@ -6,7 +6,7 @@
 #ifndef PX_SHELL_IMAGE_H
 #define PX_SHELL_IMAGE_H
 
-#include <px/color.h>
+#include <px/color.hpp>
 
 namespace px
 {
@@ -14,15 +14,11 @@ namespace px
 	{
 		struct image
 		{
-		public:
-			typedef float real_t;
-
-		public:
 			unsigned int atlas;
-			real_t x;
-			real_t y;
-			real_t dx;
-			real_t dy;
+			float left, right, bottom, top;
+			float width, height;
+			color tint;
+			double transparency;
 		};
 	}
 }

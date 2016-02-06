@@ -9,8 +9,8 @@
 #include <px/es/component.hpp>
 #include <px/es/component_manager.hpp>
 #include <px/es/component_link.hpp>
+#include <px/shell/image.h>
 #include <px/point.hpp>
-#include <px/color.hpp>
 
 namespace px
 {
@@ -29,14 +29,6 @@ namespace px
 				return (a.size() == 0) ? nullptr : &a[0];
 			}
 		}
-		struct sprite
-		{
-			unsigned int atlas;
-			float left, right, bottom, top;
-			float width, height;
-			color tint;
-			double transparency;
-		};
 		struct location
 		{
 			point position;
@@ -46,7 +38,7 @@ namespace px
 		class location_component;
 
 		class sprite_component
-			: public sprite
+			: public shell::image
 			, public es::component_link<location_component>
 			, public es::component<es::component_manager<sprite_component, 100>>
 		{
@@ -90,6 +82,10 @@ namespace px
 			std::vector<float> m_color;
 			std::vector<float> m_texture;
 			std::vector<unsigned int> m_index;
+
+		public:
+			sprite_manager() {}
+			virtual ~sprite_manager() {}
 
 		public:
 			void query(unsigned int& length, float*& vertex, float*& color, float*& texture, unsigned int*& index)

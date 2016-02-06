@@ -25,6 +25,7 @@ namespace px
 
 		protected:
 			virtual _C* create_component() = 0;
+			virtual void update_manager() {}
 
 		public:
 			_C* create()

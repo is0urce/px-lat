@@ -112,13 +112,6 @@ namespace px
 		{
 		}
 
-		void renderer::add(avatar_handle<avatar_t> handle)
-		{
-		}
-		void renderer::remove(const void* ptr)
-		{
-		}
-
 		void renderer::render(const ui::canvas& canvas, time_t time)
 		{
 			m_opengl->update(m_width, m_height);

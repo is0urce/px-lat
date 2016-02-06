@@ -127,7 +127,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\renderer.h" />
     <ClInclude Include="src\px\rl\iscene.hpp" />
     <ClInclude Include="src\px\rl\scene.h" />
-    <ClInclude Include="src\px\shell\sprite_manager.h" />
+    <ClInclude Include="src\px\core\sprite_manager.hpp" />
     <ClInclude Include="src\px\shell\timer.h" />
     <ClInclude Include="src\px\shell\vao.h" />
     <ClInclude Include="src\px\shell\wingl.h" />

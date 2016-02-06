@@ -6,7 +6,7 @@
 #ifndef PX_CORE_LIBRARY_H
 #define PX_CORE_LIBRARY_H
 
-#include <px/shell/sprite_manager.h>
+#include <px/core/sprite_manager.hpp>
 #include <px/es/unit.h>
 
 #include <memory>

@@ -18,7 +18,7 @@
 #include <px/shell/fps_counter.h>
 #include <px/shell/opengl.h>
 
-#include <px/shell/sprite_manager.h>
+#include <px/core/sprite_manager.hpp>
 
 // stl includes
 #include <algorithm>
@@ -48,23 +48,6 @@ namespace px
 
 			// game
 			m_scene = std::make_unique<rl::scene>();
-			m_scene->on_add
-				([this](rl::scene::unit_ptr unit)
-				{
-					m_renderer->add({ unit.get(), [unit]()
-					{
-						shell::renderer::avatar_t result;
-						result.position = { 0, 0 };
-						result.size = 1;
-						result.img = '@';
-						return result;
-					} });
-				});
-			m_scene->on_remove
-				([&](rl::scene::unit_ptr unit)
-				{
-					m_renderer->remove(unit.get());
-				});
 
 			m_game = std::make_unique<game>(m_scene.get());
 		}

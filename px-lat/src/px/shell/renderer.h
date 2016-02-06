@@ -15,7 +15,7 @@
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
 
-#include <px/shell/sprite_manager.h>
+#include <px/core/sprite_manager.hpp>
 
 #include <px/ui/canvas.h>
 
@@ -33,7 +33,7 @@ namespace px
 		{
 		public:
 			typedef double time_t;
-			typedef avatar<unsigned int> avatar_t;
+
 		public:
 			const static unsigned int ui_cell_width = 16;
 			const static unsigned int ui_cell_height = 20;
@@ -86,9 +86,6 @@ namespace px
 			virtual ~renderer();
 
 		public:
-			void add(avatar_handle<avatar_t>);
-			void remove(const void*);
-
 			void render(const ui::canvas& gui, time_t time);
 
 		private:
