@@ -56,11 +56,6 @@ namespace px
 
 			m_pos = pos.get();
 			m_player = u.get();
-
-			auto x = u->component<shell::location_component>();
-			x->position.Y = 1;
-
-			u->remove<shell::location_component>();
 		}
 	}
 }

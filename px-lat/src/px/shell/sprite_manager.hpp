@@ -43,9 +43,11 @@ namespace px
 			, public es::component_link<sprite_component>
 			, public es::component
 		{
+			// lookup ambiguity define
 		public:
 			using es::component_link<location_component>::link;
 			using es::component_link<sprite_component>::link;
+
 		public:
 			sprite_component()
 			{

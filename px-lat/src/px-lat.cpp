@@ -2,11 +2,12 @@
 // px-lat.cpp : Defines the entry point for the application.
 // desc: entry point for windows
 
-#include <windows.h>
+#include <windowsx.h>
 #include "px-lat.h"
 
 #include <px/shell/wingl.h>
 #include <px/core/engine.h>
+#include <memory>
 
 #define MAX_LOADSTRING 100
 
@@ -15,6 +16,8 @@ HWND hWnd;
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+
+std::unique_ptr<px::core::engine> engine; // everything (else)
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -47,11 +50,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	try
 	{
 		auto wgl = std::make_unique<px::shell::wingl>(hWnd);
-		px::core::engine engine(wgl.get());
+		engine = std::make_unique<px::core::engine>(wgl.get());
 
-		for (bool run = true; run; run &= engine.running())
+		for (bool run = true; run; run &= engine->running())
 		{
-			engine.frame();
+			engine->frame();
 
 			// dispatch windows messages
 			while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0)
@@ -129,6 +132,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+	case WM_KEYDOWN:
+		if (engine)
+		{
+			//key vkey;
+			//if (g_bindings->find(wParam, vkey))
+			//{
+			//	g_core->press(vkey);
+			//}
+		}
+		break;
+	case WM_MOUSEMOVE:
+		if (engine)
+		{
+			engine->hover({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		if (engine)
+		{
+			engine->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 1);
+		}
+		break;
+	case WM_RBUTTONDOWN:
+		if (engine)
+		{
+			engine->click({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, 2);
+		}
+		break;
+	case WM_MOUSEWHEEL:
+		if (engine)
+		{
+			engine->scroll(GET_WHEEL_DELTA_WPARAM(wParam));
+		}
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

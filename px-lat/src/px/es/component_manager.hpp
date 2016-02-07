@@ -189,7 +189,7 @@ namespace px
 			{
 				for (auto it = m_batches.begin(), last = m_batches.end(); it != last; ++it)
 				{
-					batch &b = *it;
+					auto &b = *it;
 					for (unsigned int i = 0; i < b.cursor(); ++i)
 					{
 						auto &component = (*it)[i];
