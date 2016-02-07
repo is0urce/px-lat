@@ -7,6 +7,7 @@
 #define PX_ES_COMPONENT_H
 
 #include <array>
+#include <functional>
 #include <list>
 #include <memory>
 #include <mutex>
@@ -18,62 +19,14 @@ namespace px
 	{
 		class unit;
 
-		class component_base
+		class component
 		{
 		private:
+			typedef std::function<void()> del_fn;
+		private:
+			del_fn m_del;
 			unit* m_unit;
 			bool m_enabled;
-
-		public:
-			component_base()
-			{
-			}
-			virtual ~component_base()
-			{
-			}
-
-		protected:
-			virtual void destroy_component() = 0;
-			virtual void disable_component() = 0;
-			virtual void enable_component() = 0;
-
-		public:
-			bool enabled() const
-			{
-				return m_enabled;
-			}
-			void enable()
-			{
-				enable_component();
-				m_enabled = true;
-			}
-			void disable()
-			{
-				disable_component();
-				m_enabled = false;
-			}
-			void destroy()
-			{
-				destroy_component();
-			}
-			void bind(unit* entity)
-			{
-				m_unit = entity;
-			}
-			unit* entity()
-			{
-				return m_unit;
-			}
-		};
-
-		template<typename _M>
-		class component : public component_base
-		{
-		private:
-			typedef typename _M::key key_t;
-		private:
-			_M* m_manager;
-			key_t m_key;
 
 		public:
 			component()
@@ -83,31 +36,37 @@ namespace px
 			{
 			}
 
-		protected:
-			virtual void destroy_component() override
-			{
-				m_manager->destroy(m_key);
-			}
-			virtual void disable_component() override
-			{
-			}
-			virtual void enable_component() override
-			{
-			}
-
 		public:
-			void manage(_M* manager, key_t key)
+			bool enabled() const
 			{
-				m_manager = manager;
-				m_key = key;
+				return m_enabled;
 			}
-			void manage(_M* manager)
+			void enable()
 			{
-				m_manager = manager;
+				m_enabled = true;
 			}
-			void manage(key_t key)
+			void disable()
 			{
-				m_key = key;
+				m_enabled = false;
+			}
+			void destroy()
+			{
+				if (m_del)
+				{
+					m_del();
+				}
+			}
+			void bind(unit* entity)
+			{
+				m_unit = entity;
+			}
+			unit* entity()
+			{
+				return m_unit;
+			}
+			void manage(del_fn del)
+			{
+				m_del = del;
 			}
 		};
 	}

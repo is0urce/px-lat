@@ -18,8 +18,6 @@ namespace px
 	{
 		class library
 		{
-		public:
-			//typedef shell::sprite_manager img_manager;
 		private:
 			shell::sprite_manager *m_sprites;
 			shell::location_manager m_location;
@@ -31,24 +29,9 @@ namespace px
 			virtual ~library() {}
 
 		public:
-			std::shared_ptr<es::unit> create()
+			std::shared_ptr<shell::sprite_manager::element> make_image(unsigned int u_plus)
 			{
-				// create
-				auto sprite = m_sprites->create();
-				auto location = m_location.create();
-
-				// link
-				sprite->link(location);
-
-				// put in container
-				auto result = std::make_shared<es::unit>();
-				result->add(sprite);
-				result->add(location);
-				return result;
-			}
-			shell::sprite_manager::element* make_image(unsigned int u_plus)
-			{
-				auto s = m_sprites->create();
+				auto s = m_sprites->make_shared();
 				s->alternative_ascii = u_plus;
 				return s;
 			}

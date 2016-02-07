@@ -40,8 +40,12 @@ namespace px
 		class sprite_component
 			: public shell::image
 			, public es::component_link<location_component>
-			, public es::component<es::component_manager<sprite_component, 100>>
+			, public es::component_link<sprite_component>
+			, public es::component
 		{
+		public:
+			using es::component_link<location_component>::link;
+			using es::component_link<sprite_component>::link;
 		public:
 			sprite_component()
 			{
@@ -53,7 +57,7 @@ namespace px
 
 		class location_component
 			: public location
-			, public es::component<es::component_manager<location_component, 100>>
+			, public es::component
 		{
 		public:
 			location_component()

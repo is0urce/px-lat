@@ -9,6 +9,7 @@
 #include <px/es/component.hpp>
 
 #include <list>
+#include <memory>
 
 namespace px
 {
@@ -17,7 +18,7 @@ namespace px
 		class unit : public std::enable_shared_from_this<unit>
 		{
 		public:
-			typedef component_base* component_ptr;
+			typedef std::shared_ptr<component> component_ptr;
 			typedef std::list<component_ptr> component_container;
 			typedef component_container::iterator component_it;
 			typedef std::shared_ptr<unit> ptr;
@@ -48,10 +49,6 @@ namespace px
 			// remove all components
 			void clear()
 			{
-				for (component_it it = m_components.begin(), last = m_components.end(); it != last; ++it)
-				{
-					(*it)->destroy();
-				}
 				m_components.clear();
 			}
 			void enable()
@@ -69,15 +66,29 @@ namespace px
 				}
 			}
 			template<typename _C>
-			_C* component() const
+			std::shared_ptr<_C> component() const
 			{
-				_C* cast = nullptr;
+				std::shared_ptr<_C> cast;
 				for (auto &i : m_components)
 				{
-					cast = dynamic_cast<_C*>(i);
-					if (cast != nullptr) break;
+					cast = std::dynamic_pointer_cast<_C>(i);
+					if (cast) break;
 				}
 				return cast;
+			}
+			template<typename _C>
+			bool remove()
+			{
+				for (auto it = m_components.begin(), last = m_components.end(); it != last; ++it)
+				{
+					auto cast = std::dynamic_pointer_cast<_C>(*it);
+					if (cast)
+					{
+						m_components.erase(it);
+						return true;
+					}
+				}
+				return false;
 			}
 		};
 	}

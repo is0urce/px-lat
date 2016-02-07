@@ -28,6 +28,10 @@ namespace px
 			virtual void update_manager() {}
 
 		public:
+			std::shared_ptr<_C> make_shared()
+			{
+				return std::shared_ptr<_C>(create_component(), [](_C* pointer) { pointer->destroy(); });
+			}
 			_C* create()
 			{
 				return create_component();
@@ -154,7 +158,7 @@ namespace px
 				{
 					it = m_batches.emplace(it);
 				}
-				batch &b = *it;
+				auto &b = *it;
 
 				// select index
 				unsigned int index = (b.recycled() > 0) ? b.recycle() : b.increment();
@@ -163,9 +167,10 @@ namespace px
 				_C &result = b[index];
 				result.disable();
 				result.bind(nullptr);
-				result.manage(this, { it, index });
+				result.manage([this, k = key(it, index)](){ destroy(k); });
 
 				++m_count;
+
 				return &result;
 			}
 
