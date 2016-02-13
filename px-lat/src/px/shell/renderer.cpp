@@ -23,9 +23,9 @@ namespace px
 		const unsigned int quad = 4; // four vertices for quad
 		const unsigned int strip = 6; // six indices for 2-triangles
 
-		const float panning_e = 1.0f / 1000;
-		const float panning_min = 0.01f;
-		const float panning_max = 10000.0f;
+		const double panning_e = 1.0 / 1000;
+		const double panning_min = 0.01;
+		const double panning_max = 10000.0;
 
 		void fill_color(const color &c, GLfloat *dest)
 		{
@@ -272,7 +272,7 @@ namespace px
 			m_ui.text.vao.fill_attributes(size * quad, 2, &m_ui.text.texture[0]);
 			m_ui.text.vao.draw();
 		}
-		void renderer::scale(float pan)
+		void renderer::scale(double pan)
 		{
 			m_scale *= 1 + pan * panning_e;
 			m_scale = (std::min)(m_scale, panning_max);

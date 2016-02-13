@@ -39,7 +39,7 @@ namespace px
 			opengl* m_opengl;
 			int m_width, m_height;
 			double m_aspect;
-			float m_scale;
+			double m_scale;
 
 			// ui rendering
 			// buffers cashed due constant canvas size
@@ -84,7 +84,7 @@ namespace px
 		public:
 			void render(const ui::canvas& gui, time_t time);
 			sprite_manager* sprite_manager() { return &m_sprite.manager; }
-			void scale(float delta);
+			void scale(double delta);
 
 		private:
 			void draw_canvas(const ui::canvas& gui);

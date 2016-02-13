@@ -111,6 +111,8 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\es\component_link.hpp" />
     <ClInclude Include="src\px\es\component_manager.hpp" />
     <ClInclude Include="src\px\es\unit.h" />
+    <ClInclude Include="src\px\rl\tile_base.hpp" />
+    <ClInclude Include="src\px\rl\traverse.hpp" />
     <ClInclude Include="src\px\shell\font_texture.h" />
     <ClInclude Include="src\px\shell\fps_counter.h" />
     <ClInclude Include="src\px\coordinate.hpp" />
