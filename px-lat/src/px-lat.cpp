@@ -12,7 +12,7 @@
 
 #include <memory>
 
-using namespace px;
+using px::key;
 
 #define MAX_LOADSTRING 100
 
@@ -169,12 +169,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-		if (engine)
+		if (engine && bindings)
 		{
-			if (engine && bindings)
-			{
-				engine->press(bindings->select(wParam, key::not_valid));
-			}
+			engine->press(bindings->select(wParam, key::not_valid));
 		}
 		break;
 	case WM_MOUSEMOVE:

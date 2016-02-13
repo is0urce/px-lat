@@ -22,6 +22,11 @@ namespace px
 	{
 		const unsigned int quad = 4; // four vertices for quad
 		const unsigned int strip = 6; // six indices for 2-triangles
+
+		const float panning_e = 1.0f / 1000;
+		const float panning_min = 0.01f;
+		const float panning_max = 10000.0f;
+
 		void fill_color(const color &c, GLfloat *dest)
 		{
 			c.write(dest, quad);
@@ -41,7 +46,7 @@ namespace px
 	namespace shell
 	{
 		renderer::renderer(opengl *opengl)
-			: m_opengl(opengl)
+			: m_opengl(opengl), m_scale(0.025f)
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
 
@@ -78,7 +83,7 @@ namespace px
 			m_sprite.shader.prepare([this, scale=m_sprite.shader.uniform("scale")]()
 				{
 					m_ui.text.font.bind(0);
-					m_sprite.shader.uniform(scale, 1.0f, (GLfloat)m_aspect);
+					m_sprite.shader.uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
 				});
 
 			// opengl setup
@@ -266,6 +271,12 @@ namespace px
 			m_ui.text.vao.fill_attributes(size * quad, 1, &m_ui.text.colors[0]);
 			m_ui.text.vao.fill_attributes(size * quad, 2, &m_ui.text.texture[0]);
 			m_ui.text.vao.draw();
+		}
+		void renderer::scale(float pan)
+		{
+			m_scale *= 1 + pan * panning_e;
+			m_scale = (std::min)(m_scale, panning_max);
+			m_scale = (std::max)(m_scale, panning_min);
 		}
 	}
 }

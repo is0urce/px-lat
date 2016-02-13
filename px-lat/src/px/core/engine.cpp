@@ -92,7 +92,12 @@ namespace px
 		}
 		bool engine::scroll(int delta)
 		{
-			return (m_ui && m_ui->scroll(delta)) || m_game->scroll(delta);
+			bool result = m_ui && m_ui->scroll(delta);
+			if (!result)
+			{
+				m_renderer->scale(delta);
+			}
+			return result;
 		}
 
 		bool engine::running() const
