@@ -7,7 +7,12 @@
 
 #include <px/shell/wingl.h>
 #include <px/core/engine.h>
+#include <px/shell/key_bingings.hpp>
+#include <px/key.h>
+
 #include <memory>
+
+using namespace px;
 
 #define MAX_LOADSTRING 100
 
@@ -18,6 +23,7 @@ TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 std::unique_ptr<px::core::engine> engine; // everything (else)
+std::unique_ptr<px::shell::key_bindings<WPARAM, px::key>> bindings;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -51,6 +57,35 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	{
 		auto wgl = std::make_unique<px::shell::wingl>(hWnd);
 		engine = std::make_unique<px::core::engine>(wgl.get());
+		bindings = std::make_unique<px::shell::key_bindings<WPARAM, px::key>>();
+
+		bindings->bind('W', VK_UP, VK_NUMPAD8, key::move_north);
+		bindings->bind('A', VK_LEFT, VK_NUMPAD4, key::move_west);
+		bindings->bind('S', VK_DOWN, VK_NUMPAD2, key::move_south);
+		bindings->bind('D', VK_RIGHT, VK_NUMPAD6, key::move_east);
+		bindings->bind(VK_END, VK_NUMPAD1, key::move_southwest);
+		bindings->bind(VK_NEXT, VK_NUMPAD3, key::move_southeast);
+		bindings->bind(VK_HOME, VK_NUMPAD7, key::move_northwest);
+		bindings->bind(VK_PRIOR, VK_NUMPAD9, key::move_northeast);
+		bindings->bind(VK_SPACE, VK_NUMPAD5, key::move_none);
+
+		bindings->bind('1', key::action1);
+		bindings->bind('2', key::action2);
+		bindings->bind('3', key::action3);
+		bindings->bind('4', key::action4);
+		bindings->bind('5', key::action5);
+		bindings->bind('6', key::action6);
+		bindings->bind('7', key::action7);
+		bindings->bind('8', key::action8);
+		bindings->bind('9', key::action9);
+		bindings->bind('0', key::action0);
+		bindings->bind('E', key::action_use);
+
+		bindings->bind(VK_F5, key::quick_save);
+		bindings->bind(VK_F9, key::quick_load);
+
+		bindings->bind(VK_RETURN, key::command_ok);
+		bindings->bind(VK_ESCAPE, key::command_cancel);
 
 		for (bool run = true; run; run &= engine->running())
 		{
@@ -136,11 +171,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		if (engine)
 		{
-			//key vkey;
-			//if (g_bindings->find(wParam, vkey))
-			//{
-			//	g_core->press(vkey);
-			//}
+			if (engine && bindings)
+			{
+				engine->press(bindings->select(wParam, key::not_valid));
+			}
 		}
 		break;
 	case WM_MOUSEMOVE:

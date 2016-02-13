@@ -120,6 +120,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\core\game.h" />
     <ClInclude Include="src\px\shell\glsl.h" />
     <ClInclude Include="src\px\shell\image.h" />
+    <ClInclude Include="src\px\shell\key_bingings.hpp" />
     <ClInclude Include="src\px\shell\opengl.h" />
     <ClInclude Include="src\px\shell\program.h" />
     <ClInclude Include="src\px\shell\renderer.h" />
