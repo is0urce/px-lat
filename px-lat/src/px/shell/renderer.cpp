@@ -23,9 +23,9 @@ namespace px
 		const unsigned int quad = 4; // four vertices for quad
 		const unsigned int strip = 6; // six indices for 2-triangles
 
-		const double panning_e = 1.0 / 1000;
-		const double panning_min = 0.01;
-		const double panning_max = 10000.0;
+		const double zoom_exp = 1.0 / 1000;
+		const double zoom_min = 0.01;
+		const double zoom_max = 10000;
 
 		void fill_color(const color &c, GLfloat *dest)
 		{
@@ -58,8 +58,8 @@ namespace px
 				, offset = m_ui.bg.shader.uniform("offset")
 				]()
 				{
-					glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+					program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+					program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
 				});
 
 			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", ui_cell_height);
@@ -72,8 +72,8 @@ namespace px
 				, offset = m_ui.text.shader.uniform("offset")
 				]()
 				{
-					glUniform2f(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-					glUniform2f(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+					program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+					program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
 					m_ui.text.font.bind(0);
 				});
 
@@ -83,7 +83,7 @@ namespace px
 			m_sprite.shader.prepare([this, scale=m_sprite.shader.uniform("scale")]()
 				{
 					m_ui.text.font.bind(0);
-					m_sprite.shader.uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
+					program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
 				});
 
 			// opengl setup
@@ -106,10 +106,16 @@ namespace px
 			m_aspect /= m_height;
 
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			// sprites draw
+			draw_sprites();
+			draw_canvas(canvas);
+
+			m_opengl->swap();
+		}
+		void renderer::draw_sprites()
+		{
 			m_sprite.manager.update([this](shell::image &img)
 			{
 				auto uplus = img.alternative_ascii;
@@ -125,10 +131,14 @@ namespace px
 					img.height = (float)g.height;
 				}
 			});
-			unsigned int size;
+
+			// setup states
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			// update vao and draw
+			unsigned int size;
 			m_sprite.manager.query(size, m_sprite.vertices, m_sprite.colors, m_sprite.texture, m_sprite.index);
 			m_sprite.shader.use();
 			m_sprite.vao.fill_attributes(size * quad * 4, 0, m_sprite.vertices);
@@ -136,10 +146,6 @@ namespace px
 			m_sprite.vao.fill_attributes(size * quad * 2, 2, m_sprite.texture);
 			m_sprite.vao.fill_indices(size * 2 * 3, m_sprite.index);
 			m_sprite.vao.draw();
-
-			draw_canvas(canvas);
-
-			m_opengl->swap();
 		}
 		void renderer::draw_canvas(const ui::canvas& canvas)
 		{
@@ -149,6 +155,7 @@ namespace px
 			if (ui_w <= 0 || ui_h <= 0) return;
 			int size = ui_w * ui_h;
 
+			// update cashed buffers if sizes have been changed
 			if (ui_w != m_ui.width || ui_h != m_ui.height)
 			{
 				m_ui.width = ui_w;
@@ -210,10 +217,10 @@ namespace px
 				m_ui.text.vao.fill_indices(size * strip, &m_ui.indices[0]);
 			}
 
+			// fill buffers
 			unsigned int color_offset = 0;
 			unsigned int vertex_offset = 0;
 			unsigned int texture_offset = 0;
-
 			for (int j = 0; j < ui_h; ++j)
 			{
 				for (int i = 0; i < ui_w; ++i)
@@ -274,9 +281,8 @@ namespace px
 		}
 		void renderer::scale(double pan)
 		{
-			m_scale *= 1 + pan * panning_e;
-			m_scale = (std::min)(m_scale, panning_max);
-			m_scale = (std::max)(m_scale, panning_min);
+			m_scale *= 1 + pan * zoom_exp;
+			m_scale = (std::max)(zoom_min, (std::min)(m_scale, zoom_max)); // clamp
 		}
 	}
 }

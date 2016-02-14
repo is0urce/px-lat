@@ -71,15 +71,15 @@ namespace px
 			{
 				return glGetUniformLocation(m_id, c_str);
 			}
-			void uniform(GLuint uniform, GLuint uint_value)
+			void static uniform(GLuint uniform, GLuint uint_value)
 			{
 				glUniform1ui(uniform, uint_value);
 			}
-			void uniform(GLuint uniform, GLfloat float_value)
+			void static uniform(GLuint uniform, GLfloat float_value)
 			{
 				glUniform1f(uniform, float_value);
 			}
-			void uniform(GLuint uniform, GLfloat f0, GLfloat f1)
+			void static uniform(GLuint uniform, GLfloat f0, GLfloat f1)
 			{
 				glUniform2f(uniform, f0, f1);
 			}

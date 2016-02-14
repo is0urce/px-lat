@@ -88,6 +88,7 @@ namespace px
 
 		private:
 			void draw_canvas(const ui::canvas& gui);
+			void draw_sprites();
 		};
 	}
 }
