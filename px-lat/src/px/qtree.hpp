@@ -51,6 +51,7 @@ namespace px
 		}
 
 	private:
+
 		// select branch
 		ptr& select(int x, int y)
 		{
@@ -77,6 +78,7 @@ namespace px
 				}
 			}
 		}
+
 		// select branch, if none available, create one
 		ptr& access(int x, int y)
 		{
@@ -97,11 +99,12 @@ namespace px
 		}
 
 		// helper function for expansion
-		// old - part for expanding internal not null garantee
+		// old - part for expanding (internal not null garantee)
 		// expanded - bigger area, not null
 		// update - area in bigger area for swap to old, is null
 		void static expand(ptr& old, ptr& expanded, ptr& update)
 		{
+			expanded->m_bucket.reset();
 			if (old->m_bucket)
 			{
 				std::swap(old->m_bucket, expanded->m_bucket);
