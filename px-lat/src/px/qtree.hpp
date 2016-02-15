@@ -24,27 +24,29 @@ namespace px
 		{
 			std::list<element> list;
 			int x, y;
-			bool inside(int x0, int y0) const
+			bool match(int x0, int y0) const
 			{
 				return x == x0 && y == y0;
+			}
+			bool inside(int x0, int y0, unsigned int radius)
+			{
+				return (std::abs(x - x0) <= (int)radius) && (std::abs(y - y0) <= (int)radius);
 			}
 		};
 
 	private:
+		ptr nw, ne, se, sw; // leaves
+
+		// partition data
 		int m_center_x;
 		int m_center_y;
 		unsigned int m_range;
 
-		ptr nw, ne, se, sw;
-
-		std::unique_ptr<bucket> m_bucket;
+		std::unique_ptr<bucket> m_bucket; // value
 
 	public:
-		qtree(int x, int y, unsigned int range)
+		qtree(int x, int y, unsigned int range) : m_center_x(x), m_center_y(y), m_range(range)
 		{
-			m_center_x = x;
-			m_center_y = y;
-			m_range = range;
 			m_bucket = std::make_unique<bucket>();
 		}
 
@@ -93,7 +95,7 @@ namespace px
 		{
 			if (m_bucket)
 			{
-				if (m_bucket->list.empty() || m_bucket->inside(x, y))
+				if (m_bucket->list.empty() || m_bucket->match(x, y))
 				{
 					m_bucket->list.push_back(e);
 					m_bucket->x = x;
@@ -114,30 +116,65 @@ namespace px
 				branch->add(x, y, e);
 			}
 		}
-		//remove(int x, int y, element e)
-		//{
-		//	if (m_bucket)
-		//	{
-		//		if (x == m_bucket->x && y == m_bucket->y)
-		//		{
-		//			m_bucket->list.remove(e);
-		//		}
-		//		else
-		//		{
-		//			throw std::runtime_error("qtree::remove - bucket not match");
-		//		}
-		//	}
-		//	else
-		//	{
-		//		auto branch = select(x, y);
-		//		if (!branch)
-		//		{
-		//			throw std::runtime_error("qtree::remove - no branch");
-		//		}
-		//		branch->remove(x, y, e);
-		//	}
-		//}
-		//find(int x, int y, unsigned int radius, std::function<void(element&)> fn);
+		void remove(int x, int y, element e)
+		{
+			if (m_bucket)
+			{
+				if (!m_bucket->match(x, y)) throw std::runtime_error("qtree::remove - bucket not match");
+
+				auto it = m_bucket->list.begin();
+				auto last = m_bucket->list.end();
+				while (it != last)
+				{
+					if (*it == e)
+					{
+						it = m_bucket->list.erase(it);
+						return;
+					}
+					++it;
+				}
+
+				throw std::runtime_error("qtree::remove - item not found");
+			}
+			else
+			{
+				auto &branch = select(x, y);
+
+				if (!branch) throw std::runtime_error("qtree::remove - no branch");
+
+				branch->remove(x, y, e);
+			}
+		}
+		void find(int x, int y, unsigned int radius, std::function<void(int, int, element&)> fn)
+		{
+			if (m_bucket)
+			{
+				if (m_bucket->inside(x, y, radius))
+				{
+					for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
+					{
+						fn(m_bucket->x, m_bucket->y, *it);
+					}
+				}
+			}
+			else
+			{
+				bool w = x - (int)radius <= m_center_x;
+				bool e = x + (int)radius >= m_center_x;
+				bool n = y + (int)radius >= m_center_y;
+				bool s = y - (int)radius <= m_center_y;
+				if (n)
+				{
+					if (w && nw) nw->find(x, y, radius, fn);
+					if (e && ne) ne->find(x, y, radius, fn);
+				}
+				if (s)
+				{
+					if (w && sw) sw->find(x, y, radius, fn);
+					if (e && se) se->find(x, y, radius, fn);
+				}
+			}
+		}
 	};
 }
 
