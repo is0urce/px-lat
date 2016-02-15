@@ -79,7 +79,7 @@ namespace px
 
 			m_sprite.vao = vao({ 4, 4, 2 });
 			m_sprite.shader = program("shaders/sprite");
-			m_sprite.shader.uniform("img", 0);
+			m_sprite.shader.uniform("img", 0); // texture0 + 0
 			m_sprite.shader.prepare([this, scale=m_sprite.shader.uniform("scale")]()
 				{
 					m_ui.text.font.bind(0);

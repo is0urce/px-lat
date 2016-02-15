@@ -35,11 +35,6 @@ namespace px
 		void transparent(bool val) { m_transparent = val; }
 
 		// traversability props accessors
-		template <typename _E>
-		bool traversable(_E enum_layer) const
-		{
-			return travarsable((unsigned int)enum_layer);
-		}
 		bool traversable(unsigned int layer) const
 		{
 			return m_traversable.test(layer);
@@ -47,6 +42,11 @@ namespace px
 		bool traversable() const
 		{
 			return traversable(0);
+		}
+		template <typename _E>
+		bool traversable(_E enum_layer) const
+		{
+			return traversable((unsigned int)enum_layer);
 		}
 		bool traversable(bitset l) const
 		{
