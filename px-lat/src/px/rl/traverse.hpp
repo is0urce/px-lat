@@ -10,15 +10,18 @@
 
 namespace px
 {
-	enum class traverse : unsigned int
+	namespace rl
 	{
-		walk,
-		swim,
-		fly,
-		teleport,
+		enum class traverse : unsigned int
+		{
+			walk,
+			swim,
+			fly,
+			teleport,
 
-		max_value = teleport
-	};
+			max_value = teleport
+		};
+	}
 }
 
 #endif

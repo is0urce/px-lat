@@ -6,26 +6,16 @@
 #ifndef PX_RL_SCENE_H
 #define PX_RL_SCENE_H
 
-#include <px/rl/iscene.hpp>
-#include <px/rl/tile_base.hpp>
-#include <px/rl/traverse.hpp>
+#include <px/rl/tile.hpp>
 #include <px/point.hpp>
 
 #include <memory>
 
 namespace px
 {
-	namespace es
-	{
-		class unit;
-	}
 	namespace rl
 	{
-		class tile : public tile_base<(unsigned int)traverse::max_value>
-		{
-
-		};
-		class scene : public iscene<std::shared_ptr<es::unit>>
+		class scene
 		{
 		private:
 			tile m_default;

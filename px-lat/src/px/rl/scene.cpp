@@ -11,6 +11,7 @@ namespace px
 	{
 		scene::scene()
 		{
+			m_default.traversable(true);
 		}
 
 		scene::~scene()

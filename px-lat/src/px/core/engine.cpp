@@ -50,6 +50,7 @@ namespace px
 
 			// game setup
 			m_lib = std::make_unique<library>(m_renderer->sprite_manager());
+			m_scene = std::make_unique<rl::scene>();
 			m_game = std::make_unique<game>(m_scene.get(), m_lib.get());
 			m_game->start();
 		}

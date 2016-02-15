@@ -5,6 +5,9 @@
 
 #include "game.h"
 
+#include <px/rl/scene.h>
+#include <px/rl/traverse.hpp>
+
 namespace px
 {
 	namespace core
@@ -26,7 +29,11 @@ namespace px
 		// controls (used in crtp)
 		bool game::step(const point &move)
 		{
-			m_pos->position += move;
+			auto destination = m_pos->position + move;
+			if (m_scene->traversable(destination, rl::traverse::walk))
+			{
+				m_pos->position = destination;
+			}
 			return true;
 		}
 		bool game::use(unsigned int slot, const point &position)
