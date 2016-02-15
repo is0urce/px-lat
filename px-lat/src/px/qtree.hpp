@@ -40,7 +40,7 @@ namespace px
 		std::unique_ptr<bucket> m_bucket;
 
 	public:
-		qtree(int x, int y, int range)
+		qtree(int x, int y, unsigned int range)
 		{
 			m_center_x = x;
 			m_center_y = y;
@@ -93,9 +93,11 @@ namespace px
 		{
 			if (m_bucket)
 			{
-				if (m_bucket->inside(x, y))
+				if (m_bucket->list.empty() || m_bucket->inside(x, y))
 				{
 					m_bucket->list.push_back(e);
+					m_bucket->x = x;
+					m_bucket->y = y;
 				}
 				else
 				{
