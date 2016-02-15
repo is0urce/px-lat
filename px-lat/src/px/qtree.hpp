@@ -49,6 +49,13 @@ namespace px
 		{
 			m_bucket = std::make_unique<bucket>();
 		}
+		//qtree(int x, int y, unsigned int range, ptr ne, ptr nw, ptr se, ptr sw) : m_center_x(x), m_center_y(y), m_range(range)
+		//{
+		//	this->ne = ne;
+		//	this->nw = nw;
+		//	this->se = se;
+		//	this->sw = sw;
+		//}
 
 	private:
 		// select branch
@@ -91,6 +98,11 @@ namespace px
 		}
 
 	public:
+		// partition contains point in range, there could be no elements
+		bool contains(int x, int y)
+		{
+			return (std::abs(x - m_center_x) <= (int)m_radius) && (std::abs(y - m_center_x) <= (int)m_radius);
+		}
 		void add(int x, int y, element e)
 		{
 			if (m_bucket)
@@ -106,6 +118,7 @@ namespace px
 					// move bucket
 					auto &branch = access(m_bucket->x, m_bucket->y);
 					std::swap(m_bucket, branch->m_bucket);
+					m_bucket.release();
 
 					add(x, y, e);
 				}
@@ -145,16 +158,13 @@ namespace px
 				branch->remove(x, y, e);
 			}
 		}
-		void find(int x, int y, unsigned int radius, std::function<void(int, int, element&)> fn)
+		void find(int x, int y, unsigned int radius, std::function<void(int, int, element&)> fn) const
 		{
-			if (m_bucket)
+			if (m_bucket && m_bucket->inside(x, y, radius))
 			{
-				if (m_bucket->inside(x, y, radius))
+				for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
 				{
-					for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
-					{
-						fn(m_bucket->x, m_bucket->y, *it);
-					}
+					fn(m_bucket->x, m_bucket->y, *it);
 				}
 			}
 			else
@@ -174,6 +184,41 @@ namespace px
 					if (e && se) se->find(x, y, radius, fn);
 				}
 			}
+		}
+		void expand()
+		{
+			int range = m_range;
+			if (nw)
+			{
+				auto nw_expand = std::make_unique<qtree<element>>(m_center_x - range, m_center_y + range, range);
+				if (nw->m_bucket)
+				{
+					std::swap(nw->m_bucket, nw_expand->m_bucket);
+					m_bucket.reset();
+				}
+				else
+				{
+					std::swap(ne_expand.se, ne);
+				}
+				std::swap(ne, ne_expand);
+			}
+			//qtree(int x, int y, unsigned int range, ptr ne, ptr nw, ptr se, ptr sw) : m_center_x(x), m_center_y(y), m_range(range)
+			//{
+			//	this->ne = ne;
+			//	this->nw = nw;
+			//	this->se = se;
+			//	this->sw = sw;
+			//}
+		}
+		std::string info() const
+		{
+			auto result = std::string("qtree (") + std::to_string(m_center_x) + std::string(",") + std::to_string(m_center_y) + std::string(") radius=") + std::to_string(m_range);
+			if (m_bucket) result += std::string(" has bucket size") + std::to_string(m_bucket->list.size());
+			if (nw) result += std::string(" nw=") + nw->info();
+			if (ne) result += std::string(" ne=") + ne->info();
+			if (sw) result += std::string(" sw=") + sw->info();
+			if (se) result += std::string(" se=") + se->info();
+			return result;
 		}
 	};
 }
