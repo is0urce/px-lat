@@ -59,18 +59,18 @@ namespace px
 			std::shared_ptr<es::location_manager::element> make_location(point position)
 			{
 				auto result = m_locations.make_shared();
-				result->position = position;
+				result->m_position = position;
 				m_graph.add(position, result.get());
 				return result;
 			}
 			void move(es::location_manager::element* e, point destination)
 			{
-				m_graph.move(e->position, e, destination);
-				e->position = destination;
+				m_graph.move(e->m_position, e, destination);
+				e->m_position = destination;
 			}
 			void remove(es::location_manager::element* e)
 			{
-				m_graph.remove(e->position, e);
+				m_graph.remove(e->m_position, e);
 			}
 		};
 	}

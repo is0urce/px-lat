@@ -1,4 +1,4 @@
-// name: component.hp
+// name: location_component.hpp
 // type: c++ header
 // desc: class definition
 // auth: is0urce
@@ -18,21 +18,21 @@ namespace px
 	{
 		struct location
 		{
-			point position;
+			point m_position;
 			bool transparent;
 			bool blocking;
 
-			const point& vector() const
+			const point& position() const
 			{
-				return position;
+				return m_position;
 			}
 			int x() const
 			{
-				return position.X;
+				return m_position.X;
 			}
 			int y() const
 			{
-				return position.Y;
+				return m_position.Y;
 			}
 		};
 

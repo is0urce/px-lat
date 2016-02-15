@@ -29,7 +29,7 @@ namespace px
 		// controls (used in crtp)
 		bool game::step(const point &move)
 		{
-			auto destination = m_pos->vector() + move;
+			auto destination = m_pos->position() + move;
 			if (m_scene->traversable(destination, rl::traverse::walk))
 			{
 				m_scene->move(m_pos, destination);

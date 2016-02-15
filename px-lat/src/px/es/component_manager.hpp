@@ -92,6 +92,14 @@ namespace px
 				{
 					return m_elements[index];
 				}
+				const _C& select(unsigned int index) const
+				{
+					return m_elements[index];
+				}
+				_C& select(unsigned int index)
+				{
+					return m_elements[index];
+				}
 				unsigned int increment()
 				{
 					unsigned int index = m_cursor;
@@ -142,7 +150,7 @@ namespace px
 			component_manager(const component_manager&) = delete;
 
 		protected:
-			_C* create_component()
+			virtual _C* create_component() override
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -171,13 +179,24 @@ namespace px
 
 				++m_count;
 
+				component_created(&result);
+
 				return &result;
+			}
+
+			virtual void component_created(element*)
+			{
+			}
+			virtual void component_destroyed(element*)
+			{
 			}
 
 		public:
 			void destroy(key k)
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
+
+				component_destroyed(&(k.batch->select(k.cursor)));
 
 				k.batch->recycle(k.cursor);
 
