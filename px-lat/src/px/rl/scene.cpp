@@ -9,9 +9,10 @@ namespace px
 {
 	namespace rl
 	{
-		scene::scene()
+		scene::scene() : m_graph(0, 0, 64)
 		{
 			m_default.traversable(true);
+			m_graph.add(0, 0, nullptr);
 		}
 
 		scene::~scene()

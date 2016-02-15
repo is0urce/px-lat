@@ -6,8 +6,10 @@
 #ifndef PX_RL_SCENE_H
 #define PX_RL_SCENE_H
 
+#include <px/es/unit.h>
 #include <px/rl/tile.hpp>
 #include <px/point.hpp>
+#include <px/qtree.hpp>
 
 #include <memory>
 
@@ -19,6 +21,7 @@ namespace px
 		{
 		private:
 			tile m_default;
+			qtree<es::unit*> m_graph;
 
 		public:
 			scene();
