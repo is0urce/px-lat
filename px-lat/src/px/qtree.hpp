@@ -49,13 +49,6 @@ namespace px
 		{
 			m_bucket = std::make_unique<bucket>();
 		}
-		//qtree(int x, int y, unsigned int range, ptr ne, ptr nw, ptr se, ptr sw) : m_center_x(x), m_center_y(y), m_range(range)
-		//{
-		//	this->ne = ne;
-		//	this->nw = nw;
-		//	this->se = se;
-		//	this->sw = sw;
-		//}
 
 	private:
 		// select branch
@@ -91,19 +84,65 @@ namespace px
 			if (!branch)
 			{
 				int range = m_range / 2;
-				auto result = std::make_unique<qtree<element>>(m_center_x + ((x >= m_center_x) ? range : -range), m_center_y + ((y >= m_center_y) ? range : -range), range);
+				auto result = std::make_unique<qtree>(m_center_x + ((x >= m_center_x) ? range : -range), m_center_y + ((y >= m_center_y) ? range : -range), range);
 				std::swap(branch, result);
 			}
 			return branch;
 		}
 
-	public:
 		// partition contains point in range, there could be no elements
-		bool contains(int x, int y)
+		bool contains(int x, int y) const
 		{
-			return (std::abs(x - m_center_x) <= (int)m_radius) && (std::abs(y - m_center_x) <= (int)m_radius);
+			return (std::abs(x - m_center_x) <= (int)m_range) && (std::abs(y - m_center_x) <= (int)m_range);
 		}
-		void add(int x, int y, element e)
+
+		// helper function for expansion
+		// old - part for expanding internal not null garantee
+		// expanded - bigger area, not null
+		// update - area in bigger area for swap to old, is null
+		void static expand(ptr& old, ptr& expanded, ptr& update)
+		{
+			if (old->m_bucket)
+			{
+				std::swap(old->m_bucket, expanded->m_bucket);
+				old->m_bucket.reset();
+			}
+			else
+			{
+				std::swap(update, old);
+			}
+			std::swap(old, expanded);
+		}
+
+		// expand range
+		void expand()
+		{
+			int range = m_range;
+			if (nw)
+			{
+				auto expand = std::make_unique<qtree>(m_center_x - range, m_center_y + range, range);
+				qtree::expand(nw, expand, expand->se);
+			}
+			if (ne)
+			{
+				auto expand = std::make_unique<qtree>(m_center_x + range, m_center_y + range, range);
+				qtree::expand(ne, expand, expand->sw);
+			}
+			if (sw)
+			{
+				auto expand = std::make_unique<qtree>(m_center_x - range, m_center_y - range, range);
+				qtree::expand(sw, expand, expand->ne);
+			}
+			if (se)
+			{
+				auto expand = std::make_unique<qtree>(m_center_x + range, m_center_y - range, range);
+				qtree::expand(se, expand, expand->nw);
+			}
+			m_range *= 2;
+		}
+
+		// adding element, internal guarantee x and y in range
+		void insert(int x, int y, element e)
 		{
 			if (m_bucket)
 			{
@@ -120,14 +159,24 @@ namespace px
 					std::swap(m_bucket, branch->m_bucket);
 					m_bucket.release();
 
-					add(x, y, e);
+					insert(x, y, e);
 				}
 			}
 			else
 			{
 				auto &branch = access(x, y);
-				branch->add(x, y, e);
+				branch->insert(x, y, e);
 			}
+		}
+
+	public:
+		void add(int x, int y, element e)
+		{
+			while (!contains(x, y))
+			{
+				expand();
+			}
+			insert(x, y, e);
 		}
 		void remove(int x, int y, element e)
 		{
@@ -185,35 +234,11 @@ namespace px
 				}
 			}
 		}
-		void expand()
-		{
-			int range = m_range;
-			if (nw)
-			{
-				auto nw_expand = std::make_unique<qtree<element>>(m_center_x - range, m_center_y + range, range);
-				if (nw->m_bucket)
-				{
-					std::swap(nw->m_bucket, nw_expand->m_bucket);
-					m_bucket.reset();
-				}
-				else
-				{
-					std::swap(ne_expand.se, ne);
-				}
-				std::swap(ne, ne_expand);
-			}
-			//qtree(int x, int y, unsigned int range, ptr ne, ptr nw, ptr se, ptr sw) : m_center_x(x), m_center_y(y), m_range(range)
-			//{
-			//	this->ne = ne;
-			//	this->nw = nw;
-			//	this->se = se;
-			//	this->sw = sw;
-			//}
-		}
+
 		std::string info() const
 		{
-			auto result = std::string("qtree (") + std::to_string(m_center_x) + std::string(",") + std::to_string(m_center_y) + std::string(") radius=") + std::to_string(m_range);
-			if (m_bucket) result += std::string(" has bucket size") + std::to_string(m_bucket->list.size());
+			auto result = std::string("qT(") + std::to_string(m_center_x) + std::string(",") + std::to_string(m_center_y) + std::string(") R=") + std::to_string(m_range);
+			if (m_bucket) result += std::string(" bucket size ") + std::to_string(m_bucket->list.size());
 			if (nw) result += std::string(" nw=") + nw->info();
 			if (ne) result += std::string(" ne=") + ne->info();
 			if (sw) result += std::string(" sw=") + sw->info();
