@@ -29,10 +29,10 @@ namespace px
 		// controls (used in crtp)
 		bool game::step(const point &move)
 		{
-			auto destination = m_pos->position + move;
+			auto destination = m_pos->vector() + move;
 			if (m_scene->traversable(destination, rl::traverse::walk))
 			{
-				m_pos->position = destination;
+				m_scene->move(m_pos, destination);
 			}
 			return true;
 		}
@@ -50,9 +50,8 @@ namespace px
 			auto u = std::make_shared<es::unit>();
 
 			auto img = m_lib->make_image('@');
-			std::shared_ptr<shell::location_component> pos = m_locations.make_shared();
+			auto pos = m_scene->make_location({ 3,3 });
 			img->tint = 0xffff00;
-			pos->position = { 0, 0 };
 
 			img->link(pos);
 			u->add(img);

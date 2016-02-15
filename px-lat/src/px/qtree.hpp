@@ -181,6 +181,7 @@ namespace px
 			}
 			insert(x, y, e);
 		}
+
 		void remove(int x, int y, element e)
 		{
 			if (m_bucket)
@@ -210,13 +211,13 @@ namespace px
 				branch->remove(x, y, e);
 			}
 		}
-		void find(int x, int y, unsigned int radius, std::function<void(int, int, element&)> fn) const
+		void find(int x, int y, unsigned int radius, std::function<bool(int, int, element)> fn) const
 		{
 			if (m_bucket && m_bucket->inside(x, y, radius))
 			{
 				for (auto it = m_bucket->list.begin(), last = m_bucket->list.end(); it != last; ++it)
 				{
-					fn(m_bucket->x, m_bucket->y, *it);
+					if (!fn(m_bucket->x, m_bucket->y, *it)) return;
 				}
 			}
 			else
@@ -236,6 +237,24 @@ namespace px
 					if (e && se) se->find(x, y, radius, fn);
 				}
 			}
+		}
+		void move(int sx, int sy, element e, int dx, int dy)
+		{
+			remove(sx, sy, e);
+			add(dx, dy, e);
+		}
+
+		void move(point from, element e, point destination)
+		{
+			move(from.X, from.Y, e, destination.X, destination.Y);
+		}
+		void add(point position, element e)
+		{
+			add(position.X, position.Y, e);
+		}
+		void remove(point position, element e)
+		{
+			remove(position.X, position.Y, e);
 		}
 
 		std::string info() const

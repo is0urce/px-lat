@@ -7,7 +7,10 @@
 #define PX_RL_SCENE_H
 
 #include <px/es/unit.h>
+#include <px/es/location_component.hpp>
+
 #include <px/rl/tile.hpp>
+
 #include <px/point.hpp>
 #include <px/qtree.hpp>
 
@@ -21,7 +24,8 @@ namespace px
 		{
 		private:
 			tile m_default;
-			qtree<es::unit*> m_graph;
+			qtree<es::location_manager::element*> m_graph;
+			es::location_manager m_locations;
 
 		public:
 			scene();
@@ -34,11 +38,39 @@ namespace px
 			}
 			bool transparent(const point &point)
 			{
-				return select(point).transparent();
+				bool block = false;
+				m_graph.find(point.X, point.Y, 0, [&block](int x, int y, es::location_component* l)
+				{
+					block &= l && !l->transparent;
+					return !block;
+				});
+				return !block && select(point).transparent();
 			}
 			bool traversable(const point &point, traverse layer)
 			{
-				return select(point).traversable(layer);
+				bool block = false;
+				m_graph.find(point.X, point.Y, 0, [&block](int x, int y, es::location_component* l)
+				{
+					block &= l && l->blocking;
+					return !block;
+				});
+				return !block && select(point).traversable(layer);
+			}
+			std::shared_ptr<es::location_manager::element> make_location(point position)
+			{
+				auto result = m_locations.make_shared();
+				result->position = position;
+				m_graph.add(position, result.get());
+				return result;
+			}
+			void move(es::location_manager::element* e, point destination)
+			{
+				m_graph.move(e->position, e, destination);
+				e->position = destination;
+			}
+			void remove(es::location_manager::element* e)
+			{
+				m_graph.remove(e->position, e);
 			}
 		};
 	}

@@ -9,8 +9,8 @@
 #include <px/es/component.hpp>
 #include <px/es/component_manager.hpp>
 #include <px/es/component_link.hpp>
+#include <px/es/location_component.hpp>
 #include <px/shell/image.h>
-#include <px/point.hpp>
 
 namespace px
 {
@@ -29,23 +29,19 @@ namespace px
 				return (a.size() == 0) ? nullptr : &a[0];
 			}
 		}
-		struct location
-		{
-			point position;
-		};
 
 		class sprite_component;
-		class location_component;
+		class body_component;
 
 		class sprite_component
 			: public shell::image
-			, public es::component_link<location_component>
+			, public es::component_link<es::location_component>
 			, public es::component_link<sprite_component>
 			, public es::component
 		{
 			// lookup ambiguity define
 		public:
-			using es::component_link<location_component>::link;
+			using es::component_link<es::location_component>::link;
 			using es::component_link<sprite_component>::link;
 
 		public:
@@ -53,30 +49,6 @@ namespace px
 			{
 			}
 			virtual ~sprite_component()
-			{
-			}
-		};
-
-		class location_component
-			: public location
-			, public es::component
-		{
-		public:
-			location_component()
-			{
-			}
-			virtual ~location_component()
-			{
-			}
-		};
-
-		class location_manager : public es::component_manager<location_component, 100>
-		{
-		public:
-			location_manager()
-			{
-			}
-			virtual ~location_manager()
 			{
 			}
 		};
@@ -120,9 +92,10 @@ namespace px
 				update([&](sprite_component &sprite)
 				{
 					// vertex coordinates
-					auto* location = (location_component*)sprite;
-					auto x = location->position.X;
-					auto y = location->position.Y;
+					auto* location = (es::location_component*)sprite;
+					if (!location) throw std::runtime_error("sprite_manager::update - location link is null");
+					auto x = location->x();
+					auto y = location->y();
 					auto horisontal = sprite.width;
 					auto vertical = sprite.height;
 

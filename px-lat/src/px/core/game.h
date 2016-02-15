@@ -29,10 +29,9 @@ namespace px
 			std::list<es::unit::ptr> m_units;
 			rl::scene *m_scene;
 			library *m_lib;
-			shell::location_manager m_locations;
 
 			es::unit *m_player;
-			shell::location_manager::element *m_pos;
+			es::location_manager::element *m_pos;
 
 		public:
 			game(rl::scene* scene, library* lib);

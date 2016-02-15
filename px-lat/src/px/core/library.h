@@ -20,7 +20,6 @@ namespace px
 		{
 		private:
 			shell::sprite_manager *m_sprites;
-			shell::location_manager m_location;
 
 		public:
 			library(shell::sprite_manager *image_manager) : m_sprites(image_manager)
