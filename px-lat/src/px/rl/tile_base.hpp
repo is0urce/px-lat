@@ -81,7 +81,7 @@ namespace px
 
 			// utility
 			void make_wall() { traversable(false); transparent(false); }
-			void make_ground() { traversable(false); transparent(false); }
+			void make_ground() { traversable(true); transparent(true); }
 		};
 	}
 }

@@ -12,6 +12,7 @@
 #include <px/rl/tile.hpp>
 
 #include <px/point.hpp>
+#include <px/map.hpp>
 #include <px/qtree.hpp>
 
 #include <memory>
@@ -23,6 +24,7 @@ namespace px
 		class scene
 		{
 		private:
+			map<tile> m_map;
 			tile m_default;
 			qtree<es::location_manager::element*> m_graph;
 			es::location_manager m_locations;
@@ -32,9 +34,9 @@ namespace px
 			virtual ~scene();
 
 		public:
-			const tile& select(const point &position)
+			const tile& select(const point &position) const
 			{
-				return m_default;
+				return m_map.at(position, m_default);
 			}
 			bool transparent(const point &point)
 			{

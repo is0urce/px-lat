@@ -107,11 +107,11 @@ namespace px
 
 		const _T& at(const point &position, const _T& outer) const
 		{
-			return contains(position) ? m_tiles[m_range.X * position.Y + position.X] : outer;
+			return contains(position) ? m_tiles[m_width * position.Y + position.X] : outer;
 		}
 		_T& at(const point &position, _T& outer)
 		{
-			return contains(position) ? m_tiles[m_range.X * position.Y + position.X] : outer;
+			return contains(position) ? m_tiles[m_width * position.Y + position.X] : outer;
 		}
 		const _T& at(const point& position) const
 		{
@@ -123,6 +123,7 @@ namespace px
 			if (!contains(position)) throw std::logic_error("_T& map<_T>::at(point position) - argument out of range");
 			return m_tiles[m_width * position.Y + position.X];
 		}
+
 		void fill(const _T &tile)
 		{
 			int len = m_width * m_height;
