@@ -28,12 +28,17 @@ namespace px
 			tile m_default;
 			qtree<es::location_manager::element*> m_graph;
 			es::location_manager m_locations;
+			point m_focus;
 
 		public:
 			scene();
 			virtual ~scene();
 
 		public:
+			void focus(point position)
+			{
+				m_focus = position;
+			}
 			const tile& select(const point &position) const
 			{
 				return m_map.at(position, m_default);

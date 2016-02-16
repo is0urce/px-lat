@@ -16,7 +16,6 @@
 #include <px/ui/board_panel.h>
 #include <px/ui/text_panel.h>
 
-#include <px/shell/timer.h>
 #include <px/shell/fps_counter.h>
 #include <px/shell/opengl.h>
 
@@ -35,23 +34,20 @@ namespace px
 			m_shutdown(false), m_ogl(ogl)
 		{
 			// start timers and reseed rng
-			m_timer = std::make_unique<timer>();
 			m_performance = std::make_unique<shell::fps_counter>();
-			std::srand((unsigned int)m_timer->counter());
+			std::srand((unsigned int)m_timer.counter());
 
 			// create rendering pipeline
 			m_renderer = std::make_unique<shell::renderer>(ogl);
 
 			// interface
-			m_canvas = std::make_unique<ui::canvas>(1, 1);
 			m_ui = std::make_shared<ui::stack_panel>();
 			m_ui->add(std::make_shared<ui::text_panel>("Hi!", color(1, 1, 1)), ui::alignment({ 0.0f, 0.0f }, { 0, 0 }, { 0, 0 }, { 0.0f, 0.0f }));
 			m_ui->add(std::make_shared<ui::board_panel>(color(0, 0, 0.5)), ui::alignment({ 0.0f, 0.0f }, { 1, 1 }, { 15, 5 }, { 0.0f, 0.0f }));
 
 			// game setup
 			m_lib = std::make_unique<library>(m_renderer->sprite_manager());
-			m_scene = std::make_unique<rl::scene>();
-			m_game = std::make_unique<game>(m_scene.get(), m_lib.get());
+			m_game = std::make_unique<game>(nullptr, m_lib.get());
 			m_game->start();
 		}
 		engine::~engine()
@@ -62,17 +58,12 @@ namespace px
 		{
 			m_performance->frame_processed();
 
-			int w, h;
-			m_ogl->update(w, h);
-			w = (std::max<int>)(1, w / shell::renderer::ui_cell_width);
-			h = (std::max<int>)(1, h / shell::renderer::ui_cell_height);
-			m_canvas->resize(w, h);
-			m_ui->layout({ {0, 0}, { w, h } });
-			m_ui->draw(*m_canvas);
-			m_canvas->write({ 1, 1 }, "fps:");
-			m_canvas->write({ 6, 1 }, std::to_string(m_performance->fps()));
+			auto &cnv = m_renderer->canvas();
+			m_ui->output(cnv);
+			cnv.write({ 1, 1 }, "fps:");
+			cnv.write({ 6, 1 }, std::to_string(m_performance->fps()));
 
-			m_renderer->render(*m_canvas, m_timer->measure());
+			m_renderer->render(m_timer.measure());
 		}
 
 		bool engine::press(key vk)

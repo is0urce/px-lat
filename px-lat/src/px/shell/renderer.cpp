@@ -27,6 +27,9 @@ namespace px
 		const double zoom_min = 0.01;
 		const double zoom_max = 10000;
 
+		const unsigned int perception_reach = 7;
+		const point perception_range(perception_reach * 2 + 1, perception_reach * 2 + 1);
+
 		void fill_color(const color &c, GLfloat *dest)
 		{
 			c.write(dest, quad);
@@ -46,7 +49,10 @@ namespace px
 	namespace shell
 	{
 		renderer::renderer(opengl *opengl)
-			: m_opengl(opengl), m_scale(0.025f)
+			: m_opengl(opengl)
+			, m_scale(0.025f)
+			, m_canvas(1, 1) // any but zero, resised anyway
+			, m_perception(perception_range)
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
 
@@ -62,6 +68,7 @@ namespace px
 					program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
 				});
 
+			// ui font
 			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", ui_cell_height);
 			m_ui.text.vao = vao({ 2, 4, 2 });
 			m_ui.text.shader = program("shaders/ui_text");
@@ -77,6 +84,7 @@ namespace px
 					m_ui.text.font.bind(0);
 				});
 
+			// unit sprites
 			m_sprite.vao = vao({ 4, 4, 2 });
 			m_sprite.shader = program("shaders/sprite");
 			m_sprite.shader.uniform("img", 0); // texture0 + 0
@@ -98,7 +106,7 @@ namespace px
 		{
 		}
 
-		void renderer::render(const ui::canvas& canvas, time_t time)
+		void renderer::render(time_t time)
 		{
 			m_opengl->update(m_width, m_height);
 
@@ -109,11 +117,13 @@ namespace px
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			draw_terrain();
 			draw_sprites();
-			draw_canvas(canvas);
+			draw_canvas(m_canvas);
 
 			m_opengl->swap();
 		}
+
 		void renderer::draw_sprites()
 		{
 			m_sprite.manager.update([this](shell::image &img)
@@ -147,6 +157,7 @@ namespace px
 			m_sprite.vao.fill_indices(size * 2 * 3, m_sprite.index);
 			m_sprite.vao.draw();
 		}
+
 		void renderer::draw_canvas(const ui::canvas& canvas)
 		{
 			// ui
@@ -279,10 +290,26 @@ namespace px
 			m_ui.text.vao.fill_attributes(size * quad, 2, &m_ui.text.texture[0]);
 			m_ui.text.vao.draw();
 		}
+
+		void renderer::draw_terrain()
+		{
+
+		}
+
 		void renderer::scale(double pan)
 		{
 			m_scale *= 1 + pan * zoom_exp;
 			m_scale = (std::max)(zoom_min, (std::min)(m_scale, zoom_max)); // clamp
+		}
+
+		ui::canvas& renderer::canvas()
+		{
+			int w, h;
+			m_opengl->update(w, h);
+			w = (std::max<int>)(1, w / ui_cell_width);
+			h = (std::max<int>)(1, h / ui_cell_height);
+			m_canvas.resize(w, h);
+			return m_canvas;
 		}
 	}
 }

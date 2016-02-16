@@ -7,6 +7,7 @@
 
 #include "stack_panel.h"
 
+#include <px/ui/canvas.h>
 #include <sstream>
 
 namespace px
@@ -132,6 +133,12 @@ namespace px
 		void stack_panel::clear()
 		{
 			m_stack.clear();
+		}
+
+		void stack_panel::output(canvas&c)
+		{
+			layout({ { 0, 0 }, c.range() });
+			draw(c);
 		}
 
 		std::string stack_panel::info() const

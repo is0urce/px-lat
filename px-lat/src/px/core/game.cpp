@@ -12,8 +12,10 @@ namespace px
 {
 	namespace core
 	{
-		game::game(rl::scene* scene, library *l)
-			: m_scene(scene), m_lib(l)
+		game::game(shell::perception* perception, library *l)
+			: m_scene(std::make_unique<rl::scene>())
+			, m_lib(l)
+			, m_perception(perception)
 		{
 		}
 		game::~game()

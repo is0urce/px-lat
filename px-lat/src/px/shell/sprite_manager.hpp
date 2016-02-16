@@ -30,18 +30,15 @@ namespace px
 			}
 		}
 
-		class sprite_component;
-		class body_component;
-
 		class sprite_component
 			: public shell::image
-			, public es::component_link<es::location_component>
+			, public es::component_link<rl::location>
 			, public es::component_link<sprite_component>
 			, public es::component
 		{
 			// lookup ambiguity define
 		public:
-			using es::component_link<es::location_component>::link;
+			using es::component_link<rl::location>::link;
 			using es::component_link<sprite_component>::link;
 
 		public:
@@ -92,7 +89,7 @@ namespace px
 				update([&](sprite_component &sprite)
 				{
 					// vertex coordinates
-					auto* location = (es::location_component*)sprite;
+					auto* location = (rl::location*)sprite;
 					if (!location) throw std::runtime_error("sprite_manager::update - location link is null");
 					auto x = location->x();
 					auto y = location->y();

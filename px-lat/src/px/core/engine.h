@@ -14,28 +14,20 @@
 #define PX_CORE_ENGINE_H
 
 #include <px/point.hpp>
-
 #include <px/key.h>
+#include <px/timer.h>
+
+#include <px/ui/stack_panel.h>
 
 #include <memory>
 
 namespace px
 {
-	class timer;
-	namespace ui
-	{
-		class canvas;
-		class stack_panel;
-	}
 	namespace shell
 	{
 		class opengl;
 		class renderer;
 		class fps_counter;
-	}
-	namespace rl
-	{
-		class scene;
 	}
 	namespace core
 	{
@@ -48,15 +40,13 @@ namespace px
 			shell::opengl* m_ogl;
 
 			std::shared_ptr<ui::stack_panel> m_ui;
-			std::unique_ptr<ui::canvas> m_canvas;
 
-			std::unique_ptr<rl::scene> m_scene;
 			std::unique_ptr<shell::renderer> m_renderer;
 			std::unique_ptr<game> m_game;
 			std::unique_ptr<library> m_lib;
 
 			// environment
-			std::unique_ptr<timer> m_timer;
+			timer m_timer;
 			std::unique_ptr<shell::fps_counter> m_performance;
 			bool m_shutdown;
 

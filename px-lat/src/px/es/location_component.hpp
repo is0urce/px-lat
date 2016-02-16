@@ -10,34 +10,14 @@
 #include <px/es/component_manager.hpp>
 #include <px/es/component_link.hpp>
 
-#include <px/point.hpp>
+#include <px/rl/location.hpp>
 
 namespace px
 {
 	namespace es
 	{
-		struct location
-		{
-			point m_position;
-			bool transparent;
-			bool blocking;
-
-			const point& position() const
-			{
-				return m_position;
-			}
-			int x() const
-			{
-				return m_position.X;
-			}
-			int y() const
-			{
-				return m_position.Y;
-			}
-		};
-
 		class location_component
-			: public location
+			: public rl::location
 			, public es::component
 		{
 		public:

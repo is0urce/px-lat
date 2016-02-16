@@ -62,6 +62,7 @@ namespace px
 			panel_ptr at(const panel_id &name_tag);
 			void layout(rectangle bounds);
 			void layout();
+			void output(canvas&); // layout to canvas size and draw
 			rectangle bounds() const;
 			void clear();
 			std::string info() const;

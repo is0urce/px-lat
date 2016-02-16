@@ -8,6 +8,7 @@
 
 #include <px/rl/tile_base.hpp>
 #include <px/rl/traverse.hpp>
+#include <px/shell/image.h>
 
 namespace px
 {
@@ -15,7 +16,14 @@ namespace px
 	{
 		class tile : public tile_base<(unsigned int)traverse::max_value>
 		{
+		private:
+			shell::image m_image;
 
+		public:
+			const shell::image& sprite() const
+			{
+				return m_image;
+			}
 		};
 	}
 }

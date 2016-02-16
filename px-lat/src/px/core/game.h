@@ -6,10 +6,14 @@
 #ifndef PX_CORE_GAME_H
 #define PX_CORE_GAME_H
 
-#include <px/point.hpp>
 #include <px/core/game_control.hpp>
 #include <px/core/library.h>
+
 #include <px/es/unit.h>
+#include <px/shell/perception.h>
+#include <px/rl/scene.h>
+
+#include <px/point.hpp>
 
 #include <list>
 #include <memory>
@@ -17,24 +21,21 @@
 
 namespace px
 {
-	namespace rl
-	{
-		class scene;
-	}
 	namespace core
 	{
 		class game : public game_control<game>
 		{
 		private:
 			std::list<es::unit::ptr> m_units;
-			rl::scene *m_scene;
+			std::unique_ptr<rl::scene> m_scene;
+			shell::perception* m_perception;
 			library *m_lib;
 
 			es::unit *m_player;
 			es::location_manager::element *m_pos;
 
 		public:
-			game(rl::scene* scene, library* lib);
+			game(shell::perception* perception, library* lib);
 			virtual ~game();
 
 		public:

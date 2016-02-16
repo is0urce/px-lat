@@ -89,7 +89,6 @@ namespace px
 		point::component size() const { return m_width * m_height; };
 		point range() const { return point(m_width, m_height); }
 
-		//const point& range() const { return m_range; };
 		bool contains(const point &position) const
 		{
 			return position.X >= 0 && position.Y >= 0 && position.X < m_width && position.Y < m_height;

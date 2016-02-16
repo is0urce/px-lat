@@ -12,6 +12,8 @@
 #include <px/shell/font_texture.h>
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
+
+#include <px/shell/perception.h>
 #include <px/shell/sprite_manager.hpp>
 
 #include <px/ui/canvas.h>
@@ -40,6 +42,8 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
+			ui::canvas m_canvas;
+			perception m_perception;
 
 			// ui rendering
 			// buffers cashed due constant canvas size
@@ -82,13 +86,15 @@ namespace px
 			virtual ~renderer();
 
 		public:
-			void render(const ui::canvas& gui, time_t time);
+			void render(time_t time);
 			sprite_manager* sprite_manager() { return &m_sprite.manager; }
+			ui::canvas& canvas();
 			void scale(double delta);
 
 		private:
 			void draw_canvas(const ui::canvas& gui);
 			void draw_sprites();
+			void draw_terrain();
 		};
 	}
 }

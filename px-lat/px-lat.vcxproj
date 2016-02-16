@@ -113,6 +113,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\es\location_component.hpp" />
     <ClInclude Include="src\px\es\unit.h" />
     <ClInclude Include="src\px\qtree.hpp" />
+    <ClInclude Include="src\px\rl\location.hpp" />
     <ClInclude Include="src\px\rl\tile.hpp" />
     <ClInclude Include="src\px\rl\tile_base.hpp" />
     <ClInclude Include="src\px\rl\traverse.hpp" />
@@ -127,12 +128,13 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\shell\image.h" />
     <ClInclude Include="src\px\shell\key_bingings.hpp" />
     <ClInclude Include="src\px\shell\opengl.h" />
+    <ClInclude Include="src\px\shell\perception.h" />
     <ClInclude Include="src\px\shell\program.h" />
     <ClInclude Include="src\px\shell\renderer.h" />
     <ClInclude Include="src\px\rl\iscene.hpp" />
     <ClInclude Include="src\px\rl\scene.h" />
     <ClInclude Include="src\px\shell\sprite_manager.hpp" />
-    <ClInclude Include="src\px\shell\timer.h" />
+    <ClInclude Include="src\px\timer.h" />
     <ClInclude Include="src\px\shell\vao.h" />
     <ClInclude Include="src\px\shell\wingl.h" />
     <ClInclude Include="src\px-lat.h" />
@@ -159,6 +161,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClCompile Include="src\px\shell\font.cpp" />
     <ClCompile Include="src\px\core\game.cpp" />
     <ClCompile Include="src\px\shell\opengl.cpp" />
+    <ClCompile Include="src\px\shell\perception.cpp" />
     <ClCompile Include="src\px\shell\renderer.cpp" />
     <ClCompile Include="src\px\rl\scene.cpp" />
     <ClCompile Include="src\px\shell\wingl.cpp" />

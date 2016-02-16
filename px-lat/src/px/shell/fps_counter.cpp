@@ -5,7 +5,7 @@
 
 #include "fps_counter.h"
 
-#include <px/shell/timer.h>
+#include <px/timer.h>
 
 namespace
 {
