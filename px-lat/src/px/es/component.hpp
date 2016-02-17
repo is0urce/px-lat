@@ -30,7 +30,7 @@ namespace px
 			bool m_enabled;
 
 		public:
-			component()
+			component() : m_enabled(false)
 			{
 			}
 			virtual ~component()
@@ -74,6 +74,7 @@ namespace px
 
 			void destroy()
 			{
+				disable();
 				if (m_del)
 				{
 					m_del();

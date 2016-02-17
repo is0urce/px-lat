@@ -3,14 +3,13 @@
 // desc: class definition
 // auth: is0urce
 
-#ifndef PX_ES_LOCATION_COMPONENT_H
-#define PX_ES_LOCATION_COMPONENT_H
+#ifndef PX_RL_LOCATION_COMPONENT_H
+#define PX_RL_LOCATION_COMPONENT_H
 
 #include <px/es/component.hpp>
 #include <px/es/component_manager.hpp>
 #include <px/es/component_link.hpp>
 
-#include <px/rl/location_component.hpp>
 #include <px/qtree.hpp>
 
 namespace px

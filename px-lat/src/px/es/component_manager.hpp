@@ -173,7 +173,7 @@ namespace px
 
 				// component management setup
 				_C &result = b[index];
-				result.disable();
+
 				result.bind(nullptr);
 				result.manage([this, k = key(it, index)](){ destroy(k); });
 
