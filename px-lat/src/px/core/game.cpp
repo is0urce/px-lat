@@ -34,7 +34,7 @@ namespace px
 			auto destination = m_pos->position() + move;
 			if (m_scene->traversable(destination, rl::traverse::walk))
 			{
-				m_scene->move(m_pos, destination);
+				m_pos->move(destination);
 			}
 			return true;
 		}
@@ -54,6 +54,7 @@ namespace px
 			auto img = m_lib->make_image('@');
 			auto pos = m_scene->make_location({ 3,3 });
 			img->tint = 0xffff00;
+			pos->blocking(true);
 
 			img->link(pos);
 			u->add(img);
@@ -64,6 +65,20 @@ namespace px
 
 			m_pos = pos.get();
 			m_player = u.get();
+
+			u = std::make_shared<es::unit>();
+
+			img = m_lib->make_image('g');
+			pos = m_scene->make_location({ 5,5 });
+			pos->blocking(true);
+			img->tint = 0xff0000;
+
+			img->link(pos);
+			u->add(img);
+			u->add(pos);
+
+			u->enable();
+			m_units.push_back(u);
 		}
 	}
 }

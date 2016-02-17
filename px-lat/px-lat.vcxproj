@@ -110,10 +110,9 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\es\component.hpp" />
     <ClInclude Include="src\px\es\component_link.hpp" />
     <ClInclude Include="src\px\es\component_manager.hpp" />
-    <ClInclude Include="src\px\es\location_component.hpp" />
+    <ClInclude Include="src\px\rl\location_component.hpp" />
     <ClInclude Include="src\px\es\unit.h" />
     <ClInclude Include="src\px\qtree.hpp" />
-    <ClInclude Include="src\px\rl\location.hpp" />
     <ClInclude Include="src\px\rl\tile.hpp" />
     <ClInclude Include="src\px\rl\tile_base.hpp" />
     <ClInclude Include="src\px\rl\traverse.hpp" />

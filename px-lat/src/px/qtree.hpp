@@ -11,6 +11,8 @@
 #include <functional>
 #include <stdexcept>
 
+#include <px/point.hpp>
+
 namespace px
 {
 	template<typename _E>

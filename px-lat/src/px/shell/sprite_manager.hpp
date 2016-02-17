@@ -9,7 +9,7 @@
 #include <px/es/component.hpp>
 #include <px/es/component_manager.hpp>
 #include <px/es/component_link.hpp>
-#include <px/es/location_component.hpp>
+#include <px/rl/location_component.hpp>
 #include <px/shell/image.h>
 
 namespace px
@@ -32,13 +32,13 @@ namespace px
 
 		class sprite_component
 			: public shell::image
-			, public es::component_link<rl::location>
+			, public es::component_link<rl::location_component>
 			, public es::component_link<sprite_component>
 			, public es::component
 		{
 			// lookup ambiguity define
 		public:
-			using es::component_link<rl::location>::link;
+			using es::component_link<rl::location_component>::link;
 			using es::component_link<sprite_component>::link;
 
 		public:
@@ -89,7 +89,7 @@ namespace px
 				update([&](sprite_component &sprite)
 				{
 					// vertex coordinates
-					auto* location = (rl::location*)sprite;
+					auto* location = (rl::location_component*)sprite;
 					if (!location) throw std::runtime_error("sprite_manager::update - location link is null");
 					auto x = location->x();
 					auto y = location->y();

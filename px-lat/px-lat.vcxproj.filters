@@ -158,16 +158,13 @@
     <ClInclude Include="src\px\qtree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\es\location_component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\px\rl\location.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\px\shell\perception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\px\rl\location_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -32,7 +32,7 @@ namespace px
 			library *m_lib;
 
 			es::unit *m_player;
-			es::location_manager::element *m_pos;
+			rl::location_manager::element *m_pos;
 
 		public:
 			game(shell::perception* perception, library* lib);

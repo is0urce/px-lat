@@ -7,7 +7,7 @@
 #define PX_RL_SCENE_H
 
 #include <px/es/unit.h>
-#include <px/es/location_component.hpp>
+#include <px/rl/location_component.hpp>
 
 #include <px/rl/tile.hpp>
 
@@ -26,8 +26,8 @@ namespace px
 		private:
 			map<tile> m_map;
 			tile m_default;
-			qtree<es::location_manager::element*> m_graph;
-			es::location_manager m_locations;
+			qtree<location_manager::element*> m_graph;
+			location_manager m_locations;
 			point m_focus;
 
 		public:
@@ -46,9 +46,9 @@ namespace px
 			bool transparent(const point &point)
 			{
 				bool block = false;
-				m_graph.find(point.X, point.Y, 0, [&block](int x, int y, es::location_component* l)
+				m_graph.find(point.X, point.Y, 0, [&block](int x, int y, rl::location_component* l)
 				{
-					block &= l && !l->transparent;
+					block &= l && l->enabled() && !l->transparent();
 					return !block;
 				});
 				return !block && select(point).transparent();
@@ -56,28 +56,20 @@ namespace px
 			bool traversable(const point &point, traverse layer)
 			{
 				bool block = false;
-				m_graph.find(point.X, point.Y, 0, [&block](int x, int y, es::location_component* l)
+				m_graph.find(point.X, point.Y, 0, [&block](int x, int y, location_component* l)
 				{
-					block &= l && l->blocking;
+					block |= l && l->enabled() && l->blocking();
 					return !block;
 				});
 				return !block && select(point).traversable(layer);
 			}
-			std::shared_ptr<es::location_manager::element> make_location(point position)
+			std::shared_ptr<location_manager::element> make_location(point position)
 			{
 				auto result = m_locations.make_shared();
-				result->m_position = position;
-				m_graph.add(position, result.get());
+				result->move(position);
+				result->space(&m_graph);
+
 				return result;
-			}
-			void move(es::location_manager::element* e, point destination)
-			{
-				m_graph.move(e->m_position, e, destination);
-				e->m_position = destination;
-			}
-			void remove(es::location_manager::element* e)
-			{
-				m_graph.remove(e->m_position, e);
 			}
 		};
 	}

@@ -23,6 +23,7 @@ namespace px
 		{
 		private:
 			typedef std::function<void()> del_fn;
+
 		private:
 			del_fn m_del;
 			unit* m_unit;
@@ -36,6 +37,14 @@ namespace px
 			{
 			}
 
+		protected:
+			virtual void enable_component()
+			{
+			}
+			virtual void disable_component()
+			{
+			}
+
 		public:
 			bool enabled() const
 			{
@@ -43,12 +52,21 @@ namespace px
 			}
 			void enable()
 			{
-				m_enabled = true;
+				if (!m_enabled)
+				{
+					m_enabled = true;
+					enable_component();
+				}
 			}
 			void disable()
 			{
-				m_enabled = false;
+				if (m_enabled)
+				{
+					m_enabled = false;
+					disable_component();
+				}
 			}
+
 			void destroy()
 			{
 				if (m_del)
