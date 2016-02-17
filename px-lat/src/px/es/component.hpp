@@ -66,6 +66,11 @@ namespace px
 					disable_component();
 				}
 			}
+			void reactivate()
+			{
+				disable();
+				enable();
+			}
 
 			void destroy()
 			{

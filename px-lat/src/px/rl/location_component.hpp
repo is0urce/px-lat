@@ -103,6 +103,11 @@ namespace px
 			virtual ~location_manager()
 			{
 			}
+		protected:
+			virtual void component_created(element* e) override
+			{
+				e->space(nullptr);
+			}
 		};
 	}
 }
