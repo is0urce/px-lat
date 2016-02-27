@@ -103,6 +103,8 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\json.hpp" />
+    <ClInclude Include="src\lodepng.h" />
     <ClInclude Include="src\px\color.hpp" />
     <ClInclude Include="src\px\control.h" />
     <ClInclude Include="src\px\core\game_control.hpp" />
@@ -154,6 +156,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\lodepng.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />
     <ClCompile Include="src\px\shell\fps_counter.cpp" />
     <ClCompile Include="src\px\core\engine.cpp" />

@@ -61,6 +61,19 @@ namespace px
 
 			void space(qtree<location_component*> *scene)
 			{
+				// hot swap
+				if (enabled() && (m_space != scene))
+				{
+					if (m_space)
+					{
+						m_space->remove(m_position, this);
+					}
+					if (scene)
+					{
+						scene->add(m_position, this);
+					}
+				}
+
 				m_space = scene;
 			}
 			const point& position() const

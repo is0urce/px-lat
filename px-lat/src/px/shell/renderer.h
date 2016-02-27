@@ -46,20 +46,20 @@ namespace px
 			perception m_perception;
 
 			// ui rendering
-			// buffers cashed due constant canvas size
 			struct ui_draw
 			{
 			public:
+				// buffers cashed due constant canvas size
 				int width;
 				int height;
-				struct
+				struct background_draw
 				{
 					vao vao;
 					program shader;
 					std::vector<GLfloat> vertices;
 					std::vector<GLfloat> colors;
 				} bg;
-				struct
+				struct symbol_draw
 				{
 					vao vao;
 					program shader;
@@ -71,6 +71,8 @@ namespace px
 				std::vector<GLuint> indices; // indices are shared
 				float scale_x, scale_y, offset_x, offset_y; // uniform values
 			} m_ui;
+
+			// unit sprites
 			struct sprite_draw
 			{
 			public:
@@ -80,6 +82,17 @@ namespace px
 				GLfloat *vertices, *colors, *texture;
 				GLuint* index;
 			} m_sprite;
+
+			// terrain tiles
+			struct tile_draw
+			{
+			public:
+				vao vao;
+				program shader;
+				std::vector<GLfloat> vertices;
+				std::vector<GLfloat> colors; // lights and tints
+				std::vector<GLfloat> texture;
+			};
 
 		public:
 			renderer(opengl *opengl);
