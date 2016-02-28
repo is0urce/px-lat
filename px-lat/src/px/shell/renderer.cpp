@@ -94,6 +94,10 @@ namespace px
 					program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
 				});
 
+			// tiles
+			m_tile.vao = vao({ 4, 4, 2 });
+			m_sprite.shader = program("shaders/tile");
+
 			// opengl setup
 			glEnable(GL_TEXTURE_2D);
 

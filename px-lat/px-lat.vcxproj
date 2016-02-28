@@ -196,6 +196,8 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
   <ItemGroup>
     <None Include="config\common\shaders\sprite.frag" />
     <None Include="config\common\shaders\sprite.vert" />
+    <None Include="config\common\shaders\tile.frag" />
+    <None Include="config\common\shaders\tile.vert" />
     <None Include="config\common\shaders\ui_bg.frag" />
     <None Include="config\common\shaders\ui_bg.vert" />
     <None Include="config\common\shaders\ui_text.frag" />

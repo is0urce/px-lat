@@ -92,7 +92,7 @@ namespace px
 				std::vector<GLfloat> vertices;
 				std::vector<GLfloat> colors; // lights and tints
 				std::vector<GLfloat> texture;
-			};
+			} m_tile;
 
 		public:
 			renderer(opengl *opengl);
