@@ -124,7 +124,7 @@ namespace px
 		{
 			memory[0] = (_M)X;
 			memory[1] = (_M)Y;
-			mempry[2] = (_M)Z;
+			memory[2] = (_M)Z;
 		}
 		void write3(component *memory) const
 		{

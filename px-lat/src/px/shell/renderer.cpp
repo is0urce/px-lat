@@ -22,14 +22,27 @@ namespace px
 	{
 		const unsigned int quad = 4; // four vertices for quad
 		const unsigned int strip = 6; // six indices for 2-triangles
+		const unsigned int texture_depth = 2;
+		const unsigned int vertex_depth = 4;
+		const unsigned int color_depth = 4;
 
 		const double zoom_exp = 1.0 / 1000;
 		const double zoom_min = 0.01;
 		const double zoom_max = 10000;
 
 		const unsigned int perception_reach = 7;
-		const point perception_range(perception_reach * 2 + 1, perception_reach * 2 + 1);
+		const unsigned int perception_width = perception_reach * 2 + 1;
+		const unsigned int perception_height = perception_width;
+		const unsigned int perception_size = perception_width * perception_height;
+		const point perception_range(perception_width, perception_height);
 
+		void fill_vertex(const vector &position, const vector &quad_range, GLfloat *dest)
+		{
+			(position + vector(-0.5, -0.5) * quad_range).write2(dest + 0 * vertex_depth);
+			(position + vector(-0.5, 0.5) * quad_range).write2(dest + 1 * vertex_depth);
+			(position + vector(0.5, 0.5) * quad_range).write2(dest + 2 * vertex_depth);
+			(position + vector(0.5, -0.5) * quad_range).write2(dest + 3 * vertex_depth);
+		}
 		void fill_color(const color &c, GLfloat *dest)
 		{
 			c.write(dest, quad);
@@ -45,6 +58,21 @@ namespace px
 			dest[6] = right;
 			dest[7] = bottom;
 		}
+		inline void fill_index(unsigned int num, GLuint *dest)
+		{
+			unsigned int index_offset = 0;
+			for (unsigned int i = 0; i < num; ++i)
+			{
+				dest[index_offset + 0] = i * quad + 0;
+				dest[index_offset + 1] = i * quad + 2;
+				dest[index_offset + 2] = i * quad + 1;
+				dest[index_offset + 3] = i * quad + 0;
+				dest[index_offset + 4] = i * quad + 3;
+				dest[index_offset + 5] = i * quad + 2;
+				index_offset += strip;
+			}
+		}
+
 	}
 	namespace shell
 	{
@@ -56,17 +84,41 @@ namespace px
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
 
-			// ui draw setup
+			// tiles
+			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
+			m_tile.vertices.resize(perception_size * vertex_depth * quad, 0);
+			m_tile.colors.resize(perception_size * color_depth * quad);
+			m_tile.textcoords.resize(perception_size * texture_depth * quad);
+			m_tile.indices.resize(perception_size * strip);
+			m_tile.shader = program("shaders/tile");
+			m_tile.shader.uniform("img", 0);
+			m_tile.shader.prepare([this, scale = m_tile.shader.uniform("scale")]()
+			{
+				m_tile.sheet.bind(0);
+				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
+			});
+
+			// unit sprites
+			m_sprite.vao = vao({ vertex_depth, color_depth, texture_depth });
+			m_sprite.shader = program("shaders/sprite");
+			m_sprite.shader.uniform("img", 0); // texture0 + 0
+			m_sprite.shader.prepare([this, scale = m_sprite.shader.uniform("scale")]()
+			{
+				m_ui.text.font.bind(0);
+				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
+			});
+
+			// ui background
 			m_ui.bg.vao = vao({ 2, 4 });
 			m_ui.bg.shader = program("shaders/ui_bg");
 			m_ui.bg.shader.prepare([this
 				, scale = m_ui.bg.shader.uniform("scale")
 				, offset = m_ui.bg.shader.uniform("offset")
-				]()
-				{
-					program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-					program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-				});
+			]()
+			{
+				program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+				program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+			});
 
 			// ui font
 			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", ui_cell_height);
@@ -77,26 +129,12 @@ namespace px
 			m_ui.text.shader.prepare([this
 				, scale = m_ui.text.shader.uniform("scale")
 				, offset = m_ui.text.shader.uniform("offset")
-				]()
-				{
-					program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-					program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
-					m_ui.text.font.bind(0);
-				});
-
-			// unit sprites
-			m_sprite.vao = vao({ 4, 4, 2 });
-			m_sprite.shader = program("shaders/sprite");
-			m_sprite.shader.uniform("img", 0); // texture0 + 0
-			m_sprite.shader.prepare([this, scale=m_sprite.shader.uniform("scale")]()
-				{
-					m_ui.text.font.bind(0);
-					program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
-				});
-
-			// tiles
-			m_tile.vao = vao({ 4, 4, 2 });
-			m_sprite.shader = program("shaders/tile");
+			]()
+			{
+				program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
+				program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+				m_ui.text.font.bind(0);
+			});
 
 			// opengl setup
 			glEnable(GL_TEXTURE_2D);
@@ -126,6 +164,42 @@ namespace px
 			draw_canvas(m_canvas);
 
 			m_opengl->swap();
+		}
+
+		void renderer::draw_terrain()
+		{
+			// setup states
+			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			unsigned int vertex_offset = 0;
+			unsigned int color_offset = 0;
+			unsigned int texture_offset = 0;
+			point tile_size(1, 1);
+			rectangle({ 0, 0 }, perception_range).enumerate([&](const point& position)
+			{
+				auto tile = m_perception.ground(position);
+
+				fill_vertex(position, tile_size, &m_tile.vertices[vertex_offset]);
+				fill_color(tile.tint, &m_tile.colors[color_offset]);
+				fill_texture(tile.left, tile.bottom, tile.right, tile.top, &m_tile.textcoords[texture_offset]);
+
+				vertex_offset += vertex_depth * quad;
+				color_offset += color_depth * quad;
+				texture_offset += texture_depth * quad;
+			});
+
+			fill_index(perception_size, &m_tile.indices[0]);
+
+			// update vao and draw
+			m_tile.shader.use();
+			m_tile.vao.fill_attributes(perception_size * quad * vertex_depth, 0, &m_tile.vertices[0]);
+			m_tile.vao.fill_attributes(perception_size * quad * color_depth, 1, &m_tile.colors[0]);
+			m_tile.vao.fill_attributes(perception_size * quad * texture_depth, 2, &m_tile.textcoords[0]);
+			m_tile.vao.fill_indices(perception_size * strip, &m_tile.indices[0]);
+
+			m_tile.vao.draw();
 		}
 
 		void renderer::draw_sprites()
@@ -210,21 +284,7 @@ namespace px
 					}
 				}
 
-				// cahse indices
-				unsigned int attribute_offset = 0;
-				unsigned int indice_offset = 0;
-				for (int i = 0; i < size; ++i)
-				{
-					m_ui.indices[indice_offset + 0] = attribute_offset + 0;
-					m_ui.indices[indice_offset + 1] = attribute_offset + 2;
-					m_ui.indices[indice_offset + 2] = attribute_offset + 1;
-					m_ui.indices[indice_offset + 3] = attribute_offset + 0;
-					m_ui.indices[indice_offset + 4] = attribute_offset + 3;
-					m_ui.indices[indice_offset + 5] = attribute_offset + 2;
-
-					attribute_offset += quad;
-					indice_offset += strip;
-				}
+				fill_index(size, &m_ui.indices[0]);
 
 				// fill cashed parts
 				m_ui.bg.vao.fill_attributes(size * quad, 0, &m_ui.bg.vertices[0]);
@@ -293,11 +353,6 @@ namespace px
 			m_ui.text.vao.fill_attributes(size * quad, 1, &m_ui.text.colors[0]);
 			m_ui.text.vao.fill_attributes(size * quad, 2, &m_ui.text.texture[0]);
 			m_ui.text.vao.draw();
-		}
-
-		void renderer::draw_terrain()
-		{
-
 		}
 
 		void renderer::scale(double pan)

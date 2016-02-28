@@ -8,10 +8,10 @@
 #ifndef PX_SHELL_RENDERER_H
 #define PX_SHELL_RENDERER_H
 
-#include <px/shell/font.h>
-#include <px/shell/font_texture.h>
 #include <px/shell/vao.h>
 #include <px/shell/program.h>
+#include <px/shell/texture.h>
+#include <px/shell/font_texture.h>
 
 #include <px/shell/perception.h>
 #include <px/shell/sprite_manager.hpp>
@@ -87,11 +87,13 @@ namespace px
 			struct tile_draw
 			{
 			public:
+				texture sheet;
 				vao vao;
-				program shader;
 				std::vector<GLfloat> vertices;
 				std::vector<GLfloat> colors; // lights and tints
-				std::vector<GLfloat> texture;
+				std::vector<GLfloat> textcoords;
+				std::vector<GLuint> indices;
+				program shader;
 			} m_tile;
 
 		public:

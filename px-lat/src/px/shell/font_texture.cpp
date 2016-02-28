@@ -109,11 +109,11 @@ namespace px
 			}
 		}
 
-		font_texture::texture_id font_texture::last_texture() const
+		font_texture::texture_t font_texture::last_texture() const
 		{
 			return m_texture;
 		}
-		font_texture::texture_id font_texture::texture()
+		font_texture::texture_t font_texture::texture_id()
 		{
 			update();
 			return m_texture;
@@ -121,7 +121,7 @@ namespace px
 		void font_texture::bind(unsigned int texure0_plus)
 		{
 			glActiveTexture(GL_TEXTURE0 + texure0_plus);
-			glBindTexture(GL_TEXTURE_2D, texture());
+			glBindTexture(GL_TEXTURE_2D, texture_id());
 		}
 	}
 }

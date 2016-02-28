@@ -19,10 +19,10 @@ namespace px
 		class font;
 		class font_texture final
 		{
-			typedef GLuint texture_id;
+			typedef GLuint texture_t;
 
 		private:
-			texture_id m_texture;
+			texture_t m_texture;
 			std::shared_ptr<font> m_font;
 			unsigned int m_version;
 
@@ -41,8 +41,8 @@ namespace px
 			void swap(font_texture &other);
 			void update();
 			void update(bool force);
-			texture_id last_texture() const;
-			texture_id texture();
+			texture_t last_texture() const;
+			texture_t texture_id();
 			void bind(unsigned int texure0_plus);
 
 			font_texture& operator=(font_texture other);
