@@ -92,9 +92,6 @@
     <ClInclude Include="src\px\core\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\px\rl\iscene.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\px\rl\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>

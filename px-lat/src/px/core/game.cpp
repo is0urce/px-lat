@@ -63,8 +63,7 @@ namespace px
 				{
 					shell::image img;
 					bool tile = m_scene->transparent(range_point + start);
-					//img.tint = tile ? color(1, 1, 0) : color(0, 0, 0.5);
-					img.tint = 0xffffff;
+					img.tint = color(1, 1, 1);
 					m_perception->ground(range_point, img);
 				});
 			}
