@@ -16,6 +16,9 @@
 #include <cmath>
 #include <functional>
 
+#include <json.hpp>
+#include <lodepng.h>
+
 namespace px
 {
 	namespace
@@ -78,11 +81,17 @@ namespace px
 	{
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
-			, m_scale(0.025f)
+			, m_scale(0.05f)
 			, m_canvas(1, 1) // any but zero, resised anyway
 			, m_perception(perception_range)
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
+
+			// opengl setup
+			glEnable(GL_TEXTURE_2D);
+			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE); // don't clamp hdr
+			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
+			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
 			// tiles
 			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -94,9 +103,16 @@ namespace px
 			m_tile.shader.uniform("img", 0);
 			m_tile.shader.prepare([this, scale = m_tile.shader.uniform("scale")]()
 			{
-				m_tile.sheet.bind(0);
+				//m_tile.sheet.bind(0);
+				//m_ui.text.font.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
+				glBindTexture(GL_TEXTURE_2D, m_tile.sheet.texture_id());
 			});
+			std::vector<unsigned char> image; //the raw pixels
+			unsigned width, height;
+			unsigned error = lodepng::decode(image, width, height, "textures/wall.png");
+			if (error) throw std::runtime_error("renderer::renderer - can't read file");
+			m_tile.sheet.init(width, height, 8, &image[0]);
 
 			// unit sprites
 			m_sprite.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -109,7 +125,7 @@ namespace px
 			});
 
 			// ui background
-			m_ui.bg.vao = vao({ 2, 4 });
+			m_ui.bg.vao = vao({ 2, color_depth });
 			m_ui.bg.shader = program("shaders/ui_bg");
 			m_ui.bg.shader.prepare([this
 				, scale = m_ui.bg.shader.uniform("scale")
@@ -122,7 +138,7 @@ namespace px
 
 			// ui font
 			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", ui_cell_height);
-			m_ui.text.vao = vao({ 2, 4, 2 });
+			m_ui.text.vao = vao({ 2, color_depth, texture_depth });
 			m_ui.text.shader = program("shaders/ui_text");
 			m_ui.text.shader.activate();
 			m_ui.text.shader.uniform("font", 0);
@@ -135,14 +151,6 @@ namespace px
 				program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
 				m_ui.text.font.bind(0);
 			});
-
-			// opengl setup
-			glEnable(GL_TEXTURE_2D);
-
-			// dont clamp hdr
-			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE);
-			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
-			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 		}
 		renderer::~renderer()
 		{
@@ -183,7 +191,16 @@ namespace px
 
 				fill_vertex(position, tile_size, &m_tile.vertices[vertex_offset]);
 				fill_color(tile.tint, &m_tile.colors[color_offset]);
-				fill_texture(tile.left, tile.bottom, tile.right, tile.top, &m_tile.textcoords[texture_offset]);
+				fill_texture(0, 0, 1, 1, &m_tile.textcoords[texture_offset]);
+				//fill_texture(tile.left, tile.bottom, tile.right, tile.top, &m_tile.textcoords[texture_offset]);
+				//m_tile.textcoords[texture_offset + 0] = 0;
+				//m_tile.textcoords[texture_offset + 1] = 0;
+				//m_tile.textcoords[texture_offset + 2] = 0;
+				//m_tile.textcoords[texture_offset + 3] = 1;
+				//m_tile.textcoords[texture_offset + 4] = 1;
+				//m_tile.textcoords[texture_offset + 5] = 1;
+				//m_tile.textcoords[texture_offset + 6] = 1;
+				//m_tile.textcoords[texture_offset + 7] = 0;
 
 				vertex_offset += vertex_depth * quad;
 				color_offset += color_depth * quad;
@@ -280,7 +297,7 @@ namespace px
 						m_ui.bg.vertices[offset + 6] = (GLfloat)dx;
 						m_ui.bg.vertices[offset + 7] = (GLfloat)y;
 
-						offset += 2 * quad;
+						offset += texture_depth * quad;
 					}
 				}
 
@@ -325,9 +342,9 @@ namespace px
 					// textures
 					fill_texture((GLfloat)g.left, (GLfloat)g.bottom, (GLfloat)g.right, (GLfloat)g.top, &m_ui.text.texture[texture_offset]);
 
-					color_offset += 4 * quad;
 					vertex_offset += 2 * quad;
-					texture_offset += 2 * quad;
+					color_offset += color_depth * quad;
+					texture_offset += texture_depth * quad;
 				}
 			}
 

@@ -47,6 +47,9 @@ namespace px
 			bool use(unsigned int slot, const point &position);
 			bool activate(point position, unsigned int button);
 
+			// loop
+			void turn();
+
 			void start();
 		};
 	}

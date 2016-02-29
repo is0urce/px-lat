@@ -93,8 +93,8 @@ namespace px
 					if (!location) throw std::runtime_error("sprite_manager::update - location link is null");
 					auto x = location->x();
 					auto y = location->y();
-					auto horisontal = sprite.width;
-					auto vertical = sprite.height;
+					auto horisontal = sprite.width / 2;
+					auto vertical = sprite.height / 2;
 
 					m_vertice[vertex_offset + 0] = x - horisontal;
 					m_vertice[vertex_offset + 1] = y - vertical;

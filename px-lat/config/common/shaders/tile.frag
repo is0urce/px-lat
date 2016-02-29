@@ -8,5 +8,5 @@ uniform sampler2D img;
 
 void main()
 {
-	outputColor = vec4(theColor.rgb, theColor.a * texture(img, theTexture.xy).r);
+	outputColor = texture(img, theTexture.xy) * theColor;
 }

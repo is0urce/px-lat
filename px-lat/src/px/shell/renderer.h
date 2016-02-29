@@ -102,9 +102,10 @@ namespace px
 
 		public:
 			void render(time_t time);
-			sprite_manager* sprite_manager() { return &m_sprite.manager; }
-			ui::canvas& canvas();
 			void scale(double delta);
+			ui::canvas& canvas();
+			sprite_manager* sprite_manager() { return &m_sprite.manager; }
+			perception* perception() { return &m_perception; }
 
 		private:
 			void draw_canvas(const ui::canvas& gui);
