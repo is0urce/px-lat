@@ -43,6 +43,7 @@ namespace px
 			int m_width, m_height;
 			double m_aspect;
 			double m_scale;
+			unsigned int m_pixel_scale;
 			ui::canvas m_canvas;
 			perception m_perception;
 

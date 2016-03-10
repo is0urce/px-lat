@@ -80,7 +80,7 @@ namespace px
 	{
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
-			, m_scale(0.05f)
+			, m_scale(0.05f), m_pixel_scale(1)
 			, m_canvas(1, 1) // any but zero, resised anyway
 			, m_perception(perception_range)
 		{
@@ -94,6 +94,9 @@ namespace px
 
 			// textures
 			m_tile.images.init("textures/img.json", 0);
+			glBindTexture(GL_TEXTURE_2D, m_tile.sheet.texture_id());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 			// tiles
 			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -161,7 +164,7 @@ namespace px
 		void renderer::render(time_t time)
 		{
 			m_opengl->update(m_width, m_height);
-			pixel_clip(32, 2);
+			pixel_clip(32, m_pixel_scale);
 
 			m_aspect = m_width;
 			m_aspect /= m_height;
@@ -219,7 +222,7 @@ namespace px
 		{
 			m_sprite.manager.update([this](shell::image &img)
 			{
-				auto uplus = img.alternative_ascii;
+				auto uplus = img.alternative_glyph;
 				if (uplus != 0)
 				{
 					auto &g = m_ui.text.font->at(uplus);
@@ -372,10 +375,13 @@ namespace px
 		{
 			m_scale *= 1 + pan * zoom_exp;
 			m_scale = (std::max)(zoom_min, (std::min)(m_scale, zoom_max)); // clamp
+
+			m_pixel_scale = pan > 0 ? m_pixel_scale << 1 : m_pixel_scale >> 1;
+			m_pixel_scale = (std::max)(1u, (std::min)(m_pixel_scale, 16u)); // clamp
 		}
 		void renderer::pixel_clip(unsigned int ppu, unsigned int multiplier)
 		{
-			m_scale = ppu * multiplier;
+			m_scale = ppu * multiplier * 2; // 2 is size of opengl screen range (-1,1)
 			m_scale /= m_width;
 		}
 

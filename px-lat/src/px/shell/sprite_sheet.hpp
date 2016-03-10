@@ -65,9 +65,9 @@ namespace px
 
 					img.top = y * vertical;
 					img.left = x * horisontal;
-					img.bottom = (y + h - 1) * vertical;
-					img.right = (x + w - 1) * horisontal;
-					img.alternative_ascii = '?';
+					img.bottom = (y + h) * vertical;
+					img.right = (x + w) * horisontal; 
+					img.alternative_glyph = '?';
 					img.tint = color(1, 1, 1);
 				}
 			}

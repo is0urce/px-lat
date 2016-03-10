@@ -61,10 +61,10 @@ namespace px
 
 				rectangle({ 0,0 }, m_perception->range()).enumerate([&](const point &range_point)
 				{
-					shell::image img;
-					bool tile = m_scene->transparent(range_point + start);
-					img.tint = color(1, 1, 1);
-					m_perception->ground(range_point, img);
+					const auto &tile = m_scene->select(start + range_point);
+					const shell::image* img = tile.sprite();
+					//bool tile = m_scene->transparent(range_point + start);
+					//m_perception->ground(range_point, *img);
 				});
 			}
 		}

@@ -31,7 +31,7 @@ namespace px
 			std::shared_ptr<shell::sprite_manager::element> make_image(unsigned int u_plus)
 			{
 				auto s = m_sprites->make_shared();
-				s->alternative_ascii = u_plus;
+				s->alternative_glyph = u_plus;
 				return s;
 			}
 		};
