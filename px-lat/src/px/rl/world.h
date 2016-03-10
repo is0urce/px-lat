@@ -1,4 +1,4 @@
-// name: game.h
+// name: world.h
 // type: c++ header
 // desc: class declaration
 // auth: is0urce
@@ -30,8 +30,10 @@ namespace px
 			map<bool> m_created;
 
 		public:
-			world();
-			virtual ~world();
+			world() : m_created(10, 10, false)
+			{}
+			virtual ~world()
+			{}
 			world(const world&) = delete;
 
 		public:

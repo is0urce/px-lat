@@ -1,7 +1,9 @@
-// name: core.cpp
+// name: engine.cpp
 // type: c++
 // desc: class implementation
 // auth: is0urce
+
+// facade
 
 #include "engine.h"
 
@@ -9,6 +11,7 @@
 
 #include <px/shell/renderer.h>
 
+#include <px/rl/world.h>
 #include <px/rl/scene.h>
 
 #include <px/ui/canvas.h>
@@ -47,11 +50,18 @@ namespace px
 
 			// game setup
 			m_lib = std::make_unique<library>(m_renderer->sprite_manager());
-			m_game = std::make_unique<game>(m_renderer->perception(), m_lib.get());
+			m_world = std::make_unique<rl::world>();
+			m_scene = std::make_unique<rl::scene>(m_world.get());
+			m_game = std::make_unique<game>(m_lib.get(), m_scene.get(), m_renderer->perception());
+
 			m_game->start();
 		}
 		engine::~engine()
 		{
+			m_game.reset();
+			m_scene.reset();
+			m_world.reset();
+			m_lib.reset();
 		}
 
 		void engine::frame()

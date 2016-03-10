@@ -13,22 +13,21 @@
 #ifndef PX_CORE_ENGINE_H
 #define PX_CORE_ENGINE_H
 
+#include <px/rl/world.h>
+#include <px/rl/scene.h>
+#include <px/ui/stack_panel.h>
+#include <px/shell/opengl.h>
+#include <px/shell/renderer.h>
+#include <px/shell/fps_counter.h>
+
 #include <px/point.hpp>
 #include <px/key.h>
 #include <px/timer.h>
-
-#include <px/ui/stack_panel.h>
 
 #include <memory>
 
 namespace px
 {
-	namespace shell
-	{
-		class opengl;
-		class renderer;
-		class fps_counter;
-	}
 	namespace core
 	{
 		class game;
@@ -44,6 +43,8 @@ namespace px
 			std::unique_ptr<shell::renderer> m_renderer;
 			std::unique_ptr<game> m_game;
 			std::unique_ptr<library> m_lib;
+			std::unique_ptr<rl::world> m_world;
+			std::unique_ptr<rl::scene> m_scene;
 
 			// environment
 			timer m_timer;

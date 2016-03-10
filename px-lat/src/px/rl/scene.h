@@ -21,6 +21,7 @@ namespace px
 {
 	namespace rl
 	{
+		class world;
 		class scene
 		{
 		public:
@@ -28,6 +29,7 @@ namespace px
 			typedef map<tile_t> map_t;
 
 		private:
+			world* m_world;
 			// loading...
 			point m_focus;
 			tile_t m_default;
@@ -38,7 +40,7 @@ namespace px
 			location_manager m_locations;
 
 		public:
-			scene();
+			scene(world*);
 			virtual ~scene();
 
 		public:

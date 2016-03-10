@@ -5,6 +5,8 @@
 
 #include "scene.h"
 
+#include <px/rl/world.h>
+
 namespace px
 {
 	namespace rl
@@ -17,10 +19,13 @@ namespace px
 			const point stream_center(stream_reach, stream_reach);
 		}
 
-		scene::scene()
+		scene::scene(world* w)
 			: m_graph(0, 0, 64)
 			, m_stream(stream_range)
+			, m_world(w)
 		{
+			if (!w) throw std::runtime_error("px::rl::scene::scene(..) - world is null");
+
 			m_default.make_wall();
 			m_stream.at(stream_center) = std::make_unique<map_t>(10, 10);
 

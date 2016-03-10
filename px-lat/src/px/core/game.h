@@ -26,16 +26,17 @@ namespace px
 		class game : public game_control<game>
 		{
 		private:
-			std::list<es::unit::ptr> m_units;
-			std::unique_ptr<rl::scene> m_scene;
-			shell::perception* m_perception;
 			library *m_lib;
+			rl::scene* m_scene;
+			shell::perception* m_perception;
+
+			std::list<es::unit::ptr> m_units;
 
 			es::unit *m_player;
 			rl::location_manager::element *m_pos;
 
 		public:
-			game(shell::perception* perception, library* lib);
+			game(library* lib, rl::scene* scene, shell::perception* perception);
 			virtual ~game();
 
 		public:
@@ -51,6 +52,7 @@ namespace px
 			void turn();
 
 			void start();
+			void stop();
 		};
 	}
 }

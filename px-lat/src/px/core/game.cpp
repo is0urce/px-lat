@@ -12,18 +12,19 @@ namespace px
 {
 	namespace core
 	{
-		game::game(shell::perception* perception, library *l)
-			: m_scene(std::make_unique<rl::scene>())
-			, m_lib(l)
+		game::game(library* lib, rl::scene* s, shell::perception* perception)
+			: m_lib(lib)
+			, m_scene(s)
 			, m_perception(perception)
 		{
-			if (!l) throw std::runtime_error("game::game() library is null");
+			if (!lib) throw std::runtime_error("game::game() library is null");
+			if (!s) throw std::runtime_error("game::game() scene is null");
 			if (!perception) throw std::runtime_error("game::game() perception is null");
 		}
 		game::~game()
 		{
 			// release before manager
-			m_units.clear();
+			stop();
 		}
 		unsigned int game::distance(const point &a, const point &b) const
 		{
@@ -103,6 +104,10 @@ namespace px
 			m_units.push_back(u);
 
 			turn();
+		}
+		void game::stop()
+		{
+			m_units.clear();
 		}
 	}
 }
