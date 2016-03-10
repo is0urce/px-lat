@@ -12,6 +12,7 @@
 #include <px/shell/program.h>
 #include <px/shell/texture.h>
 #include <px/shell/font_texture.h>
+#include <px/shell/sprite_sheet.hpp>
 
 #include <px/shell/perception.h>
 #include <px/shell/sprite_manager.hpp>
@@ -94,6 +95,7 @@ namespace px
 				std::vector<GLfloat> textcoords;
 				std::vector<GLuint> indices;
 				program shader;
+				sprite_sheet images;
 			} m_tile;
 
 		public:
@@ -103,6 +105,7 @@ namespace px
 		public:
 			void render(time_t time);
 			void scale(double delta);
+			void pixel_clip(unsigned int ppu, unsigned int multiptier);
 			ui::canvas& canvas();
 			sprite_manager* sprite_manager() { return &m_sprite.manager; }
 			perception* perception() { return &m_perception; }

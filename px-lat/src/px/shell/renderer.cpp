@@ -16,7 +16,6 @@
 #include <cmath>
 #include <functional>
 
-#include <json.hpp>
 #include <lodepng.h>
 
 namespace px
@@ -93,6 +92,9 @@ namespace px
 			glClampColor(GL_CLAMP_READ_COLOR, GL_FALSE);
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
+			// textures
+			m_tile.images.init("textures/img.json", 0);
+
 			// tiles
 			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
 			m_tile.vertices.resize(perception_size * vertex_depth * quad, 0);
@@ -110,7 +112,7 @@ namespace px
 			});
 			std::vector<unsigned char> image; //the raw pixels
 			unsigned width, height;
-			unsigned error = lodepng::decode(image, width, height, "textures/wall.png");
+			unsigned error = lodepng::decode(image, width, height, "textures/img.png");
 			if (error) throw std::runtime_error("renderer::renderer - can't read file");
 			m_tile.sheet.init(width, height, 8, &image[0]);
 
@@ -159,6 +161,7 @@ namespace px
 		void renderer::render(time_t time)
 		{
 			m_opengl->update(m_width, m_height);
+			pixel_clip(32, 2);
 
 			m_aspect = m_width;
 			m_aspect /= m_height;
@@ -187,20 +190,13 @@ namespace px
 			point tile_size(1, 1);
 			rectangle({ 0, 0 }, perception_range).enumerate([&](const point& position)
 			{
-				auto tile = m_perception.ground(position);
+				//auto tile = m_perception.ground(position);
+				auto &tile = m_tile.images["img/grass.png"];
 
 				fill_vertex(position, tile_size, &m_tile.vertices[vertex_offset]);
 				fill_color(tile.tint, &m_tile.colors[color_offset]);
-				fill_texture(0, 0, 1, 1, &m_tile.textcoords[texture_offset]);
-				//fill_texture(tile.left, tile.bottom, tile.right, tile.top, &m_tile.textcoords[texture_offset]);
-				//m_tile.textcoords[texture_offset + 0] = 0;
-				//m_tile.textcoords[texture_offset + 1] = 0;
-				//m_tile.textcoords[texture_offset + 2] = 0;
-				//m_tile.textcoords[texture_offset + 3] = 1;
-				//m_tile.textcoords[texture_offset + 4] = 1;
-				//m_tile.textcoords[texture_offset + 5] = 1;
-				//m_tile.textcoords[texture_offset + 6] = 1;
-				//m_tile.textcoords[texture_offset + 7] = 0;
+				//fill_texture(0, 0, 1, 1, &m_tile.textcoords[texture_offset]);
+				fill_texture(tile.left, tile.bottom, tile.right, tile.top, &m_tile.textcoords[texture_offset]);
 
 				vertex_offset += vertex_depth * quad;
 				color_offset += color_depth * quad;
@@ -376,6 +372,11 @@ namespace px
 		{
 			m_scale *= 1 + pan * zoom_exp;
 			m_scale = (std::max)(zoom_min, (std::min)(m_scale, zoom_max)); // clamp
+		}
+		void renderer::pixel_clip(unsigned int ppu, unsigned int multiplier)
+		{
+			m_scale = ppu * multiplier;
+			m_scale /= m_width;
 		}
 
 		ui::canvas& renderer::canvas()

@@ -1,4 +1,4 @@
-// name: component.hp
+// name: sprite_manager.hpp
 // type: c++ header
 // desc: class definition
 // auth: is0urce
