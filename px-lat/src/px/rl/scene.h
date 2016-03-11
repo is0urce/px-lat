@@ -12,7 +12,6 @@
 
 #include <px/point.hpp>
 #include <px/map.hpp>
-#include <px/qtree.hpp>
 
 #include <memory>
 

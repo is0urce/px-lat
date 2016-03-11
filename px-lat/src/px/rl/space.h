@@ -19,11 +19,9 @@ namespace px
 {
 	namespace rl
 	{
-		enum class traverse : unsigned int;
 		class space
 		{
 		private:
-
 			qtree<location_manager::element*> m_graph;
 			location_manager m_locations;
 
@@ -32,8 +30,8 @@ namespace px
 			virtual ~space();
 
 		public:
-			bool transparent(const point &point) const;
-			bool traversable(const point &point, traverse layer) const;
+			bool transparent(const point &position) const;
+			bool traversable(const point &position) const;
 			std::shared_ptr<location_manager::element> make_location(point position);
 		};
 	}

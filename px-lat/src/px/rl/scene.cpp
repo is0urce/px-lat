@@ -45,16 +45,14 @@ namespace px
 		{
 			return m_stream.at(stream_center)->at(position, m_default);
 		}
-
 		bool scene::transparent(const point &point) const
 		{
 			return m_space.transparent(point) && select(point).transparent();
 		}
 		bool scene::traversable(const point &point, traverse layer) const
 		{
-			return m_space.traversable(point, layer) && select(point).traversable(layer);
+			return m_space.traversable(point) && select(point).traversable(layer);
 		}
-
 		std::shared_ptr<location_manager::element> scene::make_location(point position)
 		{
 			return m_space.make_location(position);

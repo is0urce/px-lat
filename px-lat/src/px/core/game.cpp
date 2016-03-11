@@ -79,9 +79,8 @@ namespace px
 			img->tint = 0xffff00;
 			pos->blocking(true);
 
-			img->link(pos);
-			u->add(img);
-			u->add(pos);
+			u->link(img);
+			u->link(pos);
 
 			u->enable();
 			m_units.push_back(u);
@@ -93,12 +92,12 @@ namespace px
 
 			img = m_lib->make_image('g');
 			pos = m_scene->make_location({ 5,5 });
+
 			pos->blocking(true);
 			img->tint = 0xff0000;
 
-			img->link(pos);
-			u->add(img);
-			u->add(pos);
+			u->link(img);
+			u->link(pos);
 
 			u->enable();
 			m_units.push_back(u);

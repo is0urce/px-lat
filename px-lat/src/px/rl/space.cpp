@@ -26,7 +26,7 @@ namespace px
 			});
 			return !block;
 		}
-		bool space::traversable(const point &point, traverse layer) const
+		bool space::traversable(const point &point) const
 		{
 			bool block = false;
 			m_graph.find(point.X, point.Y, 0, [&block](int x, int y, location_component* l)
@@ -36,7 +36,6 @@ namespace px
 			});
 			return !block;
 		}
-
 		std::shared_ptr<location_manager::element> space::make_location(point position)
 		{
 			auto result = m_locations.make_shared();
