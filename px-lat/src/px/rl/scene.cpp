@@ -20,13 +20,13 @@ namespace px
 		}
 
 		scene::scene(world* w)
-			: m_graph(0, 0, 64)
-			, m_stream(stream_range)
+			: m_stream(stream_range)
 			, m_world(w)
 		{
 			if (!w) throw std::runtime_error("px::rl::scene::scene(..) - world is null");
 
-			m_default.make_wall();
+			m_default = m_world->default_tile();
+
 			m_stream.at(stream_center) = std::make_unique<map_t>(10, 10);
 
 			tile t;
@@ -48,32 +48,16 @@ namespace px
 
 		bool scene::transparent(const point &point) const
 		{
-			bool block = false;
-			m_graph.find(point.X, point.Y, 0, [&block](int x, int y, rl::location_component* l)
-			{
-				block &= l && l->enabled() && !l->transparent();
-				return !block;
-			});
-			return !block && select(point).transparent();
+			return m_space.transparent(point) && select(point).transparent();
 		}
 		bool scene::traversable(const point &point, traverse layer) const
 		{
-			bool block = false;
-			m_graph.find(point.X, point.Y, 0, [&block](int x, int y, location_component* l)
-			{
-				block |= l && l->enabled() && l->blocking();
-				return !block;
-			});
-			return !block && select(point).traversable(layer);
+			return m_space.traversable(point, layer) && select(point).traversable(layer);
 		}
 
 		std::shared_ptr<location_manager::element> scene::make_location(point position)
 		{
-			auto result = m_locations.make_shared();
-			result->move(position);
-			result->space(&m_graph);
-
-			return result;
+			return m_space.make_location(position);
 		}
 	}
 }

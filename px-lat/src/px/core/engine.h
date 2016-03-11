@@ -15,7 +15,9 @@
 
 #include <px/rl/world.h>
 #include <px/rl/scene.h>
+
 #include <px/ui/stack_panel.h>
+
 #include <px/shell/opengl.h>
 #include <px/shell/renderer.h>
 #include <px/shell/fps_counter.h>

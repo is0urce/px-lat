@@ -17,8 +17,11 @@ namespace px
 			unsigned int atlas;
 			float left, right, bottom, top;
 			float width, height;
+
 			color tint;
 			double transparency;
+
+			const char* name;
 			unsigned int alternative_glyph;
 		};
 	}

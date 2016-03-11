@@ -182,6 +182,9 @@
     <ClInclude Include="src\px\rl\world.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\px\rl\space.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\px-lat.cpp">
@@ -233,6 +236,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\lodepng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\px\rl\space.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

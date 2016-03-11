@@ -11,6 +11,7 @@
 #include <px/rl/tile.hpp>
 #include <px/map.hpp>
 
+#include <functional>
 #include <memory>
 #include <list>
 
@@ -24,7 +25,6 @@ namespace px
 			typedef tile tile_t;
 			typedef map<tile_t> map_t;
 			typedef std::shared_ptr<map_t> map_ptr;
-			typedef std::shared_ptr<es::unit> unit_ptr;
 
 		private:
 			map<bool> m_created;
@@ -37,9 +37,17 @@ namespace px
 			world(const world&) = delete;
 
 		public:
-			// management
-			//map_ptr generate(const point &cell, builder_t::fetch_op fetch);
-			//void store(unit_ptr unit);
+			tile_t default_tile() const
+			{
+				tile_t tile;
+				tile.make_wall();
+
+				return tile;
+			}
+			std::unique_ptr<map_t> generate(const point cell, std::function<void(es::unit::ptr)> fetch_fn)
+			{
+
+			}
 		};
 	}
 }

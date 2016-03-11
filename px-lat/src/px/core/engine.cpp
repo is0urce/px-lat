@@ -8,21 +8,11 @@
 #include "engine.h"
 
 #include <px/core/game.h>
-
-#include <px/shell/renderer.h>
-
-#include <px/rl/world.h>
-#include <px/rl/scene.h>
+#include <px/core/library.h>
 
 #include <px/ui/canvas.h>
-#include <px/ui/stack_panel.h>
 #include <px/ui/board_panel.h>
 #include <px/ui/text_panel.h>
-
-#include <px/shell/fps_counter.h>
-#include <px/shell/opengl.h>
-
-#include <px/core/library.h>
 
 // stl includes
 #include <algorithm>

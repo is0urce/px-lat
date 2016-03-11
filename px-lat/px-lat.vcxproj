@@ -116,6 +116,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
     <ClInclude Include="src\px\es\unit.h" />
     <ClInclude Include="src\px\qtree.hpp" />
     <ClInclude Include="src\px\rl\map_stream.hpp" />
+    <ClInclude Include="src\px\rl\space.h" />
     <ClInclude Include="src\px\rl\tile.hpp" />
     <ClInclude Include="src\px\rl\tile_base.hpp" />
     <ClInclude Include="src\px\rl\traverse.hpp" />
@@ -160,6 +161,7 @@ xcopy /deyvq "config/common" "$(TargetDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\lodepng.cpp" />
+    <ClCompile Include="src\px\rl\space.cpp" />
     <ClCompile Include="src\px\shell\font_texture.cpp" />
     <ClCompile Include="src\px\shell\fps_counter.cpp" />
     <ClCompile Include="src\px\core\engine.cpp" />

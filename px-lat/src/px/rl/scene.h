@@ -7,8 +7,7 @@
 #define PX_RL_SCENE_H
 
 #include <px/es/unit.h>
-#include <px/rl/location_component.hpp>
-
+#include <px/rl/space.h>
 #include <px/rl/tile.hpp>
 
 #include <px/point.hpp>
@@ -30,14 +29,12 @@ namespace px
 
 		private:
 			world* m_world;
+			space m_space;
+
 			// loading...
 			point m_focus;
 			tile_t m_default;
 			map<std::unique_ptr<map_t>> m_stream;
-
-			// space partition
-			qtree<location_manager::element*> m_graph;
-			location_manager m_locations;
 
 		public:
 			scene(world*);

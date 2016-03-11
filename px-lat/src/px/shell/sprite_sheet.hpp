@@ -55,20 +55,32 @@ namespace px
 				json j(file);
 				for (auto it = j.begin(), last = j.end(); it != last; ++it)
 				{
-					auto &img = m_map[it.key()];
 					const auto &frame = it->at("frame");
 
+					auto i = m_map.emplace(it.key(), image());
+
+					const std::string &name = i.first->first;
+					image &img = i.first->second;
+					
+					// calculate image data
 					float x = frame["x"];
 					float y = frame["y"];
 					float w = frame["width"];
 					float h = frame["height"];
 
+					// fill image data
 					img.top = y * vertical;
 					img.left = x * horisontal;
 					img.bottom = (y + h) * vertical;
 					img.right = (x + w) * horisontal; 
-					img.alternative_glyph = '?';
+					img.width = w * horisontal;
+					img.height = h * vertical;
+
 					img.tint = color(1, 1, 1);
+					img.transparency = 0;
+
+					img.alternative_glyph = '?';
+					img.name = name.c_str();
 				}
 			}
 		public:
