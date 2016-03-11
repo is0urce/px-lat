@@ -36,7 +36,7 @@ namespace px
 			});
 			return !block;
 		}
-		std::shared_ptr<location_manager::element> space::make_location(point position)
+		std::shared_ptr<location_manager::element> space::make_location(const point &position)
 		{
 			auto result = m_locations.make_shared();
 			result->move(position);

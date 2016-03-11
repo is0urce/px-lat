@@ -8,12 +8,12 @@
 
 #include <px/es/unit.h>
 
+#include <px/rl/library.h>
 #include <px/rl/tile.hpp>
 #include <px/map.hpp>
 
 #include <functional>
 #include <memory>
-#include <list>
 
 namespace px
 {
@@ -28,25 +28,41 @@ namespace px
 
 		private:
 			map<bool> m_created;
+			library* m_library;
+			tile_t m_default;
 
 		public:
-			world() : m_created(10, 10, false)
-			{}
+			world(library* lib)
+				: m_created(10, 10, false)
+				, m_library(lib)
+			{
+				if (!lib) throw std::runtime_error("world::world(..) library is null");
+
+				m_default.assign(m_library->image("img/wall.png"));
+			}
 			virtual ~world()
-			{}
+			{
+			}
 			world(const world&) = delete;
 
 		public:
 			tile_t default_tile() const
 			{
-				tile_t tile;
-				tile.make_wall();
-
-				return tile;
+				return m_default;
 			}
 			std::unique_ptr<map_t> generate(const point cell, std::function<void(es::unit::ptr)> fetch_fn)
 			{
+				auto wall = m_library->image("img/wall.png");
+				auto ground = m_library->image("img/grass.png");
 
+				auto result = std::make_unique<map_t>(10, 10);
+				rectangle({ 0,0 }, result->range()).enumerate([&](const point &position)
+				{
+					auto &t = result->at(position);
+					t.make_ground();
+					t.assign(position.X % 3 == 0 ? wall : ground);
+				});
+				return result;
 			}
 		};
 	}

@@ -44,7 +44,6 @@ namespace px
 				c->bind(this);
 			}
 
-			// add & link
 			template<typename _C>
 			void link(std::shared_ptr<_C> c)
 			{
@@ -56,6 +55,13 @@ namespace px
 						cast->link(std::weak_ptr<_C>{c});
 					}
 				}
+			}
+
+			// add & link
+			template<typename _C>
+			void attach(std::shared_ptr<_C> c)
+			{
+				link(c);
 				add(c);
 			}
 

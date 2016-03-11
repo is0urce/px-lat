@@ -80,7 +80,7 @@ namespace px
 	{
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
-			, m_scale(0.05f), m_pixel_scale(1)
+			, m_scale(0.05f), m_pixel_scale(2)
 			, m_canvas(1, 1) // any but zero, resised anyway
 			, m_perception(perception_range)
 		{
@@ -93,7 +93,7 @@ namespace px
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
 			// textures
-			m_tile.images.init("textures/img.json", 0);
+			m_sheet.init("textures/img.json", 128, 64);
 			glBindTexture(GL_TEXTURE_2D, m_tile.sheet.texture_id());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -193,13 +193,12 @@ namespace px
 			point tile_size(1, 1);
 			rectangle({ 0, 0 }, perception_range).enumerate([&](const point& position)
 			{
-				//auto tile = m_perception.ground(position);
-				auto &tile = m_tile.images["img/grass.png"];
+				const auto &sprite = m_perception.ground(position);
+				//auto &sprite = t;
 
 				fill_vertex(position, tile_size, &m_tile.vertices[vertex_offset]);
-				fill_color(tile.tint, &m_tile.colors[color_offset]);
-				//fill_texture(0, 0, 1, 1, &m_tile.textcoords[texture_offset]);
-				fill_texture(tile.left, tile.bottom, tile.right, tile.top, &m_tile.textcoords[texture_offset]);
+				fill_color(sprite.tint, &m_tile.colors[color_offset]);
+				fill_texture(sprite.left, sprite.bottom, sprite.right, sprite.top, &m_tile.textcoords[texture_offset]);
 
 				vertex_offset += vertex_depth * quad;
 				color_offset += color_depth * quad;

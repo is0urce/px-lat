@@ -25,7 +25,7 @@ namespace px
 
 	protected:
 		coordinate() {}
-		coordinate(component x, component y) : X(x), Y(y) {}
+		coordinate(component x, component y) : X(x), Y(y), Z{} {}
 		coordinate(component x, component y, component z) : X(x), Y(y), Z(z) {}
 
 	public:

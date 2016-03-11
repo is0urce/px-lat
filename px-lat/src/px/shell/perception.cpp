@@ -35,6 +35,11 @@ namespace px
 		{
 		}
 
+		void perception::outer(perception::ground_t outer)
+		{
+			m_default = outer;
+		}
+
 		int perception::width() const
 		{
 			return m_ground->width();

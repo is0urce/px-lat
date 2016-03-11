@@ -8,7 +8,6 @@
 #include "engine.h"
 
 #include <px/core/game.h>
-#include <px/core/library.h>
 
 #include <px/ui/canvas.h>
 #include <px/ui/board_panel.h>
@@ -39,8 +38,8 @@ namespace px
 			m_ui->add(std::make_shared<ui::board_panel>(color(0, 0, 0.5)), ui::alignment({ 0.0f, 0.0f }, { 1, 1 }, { 15, 5 }, { 0.0f, 0.0f }));
 
 			// game setup
-			m_lib = std::make_unique<library>(m_renderer->sprite_manager());
-			m_world = std::make_unique<rl::world>();
+			m_lib = std::make_unique<rl::library>(m_renderer->sprite_manager(), m_renderer->sprite_sheet());
+			m_world = std::make_unique<rl::world>(m_lib.get());
 			m_scene = std::make_unique<rl::scene>(m_world.get());
 			m_game = std::make_unique<game>(m_lib.get(), m_scene.get(), m_renderer->perception());
 

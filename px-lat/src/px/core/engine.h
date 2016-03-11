@@ -15,6 +15,7 @@
 
 #include <px/rl/world.h>
 #include <px/rl/scene.h>
+#include <px/rl/library.h>
 
 #include <px/ui/stack_panel.h>
 
@@ -33,20 +34,19 @@ namespace px
 	namespace core
 	{
 		class game;
-		class library;
 
 		class engine
 		{
 		private:
 			shell::opengl* m_ogl;
 
-			std::shared_ptr<ui::stack_panel> m_ui;
-
-			std::unique_ptr<shell::renderer> m_renderer;
 			std::unique_ptr<game> m_game;
-			std::unique_ptr<library> m_lib;
+			std::unique_ptr<shell::renderer> m_renderer;
+			std::unique_ptr<rl::library> m_lib;
 			std::unique_ptr<rl::world> m_world;
 			std::unique_ptr<rl::scene> m_scene;
+
+			std::shared_ptr<ui::stack_panel> m_ui;
 
 			// environment
 			timer m_timer;

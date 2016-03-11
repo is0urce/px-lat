@@ -12,14 +12,16 @@ namespace px
 {
 	namespace core
 	{
-		game::game(library* lib, rl::scene* s, shell::perception* perception)
-			: m_lib(lib)
+		game::game(rl::library* lib, rl::scene* s, shell::perception* perception)
+			: m_library(lib)
 			, m_scene(s)
 			, m_perception(perception)
 		{
 			if (!lib) throw std::runtime_error("game::game() library is null");
 			if (!s) throw std::runtime_error("game::game() scene is null");
 			if (!perception) throw std::runtime_error("game::game() perception is null");
+
+			perception->outer(m_library->image("img/wall.png"));
 		}
 		game::~game()
 		{
@@ -37,6 +39,7 @@ namespace px
 			auto destination = m_pos->position() + move;
 			if (m_scene->traversable(destination, rl::traverse::walk))
 			{
+				m_scene->focus(destination);
 				m_pos->move(destination);
 				turn();
 			}
@@ -63,50 +66,38 @@ namespace px
 				rectangle({ 0,0 }, m_perception->range()).enumerate([&](const point &range_point)
 				{
 					const auto &tile = m_scene->select(start + range_point);
-					const shell::image* img = tile.sprite();
-					//bool tile = m_scene->transparent(range_point + start);
-					//m_perception->ground(range_point, *img);
+					m_perception->ground(range_point, tile.sprite());
+					//m_perception->ground(range_point, m_library->image("img/wall.png"));
 				});
 			}
 		}
 
 		void game::start()
 		{
+			point start(3, 3);
 			auto u = std::make_shared<es::unit>();
 
-			auto img = m_lib->make_image('@');
-			auto pos = m_scene->make_location({ 3,3 });
+			auto img = m_library->make_image('@');
 			img->tint = 0xffff00;
-			pos->blocking(true);
+			u->attach(img);
+			m_scene->add(u, start);
 
-			u->link(img);
-			u->link(pos);
-
-			u->enable();
-			m_units.push_back(u);
-
-			m_pos = pos.get();
-			m_player = u.get();
+			m_player = u.get(); 
+			m_player->persistent(true);
+			m_pos = m_player->component<rl::location_component>().get();
 
 			u = std::make_shared<es::unit>();
 
-			img = m_lib->make_image('g');
-			pos = m_scene->make_location({ 5,5 });
-
-			pos->blocking(true);
+			img = m_library->make_image('g');
 			img->tint = 0xff0000;
+			u->attach(img);
+			m_scene->add(u, { 5, 5 });
 
-			u->link(img);
-			u->link(pos);
-
-			u->enable();
-			m_units.push_back(u);
-
+			m_scene->focus(start, true);
 			turn();
 		}
 		void game::stop()
 		{
-			m_units.clear();
 		}
 	}
 }

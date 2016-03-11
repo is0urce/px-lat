@@ -19,22 +19,19 @@ namespace px
 {
 	namespace shell
 	{
-
 		class sprite_sheet
 		{
 		public:
 			typedef std::string name;
+			typedef image element;
+
 		private:
 			unsigned int m_index;
-			std::map<name, image> m_map;
+			std::map<name, element> m_map;
 
 		public:
-			sprite_sheet()
+			sprite_sheet() : m_index(0)
 			{
-			}
-			sprite_sheet(const char* file_path, unsigned int index)
-			{
-				init(file_path, index);
 			}
 			~sprite_sheet()
 			{
@@ -42,15 +39,14 @@ namespace px
 			sprite_sheet(const sprite_sheet&) = delete;
 
 		public:
-			void init(const char* file_path, unsigned int index)
+			unsigned int init(const char* file_path, unsigned int width, unsigned int height)
 			{
-				m_index = index;
 				std::ifstream file = std::ifstream(file_path, std::ifstream::in);
 
 				if (!file) throw std::runtime_error(std::string("px::shell::sprite_sheet - can not read file ") + std::string(file_path));
 
-				float horisontal = 1.0f / 128;
-				float vertical = 1.0f / 64;
+				float horisontal = 1.0f / width;
+				float vertical = 1.0f / height;
 
 				json j(file);
 				for (auto it = j.begin(), last = j.end(); it != last; ++it)
@@ -60,7 +56,7 @@ namespace px
 					auto i = m_map.emplace(it.key(), image());
 
 					const std::string &name = i.first->first;
-					image &img = i.first->second;
+					element &img = i.first->second;
 					
 					// calculate image data
 					float x = frame["x"];
@@ -72,7 +68,7 @@ namespace px
 					img.top = y * vertical;
 					img.left = x * horisontal;
 					img.bottom = (y + h) * vertical;
-					img.right = (x + w) * horisontal; 
+					img.right = (x + w) * horisontal;
 					img.width = w * horisontal;
 					img.height = h * vertical;
 
@@ -81,10 +77,17 @@ namespace px
 
 					img.alternative_glyph = '?';
 					img.name = name.c_str();
+					img.atlas = m_index;
 				}
+
+				return m_index++;
 			}
 		public:
 			const image& operator[](const std::string &name) const
+			{
+				return m_map.at(name);
+			}
+			const image& at(const std::string &name) const
 			{
 				return m_map.at(name);
 			}

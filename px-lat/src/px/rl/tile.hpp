@@ -17,12 +17,20 @@ namespace px
 		class tile : public tile_base<(unsigned int)traverse::max_value>
 		{
 		private:
-			shell::image* m_image;
+			shell::image m_image;
 
 		public:
-			const shell::image* sprite() const
+			shell::image& sprite()
 			{
 				return m_image;
+			}
+			const shell::image& sprite() const
+			{
+				return m_image;
+			}
+			void assign(const shell::image& img)
+			{
+				m_image = img;
 			}
 		};
 	}

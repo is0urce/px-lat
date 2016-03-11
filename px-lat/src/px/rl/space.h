@@ -32,7 +32,7 @@ namespace px
 		public:
 			bool transparent(const point &position) const;
 			bool traversable(const point &position) const;
-			std::shared_ptr<location_manager::element> make_location(point position);
+			std::shared_ptr<location_manager::element> make_location(const point &position);
 		};
 	}
 }

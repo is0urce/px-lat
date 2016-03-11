@@ -7,10 +7,11 @@
 #define PX_CORE_GAME_H
 
 #include <px/core/game_control.hpp>
-#include <px/core/library.h>
 
 #include <px/es/unit.h>
 #include <px/shell/perception.h>
+
+#include <px/rl/library.h>
 #include <px/rl/scene.h>
 
 #include <px/point.hpp>
@@ -26,17 +27,15 @@ namespace px
 		class game : public game_control<game>
 		{
 		private:
-			library *m_lib;
+			rl::library *m_library;
 			rl::scene* m_scene;
 			shell::perception* m_perception;
-
-			std::list<es::unit::ptr> m_units;
 
 			es::unit *m_player;
 			rl::location_manager::element *m_pos;
 
 		public:
-			game(library* lib, rl::scene* scene, shell::perception* perception);
+			game(rl::library* lib, rl::scene* scene, shell::perception* perception);
 			virtual ~game();
 
 		public:

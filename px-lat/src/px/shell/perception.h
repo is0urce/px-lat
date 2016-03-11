@@ -64,6 +64,7 @@ namespace px
 			int height() const;
 			bool contains(const point &position) const;
 			point range() const;
+			void outer(ground_t outer);
 
 			unsigned int version() const;
 			void displace(const point &start);

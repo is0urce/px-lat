@@ -47,6 +47,8 @@ namespace px
 			ui::canvas m_canvas;
 			perception m_perception;
 
+			sprite_sheet m_sheet;
+
 			// ui rendering
 			struct ui_draw
 			{
@@ -96,7 +98,6 @@ namespace px
 				std::vector<GLfloat> textcoords;
 				std::vector<GLuint> indices;
 				program shader;
-				sprite_sheet images;
 			} m_tile;
 
 		public:
@@ -109,6 +110,7 @@ namespace px
 			void pixel_clip(unsigned int ppu, unsigned int multiptier);
 			ui::canvas& canvas();
 			sprite_manager* sprite_manager() { return &m_sprite.manager; }
+			sprite_sheet* sprite_sheet() { return &m_sheet; }
 			perception* perception() { return &m_perception; }
 
 		private:

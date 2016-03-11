@@ -29,6 +29,7 @@ namespace px
 		private:
 			world* m_world;
 			space m_space;
+			std::list<es::unit::ptr> m_units;
 
 			// loading...
 			point m_focus;
@@ -39,12 +40,18 @@ namespace px
 			scene(world*);
 			virtual ~scene();
 
+		private:
+			point cell(const point &absolute) const;
+
 		public:
 			void focus(point position);
+			void focus(point position, bool force);
 			const tile& select(const point &position) const;
 			bool transparent(const point &point) const;
 			bool traversable(const point &point, traverse layer) const;
-			std::shared_ptr<location_manager::element> make_location(point position);
+
+			void add(es::unit::ptr unit, const point &position);
+			void clear();
 		};
 	}
 }
