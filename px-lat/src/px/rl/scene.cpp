@@ -19,6 +19,7 @@ namespace px
 			const unsigned int stream_size = stream_reach * 2 + 1;
 			const point stream_range(stream_size, stream_size);
 			const point stream_center(stream_reach, stream_reach);
+			const rectangle stream_rectangle({ 0, 0 }, stream_range);
 
 			const unsigned int cell_width = 10;
 			const unsigned int cell_height = cell_width;
@@ -33,18 +34,6 @@ namespace px
 			if (!w) throw std::runtime_error("px::rl::scene::scene(..) - world is null");
 
 			m_default = m_world->default_tile();
-
-			rectangle({ 0,0 }, stream_range).enumerate([&](const point &cell)
-			{
-				m_stream.at(cell) = std::make_unique<map_t>(cell_width, cell_height);
-				//tile_t d;
-				//d.make_ground();
-				//m_stream.at(cell)->fill(d);
-			});
-
-			tile t;
-			t.make_ground();
-			m_stream.at(stream_center)->fill(t);
 		}
 		scene::~scene()
 		{
@@ -77,7 +66,26 @@ namespace px
 			point c = cell(absolute);
 			if (force || m_focus != c)
 			{
-				m_stream.at(stream_center).swap(m_world->generate(c, nullptr));
+				point offset = c - m_focus;
+				stream_t shift(stream_range);
+				stream_rectangle.enumerate([&](const point &cell)
+				{
+					if (m_stream.contains(cell - offset))
+					{
+						shift.at(cell).swap(m_stream.at(cell - offset));
+					}
+				});
+
+				m_stream.swap(shift);
+				
+				stream_rectangle.enumerate([&](const point &cell)
+				{
+					if (!m_stream.at(cell))
+					{
+						m_stream.at(cell).swap(m_world->generate(c + cell, nullptr));
+					}
+				});
+
 				m_focus = c;
 			}
 		}

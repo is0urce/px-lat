@@ -168,10 +168,10 @@ namespace px
 			if (!generator_fn) throw std::logic_error("void fill_indexed(std::function<element()> generator_fn) - generator empty");
 
 			point index;
-			point offset = 0;
-			for (index.Y = m_start.Y; index.Y < m_height; ++index.Y)
+			unsigned int offset = 0;
+			for (index.Y = 0; index.Y < m_height; ++index.Y)
 			{
-				for (index.X = m_start.X; index.X < m_width; ++index.X)
+				for (index.X = 0; index.X < m_width; ++index.X)
 				{
 					m_tiles[offset] = generator_fn(index);
 					++offset;

@@ -25,6 +25,7 @@ namespace px
 		public:
 			typedef tile tile_t;
 			typedef map<tile_t> map_t;
+			typedef map<std::unique_ptr<map_t>> stream_t;
 
 		private:
 			world* m_world;
@@ -34,7 +35,7 @@ namespace px
 			// loading...
 			point m_focus;
 			tile_t m_default;
-			map<std::unique_ptr<map_t>> m_stream;
+			stream_t m_stream;
 
 		public:
 			scene(world*);
