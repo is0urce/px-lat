@@ -52,8 +52,9 @@ namespace px
 			}
 			std::unique_ptr<map_t> generate(const point cell, std::function<void(es::unit::ptr)> fetch_fn)
 			{
-				auto wall = m_library->image("img/wall.png");
-				auto ground = m_library->image("img/grass.png");
+				auto wall = m_library->image("img/stone0.png");
+
+				auto ground = m_library->image("img/grass0.png");
 
 				auto result = std::make_unique<map_t>(10, 10);
 				rectangle({ 0,0 }, result->range()).enumerate([&](const point &position)

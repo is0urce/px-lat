@@ -81,8 +81,8 @@ namespace px
 	inline vector operator-(vector lhs, const vector &rhs) { lhs -= rhs; return lhs; }
 	inline vector operator*(vector lhs, const vector &rhs) { lhs *= rhs; return lhs; }
 	inline vector operator/(vector lhs, const vector &rhs) { lhs /= rhs; return lhs; }
-	inline vector operator*(vector lhs, point::component c) { lhs *= c; return lhs; }
-	inline vector operator/(vector lhs, point::component c) { lhs /= c; return lhs; }
+	inline vector operator*(vector lhs, vector::component c) { lhs *= c; return lhs; }
+	inline vector operator/(vector lhs, vector::component c) { lhs /= c; return lhs; }
 }
 
 #endif

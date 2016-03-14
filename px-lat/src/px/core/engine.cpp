@@ -57,6 +57,13 @@ namespace px
 		{
 			m_performance->frame_processed();
 
+			auto current = m_renderer->perception()->version();
+			if (m_version != current)
+			{
+				m_version = current;
+				m_timer.restart();
+			}
+
 			auto &cnv = m_renderer->canvas();
 			m_ui->output(cnv);
 			cnv.write({ 1, 1 }, "fps:");

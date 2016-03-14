@@ -32,11 +32,14 @@ namespace px
 		const double zoom_min = 0.01;
 		const double zoom_max = 10000;
 
-		const unsigned int perception_reach = 7;
+		const unsigned int perception_reach = 17;
 		const unsigned int perception_width = perception_reach * 2 + 1;
 		const unsigned int perception_height = perception_width;
 		const unsigned int perception_size = perception_width * perception_height;
 		const point perception_range(perception_width, perception_height);
+		const point perception_half(perception_width / 2, perception_height / 2);
+
+		const float move_speed = 5.0f;
 
 		void fill_vertex(const vector &position, const vector &quad_range, GLfloat *dest)
 		{
@@ -86,6 +89,8 @@ namespace px
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
 
+
+
 			// opengl setup
 			glEnable(GL_TEXTURE_2D);
 			glClampColor(GL_CLAMP_VERTEX_COLOR, GL_FALSE); // don't clamp hdr
@@ -93,10 +98,17 @@ namespace px
 			glClampColor(GL_CLAMP_FRAGMENT_COLOR, GL_FALSE);
 
 			// textures
-			m_sheet.init("textures/img.json", 128, 64);
+			std::vector<unsigned char> image; //the raw pixels
+			unsigned width, height;
+			unsigned error = lodepng::decode(image, width, height, "textures/img.png");
+			if (error) throw std::runtime_error("renderer::renderer - can't read file");
+			m_tile.sheet.init(width, height, 8, &image[0]);
+			m_sheet.init("textures/img.json", 128, 128);
 			glBindTexture(GL_TEXTURE_2D, m_tile.sheet.texture_id());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+
 
 			// tiles
 			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -105,28 +117,32 @@ namespace px
 			m_tile.textcoords.resize(perception_size * texture_depth * quad);
 			m_tile.indices.resize(perception_size * strip);
 			m_tile.shader = program("shaders/tile");
+			m_tile.shader.activate();
 			m_tile.shader.uniform("img", 0);
-			m_tile.shader.prepare([this, scale = m_tile.shader.uniform("scale")]()
+
+			m_tile.shader.uniform("offset", (GLfloat)(-perception_half.X), (GLfloat)(-perception_half.Y));
+			m_tile.shader.prepare([this
+				, scale = m_tile.shader.uniform("scale")
+				, offset = m_tile.shader.uniform("offset")]()
 			{
-				//m_tile.sheet.bind(0);
-				//m_ui.text.font.bind(0);
+				m_tile.sheet.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
-				glBindTexture(GL_TEXTURE_2D, m_tile.sheet.texture_id());
+				program::uniform(offset, (GLfloat)(m_tile.offset.X), (GLfloat)(m_tile.offset.Y));
 			});
-			std::vector<unsigned char> image; //the raw pixels
-			unsigned width, height;
-			unsigned error = lodepng::decode(image, width, height, "textures/img.png");
-			if (error) throw std::runtime_error("renderer::renderer - can't read file");
-			m_tile.sheet.init(width, height, 8, &image[0]);
+
 
 			// unit sprites
 			m_sprite.vao = vao({ vertex_depth, color_depth, texture_depth });
 			m_sprite.shader = program("shaders/sprite");
-			m_sprite.shader.uniform("img", 0); // texture0 + 0
-			m_sprite.shader.prepare([this, scale = m_sprite.shader.uniform("scale")]()
+			m_sprite.shader.activate();
+			m_sprite.shader.uniform("img", 0);
+			m_sprite.shader.prepare([this
+				, scale = m_sprite.shader.uniform("scale")
+				, offset = m_sprite.shader.uniform("offset")]()
 			{
 				m_ui.text.font.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
+				//program::uniform(offset, (GLfloat)0, (GLfloat)0);
 			});
 
 			// ui background
@@ -156,6 +172,14 @@ namespace px
 				program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
 				m_ui.text.font.bind(0);
 			});
+
+#if _DEBUG
+			GLenum err = GL_NO_ERROR;
+			while ((err = glGetError()) != GL_NO_ERROR)
+			{
+				throw std::runtime_error("renderer::renderer() - OpenGL error #" + std::to_string(err));
+			}
+#endif
 		}
 		renderer::~renderer()
 		{
@@ -173,19 +197,31 @@ namespace px
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			draw_terrain();
+			draw_terrain(time);
 			draw_sprites();
 			draw_canvas(m_canvas);
 
 			m_opengl->swap();
+
+#if _DEBUG
+			GLenum err = GL_NO_ERROR;
+			while ((err = glGetError()) != GL_NO_ERROR)
+			{
+				throw std::runtime_error("renderer::render(..) - OpenGL error");
+			}
+#endif
 		}
 
-		void renderer::draw_terrain()
+		void renderer::draw_terrain(time_t time)
 		{
 			// setup states
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			m_tile.offset = vector(m_perception.movement());
+			m_tile.offset *= std::max<time_t>(1 - time * move_speed, 0);
+			m_tile.offset -= perception_half;
 
 			unsigned int vertex_offset = 0;
 			unsigned int color_offset = 0;
@@ -194,7 +230,6 @@ namespace px
 			rectangle({ 0, 0 }, perception_range).enumerate([&](const point& position)
 			{
 				const auto &sprite = m_perception.ground(position);
-				//auto &sprite = t;
 
 				fill_vertex(position, tile_size, &m_tile.vertices[vertex_offset]);
 				fill_color(sprite.tint, &m_tile.colors[color_offset]);

@@ -49,6 +49,7 @@ namespace px
 			std::shared_ptr<ui::stack_panel> m_ui;
 
 			// environment
+			unsigned int m_version;
 			timer m_timer;
 			std::unique_ptr<shell::fps_counter> m_performance;
 			bool m_shutdown;

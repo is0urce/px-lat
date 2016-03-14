@@ -24,7 +24,7 @@ namespace px
 		struct program
 		{
 		private:
-			GLuint m_id;
+			GLint m_id;
 			bool m_init;
 			std::function<void()> m_fn;
 
@@ -67,19 +67,19 @@ namespace px
 			{
 				glUseProgram(m_id);
 			}
-			GLuint uniform(const char* c_str)
+			GLint uniform(const char* c_str)
 			{
 				return glGetUniformLocation(m_id, c_str);
 			}
-			void static uniform(GLuint uniform, GLuint uint_value)
+			void static uniform(GLint uniform, GLint int_value)
 			{
-				glUniform1ui(uniform, uint_value);
+				glUniform1i(uniform, int_value);
 			}
-			void static uniform(GLuint uniform, GLfloat float_value)
+			void static uniform(GLint uniform, GLfloat float_value)
 			{
 				glUniform1f(uniform, float_value);
 			}
-			void static uniform(GLuint uniform, GLfloat f0, GLfloat f1)
+			void static uniform(GLint uniform, GLfloat f0, GLfloat f1)
 			{
 				glUniform2f(uniform, f0, f1);
 			}
@@ -87,7 +87,7 @@ namespace px
 			{
 				m_fn = fn;
 			}
-			GLuint id() const
+			GLint id() const
 			{
 				return m_id;
 			}
@@ -105,9 +105,13 @@ namespace px
 			}
 
 			// aux
-			void uniform(const char* c_str, GLuint uint_value)
+			void uniform(const char* c_str, GLint int_value)
 			{
-				uniform(uniform(c_str), uint_value);
+				uniform(uniform(c_str), int_value);
+			}
+			void uniform(const char* c_str, GLfloat f0, GLfloat f1)
+			{
+				uniform(uniform(c_str), f0, f1);
 			}
 		};
 	}

@@ -21,7 +21,7 @@ namespace px
 			const point stream_center(stream_reach, stream_reach);
 			const rectangle stream_rectangle({ 0, 0 }, stream_range);
 
-			const unsigned int cell_width = 10;
+			const unsigned int cell_width = 5;
 			const unsigned int cell_height = cell_width;
 			const point cell_range(cell_width, cell_height);
 		}

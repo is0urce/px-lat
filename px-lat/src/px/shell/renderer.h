@@ -98,6 +98,7 @@ namespace px
 				std::vector<GLfloat> textcoords;
 				std::vector<GLuint> indices;
 				program shader;
+				vector offset;
 			} m_tile;
 
 		public:
@@ -116,7 +117,7 @@ namespace px
 		private:
 			void draw_canvas(const ui::canvas& gui);
 			void draw_sprites();
-			void draw_terrain();
+			void draw_terrain(time_t time);
 		};
 	}
 }

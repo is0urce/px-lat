@@ -8,10 +8,11 @@ smooth out vec4 theColor;
 smooth out vec2 theTexture;
 
 uniform vec2 scale;
+uniform vec2 offset;
 
 void main()
 {
-	gl_Position = vec4(position.xyz * scale.xyy, 1);
+	gl_Position = vec4((position.xy + offset) * scale, 0, 1);
     theColor = color;
 	theTexture = textcoord;
 }
