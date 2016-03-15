@@ -20,67 +20,70 @@
 
 namespace px
 {
-	namespace
-	{
-		const unsigned int quad = 4; // four vertices for quad
-		const unsigned int strip = 6; // six indices for 2-triangles
-		const unsigned int texture_depth = 2;
-		const unsigned int vertex_depth = 4;
-		const unsigned int color_depth = 4;
-
-		const double zoom_exp = 1.0 / 1000;
-		const double zoom_min = 0.01;
-		const double zoom_max = 10000;
-
-		const unsigned int perception_reach = 17;
-		const unsigned int perception_width = perception_reach * 2 + 1;
-		const unsigned int perception_height = perception_width;
-		const unsigned int perception_size = perception_width * perception_height;
-		const point perception_range(perception_width, perception_height);
-		const point perception_half(perception_width / 2, perception_height / 2);
-
-		const float move_speed = 5.0f;
-
-		void fill_vertex(const vector &position, const vector &quad_range, GLfloat *dest)
-		{
-			(position + vector(-0.5, -0.5) * quad_range).write2(dest + 0 * vertex_depth);
-			(position + vector(-0.5, 0.5) * quad_range).write2(dest + 1 * vertex_depth);
-			(position + vector(0.5, 0.5) * quad_range).write2(dest + 2 * vertex_depth);
-			(position + vector(0.5, -0.5) * quad_range).write2(dest + 3 * vertex_depth);
-		}
-		void fill_color(const color &c, GLfloat *dest)
-		{
-			c.write(dest, quad);
-		}
-		void fill_texture(GLfloat left, GLfloat bottom, GLfloat right, GLfloat top, GLfloat *dest)
-		{
-			dest[0] = left;
-			dest[1] = bottom;
-			dest[2] = left;
-			dest[3] = top;
-			dest[4] = right;
-			dest[5] = top;
-			dest[6] = right;
-			dest[7] = bottom;
-		}
-		inline void fill_index(unsigned int num, GLuint *dest)
-		{
-			unsigned int index_offset = 0;
-			for (unsigned int i = 0; i < num; ++i)
-			{
-				dest[index_offset + 0] = i * quad + 0;
-				dest[index_offset + 1] = i * quad + 2;
-				dest[index_offset + 2] = i * quad + 1;
-				dest[index_offset + 3] = i * quad + 0;
-				dest[index_offset + 4] = i * quad + 3;
-				dest[index_offset + 5] = i * quad + 2;
-				index_offset += strip;
-			}
-		}
-
-	}
 	namespace shell
 	{
+		namespace
+		{
+			const unsigned int quad = 4; // four vertices for quad
+			const unsigned int strip = 6; // six indices for 2-triangles
+			const unsigned int texture_depth = 2;
+			const unsigned int vertex_depth = 4;
+			const unsigned int color_depth = 4;
+
+			const double zoom_exp = 1.0 / 1000;
+			const double zoom_min = 0.01;
+			const double zoom_max = 10000;
+
+			const unsigned int perception_reach = 17;
+			const unsigned int perception_width = perception_reach * 2 + 1;
+			const unsigned int perception_height = perception_width;
+			const unsigned int perception_size = perception_width * perception_height;
+			const point perception_range(perception_width, perception_height);
+			const point perception_half(perception_width / 2, perception_height / 2);
+
+			const float move_speed = 5.0f;
+
+			const char* font_name = "PragmataPro.ttf";
+			const unsigned int font_size = renderer::ui_cell_height;
+
+			void fill_vertex(const vector &position, const vector &quad_range, GLfloat *dest)
+			{
+				(position + vector(-0.5, -0.5) * quad_range).write2(dest + 0 * vertex_depth);
+				(position + vector(-0.5, 0.5) * quad_range).write2(dest + 1 * vertex_depth);
+				(position + vector(0.5, 0.5) * quad_range).write2(dest + 2 * vertex_depth);
+				(position + vector(0.5, -0.5) * quad_range).write2(dest + 3 * vertex_depth);
+			}
+			void fill_color(const color &c, GLfloat *dest)
+			{
+				c.write(dest, quad);
+			}
+			void fill_texture(GLfloat left, GLfloat bottom, GLfloat right, GLfloat top, GLfloat *dest)
+			{
+				dest[0] = left;
+				dest[1] = bottom;
+				dest[2] = left;
+				dest[3] = top;
+				dest[4] = right;
+				dest[5] = top;
+				dest[6] = right;
+				dest[7] = bottom;
+			}
+			inline void fill_index(unsigned int num, GLuint *dest)
+			{
+				unsigned int index_offset = 0;
+				for (unsigned int i = 0; i < num; ++i)
+				{
+					dest[index_offset + 0] = i * quad + 0;
+					dest[index_offset + 1] = i * quad + 2;
+					dest[index_offset + 2] = i * quad + 1;
+					dest[index_offset + 3] = i * quad + 0;
+					dest[index_offset + 4] = i * quad + 3;
+					dest[index_offset + 5] = i * quad + 2;
+					index_offset += strip;
+				}
+			}
+
+		}
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
 			, m_scale(0.05f), m_pixel_scale(2)
@@ -88,8 +91,6 @@ namespace px
 			, m_perception(perception_range)
 		{
 			if (!opengl) throw std::runtime_error("renderer::renderer(opengl* opengl) - opengl is null");
-
-
 
 			// opengl setup
 			glEnable(GL_TEXTURE_2D);
@@ -99,16 +100,14 @@ namespace px
 
 			// textures
 			std::vector<unsigned char> image; //the raw pixels
-			unsigned width, height;
-			unsigned error = lodepng::decode(image, width, height, "textures/img.png");
-			if (error) throw std::runtime_error("renderer::renderer - can't read file");
+			unsigned int width, height;
+			unsigned int error = lodepng::decode(image, width, height, "textures/img.png");
+			if (error) throw std::runtime_error("renderer::renderer - can't read file, error code #" + std::to_string(error));
 			m_tile.sheet.init(width, height, 8, &image[0]);
-			m_sheet.init("textures/img.json", 128, 128);
-			glBindTexture(GL_TEXTURE_2D, m_tile.sheet.texture_id());
+			m_tile.sheet.bind(0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-
+			m_sheet.init("textures/img.json", width, height);
 
 			// tiles
 			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -119,7 +118,6 @@ namespace px
 			m_tile.shader = program("shaders/tile");
 			m_tile.shader.activate();
 			m_tile.shader.uniform("img", 0);
-
 			m_tile.shader.uniform("offset", (GLfloat)(-perception_half.X), (GLfloat)(-perception_half.Y));
 			m_tile.shader.prepare([this
 				, scale = m_tile.shader.uniform("scale")
@@ -129,7 +127,6 @@ namespace px
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
 				program::uniform(offset, (GLfloat)(m_tile.offset.X), (GLfloat)(m_tile.offset.Y));
 			});
-
 
 			// unit sprites
 			m_sprite.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -142,7 +139,7 @@ namespace px
 			{
 				m_ui.text.font.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
-				//program::uniform(offset, (GLfloat)0, (GLfloat)0);
+				program::uniform(offset, (GLfloat)0, (GLfloat)0);
 			});
 
 			// ui background
@@ -158,7 +155,7 @@ namespace px
 			});
 
 			// ui font
-			m_ui.text.font = std::make_unique<font>("PragmataPro.ttf", ui_cell_height);
+			m_ui.text.font = std::make_unique<font>(font_name, font_size);
 			m_ui.text.vao = vao({ 2, color_depth, texture_depth });
 			m_ui.text.shader = program("shaders/ui_text");
 			m_ui.text.shader.activate();
@@ -219,7 +216,7 @@ namespace px
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			m_tile.offset = vector(m_perception.movement());
+			m_tile.offset = m_perception.movement();
 			m_tile.offset *= std::max<time_t>(1 - time * move_speed, 0);
 			m_tile.offset -= perception_half;
 
@@ -248,7 +245,6 @@ namespace px
 			m_tile.vao.fill_attributes(perception_size * quad * color_depth, 1, &m_tile.colors[0]);
 			m_tile.vao.fill_attributes(perception_size * quad * texture_depth, 2, &m_tile.textcoords[0]);
 			m_tile.vao.fill_indices(perception_size * strip, &m_tile.indices[0]);
-
 			m_tile.vao.draw();
 		}
 
