@@ -80,7 +80,7 @@ namespace px
 			u->attach(img);
 			m_scene->add(u, start);
 
-			m_player = u.get(); 
+			m_player = u.get();
 			m_player->persistent(true);
 			m_pos = m_player->component<rl::location_component>().get();
 

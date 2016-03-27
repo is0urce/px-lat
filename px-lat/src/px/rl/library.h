@@ -22,21 +22,22 @@ namespace px
 			shell::sprite_sheet *m_sheet;
 
 		public:
-			library(shell::sprite_manager *image_manager, shell::sprite_sheet* sheet)
+			library(shell::sprite_manager *image_manager, shell::sprite_sheet* sprite_sheet)
 				: m_sprites(image_manager)
-				, m_sheet(sheet)
+				, m_sheet(sprite_sheet)
 			{
+				if (!image_manager) throw std::runtime_error("library::library(..) image_manager is null");
+				if (!sprite_sheet) throw std::runtime_error("library::library(..) sprite_sheet is null");
 			}
 			virtual ~library() {}
 
 		public:
-			std::shared_ptr<shell::sprite_manager::element> make_image(const std::string &name)
+			auto make_image(const std::string &name) -> decltype(m_sprites->make_shared())
 			{
 				auto s = m_sprites->make_shared();
 				shell::image* img = s.get();
 				*img = m_sheet->at(name);
-				//s->tint = 0xffffff;
-				//s->alternative_glyph = u_plus;
+
 				return s;
 			}
 			auto image(const std::string &name) -> decltype(m_sheet->at(name))
