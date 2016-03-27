@@ -21,6 +21,7 @@ namespace px
 		{
 		private:
 			point m_position;
+			point m_previous;
 			bool m_transparent;
 			bool m_blocking;
 			qtree<location_component*> *m_space;
@@ -55,6 +56,11 @@ namespace px
 				if (enabled() && m_space)
 				{
 					m_space->move(m_position, this, destination);
+					m_previous = m_position;
+				}
+				else
+				{
+					m_previous = destination;
 				}
 				m_position = destination;
 			}
@@ -79,6 +85,10 @@ namespace px
 			const point& position() const
 			{
 				return m_position;
+			}
+			const point& prevoius() const
+			{
+				return m_previous;
 			}
 			bool transparent() const
 			{

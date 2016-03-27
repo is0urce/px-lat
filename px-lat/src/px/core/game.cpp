@@ -21,7 +21,7 @@ namespace px
 			if (!s) throw std::runtime_error("game::game() scene is null");
 			if (!perception) throw std::runtime_error("game::game() perception is null");
 
-			perception->outer(m_library->image("img/wall.png"));
+			perception->outer(m_library->image("wall"));
 		}
 		game::~game()
 		{
@@ -67,7 +67,6 @@ namespace px
 				{
 					const auto &tile = m_scene->select(start + range_point);
 					m_perception->ground(range_point, tile.sprite());
-					//m_perception->ground(range_point, m_library->image("img/wall.png"));
 				});
 			}
 		}
@@ -77,8 +76,7 @@ namespace px
 			point start(3, 3);
 			auto u = std::make_shared<es::unit>();
 
-			auto img = m_library->make_image('@');
-			img->tint = 0xffff00;
+			auto img = m_library->make_image("zombie_marksman");
 			u->attach(img);
 			m_scene->add(u, start);
 
@@ -88,8 +86,7 @@ namespace px
 
 			u = std::make_shared<es::unit>();
 
-			img = m_library->make_image('g');
-			img->tint = 0xff0000;
+			img = m_library->make_image("goblin_h");
 			u->attach(img);
 			m_scene->add(u, { 5, 5 });
 

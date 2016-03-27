@@ -46,6 +46,37 @@ namespace px
 			const char* font_name = "PragmataPro.ttf";
 			const unsigned int font_size = renderer::ui_cell_height;
 
+			const char* texture_path = "textures/compiled.png";
+			const char* texture_desc = "textures/compiled.json";
+
+			void fill_vertex(const point &position, GLfloat* dest)
+			{
+				GLfloat x = (GLfloat)position.X;
+				GLfloat y = (GLfloat)position.Y;
+				GLfloat dx = (GLfloat)(position.X + 1);
+				GLfloat dy = (GLfloat)(position.Y + 1);
+				x -= 0.5f;
+				y -= 0.5f;
+				dx -= 0.5f;
+				dy -= 0.5f;
+
+				dest[0] = x;
+				dest[1] = y;
+				dest[2] = 0;
+				dest[3] = 1;
+				dest[4] = x;
+				dest[5] = dy;
+				dest[6] = 0;
+				dest[7] = 1;
+				dest[8] = dx;
+				dest[9] = dy;
+				dest[10] = 0;
+				dest[11] = 1;
+				dest[12] = dx;
+				dest[13] = y;
+				dest[14] = 0;
+				dest[15] = 1;
+			}
 			void fill_vertex(const vector &position, const vector &quad_range, GLfloat *dest)
 			{
 				(position + vector(-0.5, -0.5) * quad_range).write2(dest + 0 * vertex_depth);
@@ -82,7 +113,16 @@ namespace px
 					index_offset += strip;
 				}
 			}
-
+			template<typename _T>
+			const _T* to_pointer(const std::vector<_T>& a)
+			{
+				return (a.size() == 0) ? nullptr : &a[0];
+			}
+			template<typename _T>
+			_T* to_pointer(std::vector<_T>& a)
+			{
+				return (a.size() == 0) ? nullptr : &a[0];
+			}
 		}
 		renderer::renderer(opengl *opengl)
 			: m_opengl(opengl)
@@ -101,13 +141,14 @@ namespace px
 			// textures
 			std::vector<unsigned char> image; //the raw pixels
 			unsigned int width, height;
-			unsigned int error = lodepng::decode(image, width, height, "textures/img.png");
+			unsigned int error = lodepng::decode(image, width, height, texture_path);
 			if (error) throw std::runtime_error("renderer::renderer - can't read file, error code #" + std::to_string(error));
 			m_tile.sheet.init(width, height, 8, &image[0]);
 			m_tile.sheet.bind(0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			m_sheet.init("textures/img.json", width, height);
+
+			m_sheet.init(texture_desc, width, height);
 
 			// tiles
 			m_tile.vao = vao({ vertex_depth, color_depth, texture_depth });
@@ -125,7 +166,7 @@ namespace px
 			{
 				m_tile.sheet.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
-				program::uniform(offset, (GLfloat)(m_tile.offset.X), (GLfloat)(m_tile.offset.Y));
+				program::uniform(offset, (GLfloat)(m_camera.X), (GLfloat)(m_camera.Y));
 			});
 
 			// unit sprites
@@ -137,9 +178,10 @@ namespace px
 				, scale = m_sprite.shader.uniform("scale")
 				, offset = m_sprite.shader.uniform("offset")]()
 			{
-				m_ui.text.font.bind(0);
+				//m_ui.text.font.bind(0);
+				m_tile.sheet.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
-				program::uniform(offset, (GLfloat)0, (GLfloat)0);
+				program::uniform(offset, (GLfloat)(m_camera.X), (GLfloat)(m_camera.Y));
 			});
 
 			// ui background
@@ -151,7 +193,7 @@ namespace px
 			]()
 			{
 				program::uniform(scale, (GLfloat)m_ui.scale_x, (GLfloat)m_ui.scale_y);
-				program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y);
+				program::uniform(offset, (GLfloat)m_ui.offset_x, (GLfloat)m_ui.offset_y); 
 			});
 
 			// ui font
@@ -190,12 +232,16 @@ namespace px
 			m_aspect = m_width;
 			m_aspect /= m_height;
 
+			m_camera = m_perception.movement();
+			m_camera *= std::max<time_t>(1 - time * move_speed, 0);
+			m_camera -= perception_half;
+
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			draw_terrain(time);
-			draw_sprites();
+			draw_sprites(time);
 			draw_canvas(m_canvas);
 
 			m_opengl->swap();
@@ -211,15 +257,6 @@ namespace px
 
 		void renderer::draw_terrain(time_t time)
 		{
-			// setup states
-			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			m_tile.offset = m_perception.movement();
-			m_tile.offset *= std::max<time_t>(1 - time * move_speed, 0);
-			m_tile.offset -= perception_half;
-
 			unsigned int vertex_offset = 0;
 			unsigned int color_offset = 0;
 			unsigned int texture_offset = 0;
@@ -228,7 +265,7 @@ namespace px
 			{
 				const auto &sprite = m_perception.ground(position);
 
-				fill_vertex(position, tile_size, &m_tile.vertices[vertex_offset]);
+				fill_vertex(position, &m_tile.vertices[vertex_offset]);
 				fill_color(sprite.tint, &m_tile.colors[color_offset]);
 				fill_texture(sprite.left, sprite.bottom, sprite.right, sprite.top, &m_tile.textcoords[texture_offset]);
 
@@ -239,32 +276,60 @@ namespace px
 
 			fill_index(perception_size, &m_tile.indices[0]);
 
+			// setup states
+			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			// update vao and draw
 			m_tile.shader.use();
-			m_tile.vao.fill_attributes(perception_size * quad * vertex_depth, 0, &m_tile.vertices[0]);
-			m_tile.vao.fill_attributes(perception_size * quad * color_depth, 1, &m_tile.colors[0]);
-			m_tile.vao.fill_attributes(perception_size * quad * texture_depth, 2, &m_tile.textcoords[0]);
-			m_tile.vao.fill_indices(perception_size * strip, &m_tile.indices[0]);
+			m_tile.vao.fill_attributes(perception_size * quad * vertex_depth, 0, to_pointer(m_tile.vertices));
+			m_tile.vao.fill_attributes(perception_size * quad * color_depth, 1, to_pointer(m_tile.colors));
+			m_tile.vao.fill_attributes(perception_size * quad * texture_depth, 2, to_pointer(m_tile.textcoords));
+			m_tile.vao.fill_indices(perception_size * strip, to_pointer(m_tile.indices));
 			m_tile.vao.draw();
 		}
 
-		void renderer::draw_sprites()
+		void renderer::draw_sprites(time_t time)
 		{
-			m_sprite.manager.update([this](shell::image &img)
+			unsigned int count = m_sprite.manager.count();
+			unsigned int length = 0; // length of enabled sprites (length <= count)
+			m_sprite.vertices.resize(count * quad * vertex_depth);
+			m_sprite.colors.resize(count * quad * color_depth);
+			m_sprite.texture.resize(count * quad * texture_depth);
+
+			vector start = m_perception.start();
+
+			unsigned int vertex_offset = 0;
+			unsigned int color_offset = 0;
+			unsigned int texture_offset = 0;
+			point sprite_size(1, 1);
+			m_sprite.manager.update([&](sprite_component &sprite)
 			{
-				auto uplus = img.alternative_glyph;
-				if (uplus != 0)
-				{
-					auto &g = m_ui.text.font->at(uplus);
-					img.atlas = 0;
-					img.left = (float)g.left;
-					img.right = (float)g.right;
-					img.bottom = (float)g.bottom;
-					img.top = (float)g.top;
-					img.width = (float)g.width;
-					img.height = (float)g.height;
-				}
+				// vertex coordinates
+				auto* location = (rl::location_component*)sprite;
+				if (!location) throw std::runtime_error("sprite_manager::update - location link is null");
+				vector position = vector(location->prevoius()).lerp(vector(location->position()), std::min<time_t>(1, time * move_speed));
+
+				fill_vertex(position - start, sprite_size, &m_sprite.vertices[vertex_offset]);
+				fill_color(sprite.tint, &m_sprite.colors[color_offset]);
+				fill_texture(sprite.left, sprite.bottom, sprite.right, sprite.top, &m_sprite.texture[texture_offset]);
+
+				vertex_offset += quad * vertex_depth;
+				color_offset += quad * color_depth;
+				texture_offset += quad * texture_depth;
+
+				++length;
 			});
+
+			// indices
+			if (length > m_sprite.max)
+			{
+				m_sprite.max = length;
+
+				m_sprite.indices.resize(length * strip);
+				fill_index(length, to_pointer(m_sprite.indices));
+			}
 
 			// setup states
 			glViewport(0, 0, (GLsizei)m_width, (GLsizei)m_height);
@@ -272,13 +337,11 @@ namespace px
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			// update vao and draw
-			unsigned int size;
-			m_sprite.manager.query(size, m_sprite.vertices, m_sprite.colors, m_sprite.texture, m_sprite.index);
 			m_sprite.shader.use();
-			m_sprite.vao.fill_attributes(size * quad * 4, 0, m_sprite.vertices);
-			m_sprite.vao.fill_attributes(size * quad * 4, 1, m_sprite.colors);
-			m_sprite.vao.fill_attributes(size * quad * 2, 2, m_sprite.texture);
-			m_sprite.vao.fill_indices(size * 2 * 3, m_sprite.index);
+			m_sprite.vao.fill_attributes(length * quad * vertex_depth, 0, to_pointer(m_sprite.vertices));
+			m_sprite.vao.fill_attributes(length * quad * color_depth, 1, to_pointer(m_sprite.colors));
+			m_sprite.vao.fill_attributes(length * quad * texture_depth, 2, to_pointer(m_sprite.texture));
+			m_sprite.vao.fill_indices(length * strip, to_pointer(m_sprite.indices));
 			m_sprite.vao.draw();
 		}
 

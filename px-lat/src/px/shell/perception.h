@@ -30,7 +30,7 @@ namespace px
 			typedef image ground_t;
 
 		private:
-			unsigned int m_version;
+			unsigned int m_version = 0;
 			point m_start;
 			point m_start_previous;
 			point m_move; // current-prev start

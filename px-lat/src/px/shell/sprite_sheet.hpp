@@ -48,7 +48,8 @@ namespace px
 				float horisontal = 1.0f / width;
 				float vertical = 1.0f / height;
 
-				json j(file);
+				json f(file);
+				auto j = f["frames"];
 				for (auto it = j.begin(), last = j.end(); it != last; ++it)
 				{
 					const auto &frame = it->at("frame");
@@ -61,8 +62,8 @@ namespace px
 					// calculate image data
 					float x = frame["x"];
 					float y = frame["y"];
-					float w = frame["width"];
-					float h = frame["height"];
+					float w = frame["w"];
+					float h = frame["h"];
 
 					// fill image data
 					img.top = y * vertical;
@@ -89,7 +90,14 @@ namespace px
 			}
 			const image& at(const std::string &name) const
 			{
-				return m_map.at(name);
+				try
+				{ 
+					return m_map.at(name);
+				}
+				catch (const std::exception& e)
+				{
+					throw std::runtime_error(name + e.what());
+				}
 			}
 		};
 	}

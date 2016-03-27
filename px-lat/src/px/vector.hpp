@@ -26,8 +26,8 @@ namespace px
 
 		vector moved(vector move) const { move.move(*this); return move; }
 		vector multiplied(vector c) const { c.multiply(*this); return c; }
-		vector multiplied(component w, component h) const { return multiplied(w, h); }
-		vector multiplied(component c) const { return multiplied(c); }
+		vector multiplied(component w, component h) const { vector result(w, h, 1); result.multiply(*this); return result; }
+		vector multiplied(component c) const { vector result(c, c, c); result.multiply(*this); return result; }
 
 		vector operator-() const { return { -X, -Y, -Z }; }
 		vector& operator+=(const vector &rhs) { move(rhs); return *this; }

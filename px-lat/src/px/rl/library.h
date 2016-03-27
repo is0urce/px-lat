@@ -30,10 +30,13 @@ namespace px
 			virtual ~library() {}
 
 		public:
-			std::shared_ptr<shell::sprite_manager::element> make_image(unsigned int u_plus)
+			std::shared_ptr<shell::sprite_manager::element> make_image(const std::string &name)
 			{
 				auto s = m_sprites->make_shared();
-				s->alternative_glyph = u_plus;
+				shell::image* img = s.get();
+				*img = m_sheet->at(name);
+				//s->tint = 0xffffff;
+				//s->alternative_glyph = u_plus;
 				return s;
 			}
 			auto image(const std::string &name) -> decltype(m_sheet->at(name))

@@ -76,16 +76,7 @@ namespace px
 				float scale_x, scale_y, offset_x, offset_y; // uniform values
 			} m_ui;
 
-			// unit sprites
-			struct sprite_draw
-			{
-			public:
-				sprite_manager manager;
-				vao vao;
-				program shader;
-				GLfloat *vertices, *colors, *texture;
-				GLuint* index;
-			} m_sprite;
+			vector m_camera; // offset
 
 			// terrain tiles
 			struct tile_draw
@@ -98,8 +89,19 @@ namespace px
 				std::vector<GLfloat> textcoords;
 				std::vector<GLuint> indices;
 				program shader;
-				vector offset;
 			} m_tile;
+
+			// unit sprites
+			struct sprite_draw
+			{
+			public:
+				sprite_manager manager;
+				vao vao;
+				unsigned int max = 0;
+				std::vector<GLfloat> vertices, colors, texture;
+				std::vector<GLuint> indices;
+				program shader;
+			} m_sprite;
 
 		public:
 			renderer(opengl *opengl);
@@ -116,7 +118,7 @@ namespace px
 
 		private:
 			void draw_canvas(const ui::canvas& gui);
-			void draw_sprites();
+			void draw_sprites(time_t time);
 			void draw_terrain(time_t time);
 		};
 	}

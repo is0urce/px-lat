@@ -16,20 +16,6 @@ namespace px
 {
 	namespace shell
 	{
-		namespace
-		{
-			template<typename _T>
-			const _T* to_pointer(const std::vector<_T>& a)
-			{
-				return (a.size() == 0) ? nullptr : &a[0];
-			}
-			template<typename _T>
-			_T* to_pointer(std::vector<_T>& a)
-			{
-				return (a.size() == 0) ? nullptr : &a[0];
-			}
-		}
-
 		class sprite_component
 			: public shell::image
 			, public es::component_link<rl::location_component>
@@ -52,112 +38,9 @@ namespace px
 
 		class sprite_manager : public es::component_manager<sprite_component, 100>
 		{
-		private:
-			unsigned int m_length = 0;
-			unsigned int m_max = 0;
-			std::vector<float> m_vertice;
-			std::vector<float> m_color;
-			std::vector<float> m_texture;
-			std::vector<unsigned int> m_index;
-
 		public:
 			sprite_manager() {}
 			virtual ~sprite_manager() {}
-
-		public:
-			void query(unsigned int& length, float*& vertex, float*& color, float*& texture, unsigned int*& index)
-			{
-				construct();
-				length = m_length;
-				vertex = to_pointer(m_vertice);
-				color = to_pointer(m_color);
-				texture = to_pointer(m_texture);
-				index = to_pointer(m_index);
-			}
-		private:
-			void construct()
-			{
-				unsigned int len = count();
-				m_vertice.resize(len * 4 * 4);
-				m_color.resize(len * 4 * 4);
-				m_texture.resize(len * 4 * 2);
-
-				m_length = 0;
-				unsigned int vertex_offset = 0;
-				unsigned int color_offset = 0;
-				unsigned int texture_offset = 0;
-				update([&](sprite_component &sprite)
-				{
-					// vertex coordinates
-					auto* location = (rl::location_component*)sprite;
-					if (!location) throw std::runtime_error("sprite_manager::update - location link is null");
-					auto x = location->x();
-					auto y = location->y();
-					auto horisontal = sprite.width / 2;
-					auto vertical = sprite.height / 2;
-
-					m_vertice[vertex_offset + 0] = x - horisontal;
-					m_vertice[vertex_offset + 1] = y - vertical;
-					m_vertice[vertex_offset + 2] = 0;
-					m_vertice[vertex_offset + 3] = 1;
-
-					m_vertice[vertex_offset + 4] = x - horisontal;
-					m_vertice[vertex_offset + 5] = y + vertical;
-					m_vertice[vertex_offset + 6] = 0;
-					m_vertice[vertex_offset + 7] = 1;
-
-					m_vertice[vertex_offset + 8] = x + horisontal;
-					m_vertice[vertex_offset + 9] = y + vertical;
-					m_vertice[vertex_offset + 10] = 0;
-					m_vertice[vertex_offset + 11] = 1;
-
-					m_vertice[vertex_offset + 12] = x + horisontal;
-					m_vertice[vertex_offset + 13] = y - vertical;
-					m_vertice[vertex_offset + 14] = 0;
-					m_vertice[vertex_offset + 15] = 1;
-					
-					// color tint
-					sprite.tint.write(&m_color[color_offset], 4);
-
-					// texture coordinates
-					m_texture[texture_offset + 0] = sprite.left;
-					m_texture[texture_offset + 1] = sprite.bottom;
-					m_texture[texture_offset + 2] = sprite.left;
-					m_texture[texture_offset + 3] = sprite.top;
-					m_texture[texture_offset + 4] = sprite.right;
-					m_texture[texture_offset + 5] = sprite.top;
-					m_texture[texture_offset + 6] = sprite.right;
-					m_texture[texture_offset + 7] = sprite.bottom;
-
-					vertex_offset += 4 * 4;
-					color_offset += 4 * 4;
-					texture_offset += 4 * 2;
-
-					++m_length;
-				});
-
-				// indices
-				if (m_length > m_max)
-				{
-					m_max = m_length;
-
-					m_index.resize(len * 2 * 3);
-					unsigned int index_offset = 0;
-					unsigned int quad_offset = 0;
-					for (unsigned int i = 0; i < m_length; ++i)
-					{
-						m_index[index_offset + 0] = quad_offset + 0;
-						m_index[index_offset + 1] = quad_offset + 2;
-						m_index[index_offset + 2] = quad_offset + 1;
-						m_index[index_offset + 3] = quad_offset + 0;
-						m_index[index_offset + 4] = quad_offset + 3;
-						m_index[index_offset + 5] = quad_offset + 2;
-
-						index_offset += 6;
-						quad_offset += 4;
-					}
-				}
-			}
 		};
 	}
 }
