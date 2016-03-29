@@ -178,7 +178,6 @@ namespace px
 				, scale = m_sprite.shader.uniform("scale")
 				, offset = m_sprite.shader.uniform("offset")]()
 			{
-				//m_ui.text.font.bind(0);
 				m_tile.sheet.bind(0);
 				program::uniform(scale, (GLfloat)m_scale, (GLfloat)(m_scale * m_aspect));
 				program::uniform(offset, (GLfloat)(m_camera.X), (GLfloat)(m_camera.Y));

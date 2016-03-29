@@ -47,6 +47,7 @@ namespace px
 			ui::canvas m_canvas;
 			perception m_perception;
 
+			vector m_camera; // camera offset
 			sprite_sheet m_sheet;
 
 			// ui rendering
@@ -76,9 +77,7 @@ namespace px
 				float scale_x, scale_y, offset_x, offset_y; // uniform values
 			} m_ui;
 
-			vector m_camera; // offset
-
-			// terrain tiles
+			// terrain tile sprites
 			struct tile_draw
 			{
 			public:
@@ -90,7 +89,6 @@ namespace px
 				std::vector<GLuint> indices;
 				program shader;
 			} m_tile;
-
 			// unit sprites
 			struct sprite_draw
 			{

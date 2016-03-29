@@ -19,6 +19,11 @@ namespace px
 {
 	namespace shell
 	{
+		namespace
+		{
+			const char default_glyph = '?';
+			const color default_color(1, 1, 1);
+		}
 		class sprite_sheet
 		{
 		public:
@@ -41,16 +46,17 @@ namespace px
 		public:
 			unsigned int init(const char* file_path, unsigned int width, unsigned int height)
 			{
-				std::ifstream file = std::ifstream(file_path, std::ifstream::in);
+				std::ifstream file(file_path, std::ifstream::in);
 
 				if (!file) throw std::runtime_error(std::string("px::shell::sprite_sheet - can not read file ") + std::string(file_path));
 
-				float horisontal = 1.0f / width;
-				float vertical = 1.0f / height;
+				json js(file);
 
-				json f(file);
-				auto j = f["frames"];
-				for (auto it = j.begin(), last = j.end(); it != last; ++it)
+				unsigned int atlas = m_index;
+				++m_index;
+
+				auto frames = js["frames"];
+				for (auto it = frames.begin(), last = frames.end(); it != last; ++it)
 				{
 					const auto &frame = it->at("frame");
 
@@ -60,28 +66,28 @@ namespace px
 					element &img = i.first->second;
 					
 					// calculate image data
-					float x = frame["x"];
-					float y = frame["y"];
-					float w = frame["w"];
-					float h = frame["h"];
+					double x = frame["x"];
+					double y = frame["y"];
+					double w = frame["w"];
+					double h = frame["h"];
 
 					// fill image data
-					img.top = y * vertical;
-					img.left = x * horisontal;
-					img.bottom = (y + h) * vertical;
-					img.right = (x + w) * horisontal;
-					img.width = w * horisontal;
-					img.height = h * vertical;
-
-					img.tint = color(1, 1, 1);
-					img.transparency = 0;
-
-					img.alternative_glyph = '?';
+					img.atlas = atlas;
 					img.name = name.c_str();
-					img.atlas = m_index;
+					img.alternative_glyph = default_glyph;
+
+					img.top = float(y / height);
+					img.left = float(x / width);
+					img.bottom = float((y + h) / height);
+					img.right = float((x + w) / width);
+					img.width = float(w / width);
+					img.height = float(h / height);
+
+					img.tint = default_color;
+					img.transparency = 0;
 				}
 
-				return m_index++;
+				return atlas;
 			}
 		public:
 			const image& operator[](const std::string &name) const
